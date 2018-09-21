@@ -11,6 +11,4 @@ public interface IGameManager {
 	
 	public String getUserName();
 	
-	public void setUserName(String userName);
-	
 }
