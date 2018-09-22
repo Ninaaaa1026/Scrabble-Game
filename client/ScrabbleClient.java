@@ -1,10 +1,10 @@
 package client;
 import java.awt.EventQueue;
-import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 import remote.ClientInterface;
@@ -18,13 +18,15 @@ import remote.ServerInterface;
  */
 public class ScrabbleClient implements ClientInterface {
 	private ClientGUI gui = new ClientGUI();
-	//注意一下参数初始化和GUI获取参数的顺序
+	//mention the order of initiating the parameters and invoking them by gui
 	private boolean gameState = false;
 	private boolean roomState = false;
 	private String roomCreatorName;
+	private String currentPlayer;
 	private ArrayList<String> playerUserName;
 	private ArrayList<String> gamerUserName;
 	private ArrayList<Integer> gamerScores;
+	private char[][] grid;
 
 	String userName;
 	public static ScrabbleClient player=new ScrabbleClient();
@@ -97,18 +99,27 @@ public class ScrabbleClient implements ClientInterface {
 
 	@Override
 	public void roomCreated(String createplayerusername) throws RemoteException {
-		// TODO Auto-generated method stub
+		// TODO show room and the creator in the room
 		this.roomState = true;
 		this.playerUserName.remove(createplayerusername);
-		//this.gamerUserName.add(createplayerusername);
-		//this.gamerScores.add(0);
+		//TODO GUI: remove from player list
+		this.gamerUserName.add(createplayerusername);
+		this.gamerScores.add(0);
 		this.roomCreatorName = createplayerusername;
 	}
 
 	@Override
 	public void playerInvited() throws RemoteException {
 		// TODO Auto-generated method stub
-		//the player is invited to join the room
+		//TODO: GUI shows the dialog for the player respond to the invitaion
+		//TODO: GUI get response and deal with it
+		boolean accept = false;
+		if (accept) {
+			this.playerUserName.remove(this.userName);
+			this.gamerUserName.add(this.userName);
+			this.gamerScores.add(0);
+		}
+		remoteServer.respondToInvitation(accept, getUserName());
 	}
 
 	@Override
@@ -155,11 +166,14 @@ public class ScrabbleClient implements ClientInterface {
 	}
 
 	@Override
-	public void initiateGame(boolean gameState, boolean roomState, ArrayList<String> playerUserName,
-			ArrayList<String> gamerUserName, ArrayList<Integer> scores) throws RemoteException {
-		// TODO Auto-generated method stub
-		this.gameState = gameState;
-		this.roomState = roomState;
+	public void initiateGame(boolean)
+	@Override
+	public void viewGame(ArrayList<String> playerUserName,
+			ArrayList<String> gamerUserName, ArrayList<Integer> scores, String currentPlayer) throws RemoteException {
+		// TODO GUI display: who's turn, current grid, players, gamers, scores
+		this.gameState = true;
+		this.roomState = true;
+		this.currentPlayer = currentPlayer;
 		this.playerUserName = new ArrayList<String>(playerUserName.size());
 		this.playerUserName.addAll(playerUserName);
 		this.gamerUserName = new ArrayList<String>(gamerUserName.size());
@@ -169,9 +183,15 @@ public class ScrabbleClient implements ClientInterface {
 	}
 
 	@Override
-	public void gameStarted(ArrayList<String> gamers) throws RemoteException {
+	public void gameStarted(ArrayList<String> gamers, ArrayList<String> players, String currentPlayer) throws RemoteException {
 		// TODO Auto-generated method stub
-		
+		this.playerUserName = new ArrayList<String>(players.size());
+		this.playerUserName.addAll(players);
+		this.gamerUserName = new ArrayList<String>(gamers.size());
+		this.gamerUserName.addAll(gamers);
+		this.gamerScores = new ArrayList<Integer>(gamers.size());
+		Collections.fill(this.gamerScores, 0);
+		this.currentPlayer = currentPlayer;
 	}
 
 }
