@@ -2,15 +2,16 @@ package remote;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.rmi.Remote;
 
 public interface ClientInterface extends Remote {
 	// gamestate means if the game is playing now and transmit the client instance
 	// to server
-	public void initiateGame(boolean gameState, boolean roomState, ArrayList<String> playerUserName,
-			ArrayList<String> gamerUserName, ArrayList<Integer> scores) throws RemoteException;
+	public void initiateGame(boolean gameState, boolean roomState, ArrayList<String> playerUserName,ArrayList<String> gamerUserName) throws RemoteException;
 
+	public void viewGame(ArrayList<String> playerUserName,
+			ArrayList<String> gamerUserName, ArrayList<Integer> scores, String currentPlayer,char[][] table) throws RemoteException;
+	
 	// add a new client to the list
 	public void clientAdded(String playerUserName) throws RemoteException;
 
@@ -24,14 +25,14 @@ public interface ClientInterface extends Remote {
 	public void invitationResponse(String invitedplayer, boolean agree) throws RemoteException;
 
 	// start a game and transmit the players who wants to play this game
-	public void gameStarted(ArrayList<String> gamers) throws RemoteException;
+	public void gameStarted(ArrayList<String> gamers, ArrayList<String> players, String currentPlayer)
+			throws RemoteException;
 
 	// change the clients' game table
 	// public void gameTableChanged(char character, int rowIndex, int colIndex)
-
 	// throws RemoteException;
 	// set player's turn
-	public void nextPlayer(char character, int rowIndex, int colIndex, String currentPlayer) throws RemoteException;
+	public void nextPlayer(char character, int rowIndex, int colIndex, String nextUserName) throws RemoteException;
 
 	// pass this turn, the argument is the next player
 	public void pass(String nextUserName) throws RemoteException;
@@ -41,10 +42,10 @@ public interface ClientInterface extends Remote {
 			String userName) throws RemoteException;
 
 	// if all players think the string is valid , the people get the score. ???????
-	public void voteSuccess(Map<String, Integer> player) throws RemoteException;
+	public void voteSuccess(String beginVoteUserName, int totalMark, String nextUserName) throws RemoteException;
 
 	// gameover
-	public void gameOver() throws RemoteException;
+	public void gameOver(ArrayList<String> playerUserName) throws RemoteException;
 
 	// remove the client in other clients'list
 	public void clientExited(String playerUserName) throws RemoteException;

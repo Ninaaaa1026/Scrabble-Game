@@ -10,7 +10,6 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
-import java.awt.FlowLayout;
 import javax.swing.table.DefaultTableModel;
 
 import javax.swing.UIManager;
@@ -20,29 +19,35 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.event.InputMethodListener;
 import java.awt.event.InputMethodEvent;
+import java.awt.GridLayout;
+import javax.swing.JScrollPane;
 
 public class ClientGUI implements ActionListener {
 
-	private JFrame frame;
-	private JTable gameTable;
-	JButton btnSelectWord;
-	JPanel visitPlayerdPanel;
-	JButton btnPass;
-	JButton btnVote;
-	JButton btnAgreeVote;
-	JButton btnCreateRoom;
-	JLabel lblPlayersTurn;
-	JPanel playersPanel;
-	JLabel lblCurrentGameState;
-	JLabel InvitedPlayersLabel;
-	JButton btnNext;
-	private JButton btnDisagree;
-	private JPanel btnPanel;
-	private JPanel votePanel;
-	private JPanel selectPenel;
-	private JPanel passPanel;
-	DefaultTableModel myModel;
-	private JPanel voidPanel;
+	protected JFrame frame;
+	protected JTable gameTable;
+	protected JButton btnSelectWord;
+	protected JButton btnPass;
+	protected JButton btnVote;
+	protected JButton btnAgreeVote;
+	protected JButton btnCreateRoom;
+	protected JLabel lblPlayersTurn;
+	protected JLabel lblCurrentGameState;
+	protected JLabel InvitedPlayersLabel;
+	protected JButton btnNext;
+	protected  JButton btnDisagree;
+	protected  JPanel btnPanel;
+	protected  JPanel votePanel;
+	protected  JPanel selectPenel;
+	protected  JPanel passPanel;
+	protected DefaultTableModel myModel;
+	protected  JPanel voidPanel;
+	private JPanel listPanel;
+	private JPanel panel_1;
+	private JScrollPane scrollPane_1;
+	private JPanel panel_2;
+	private JPanel visitingPanel;
+	private JLabel visitingLabel;
 
 	/**
 	 * Create the application.
@@ -69,7 +74,7 @@ public class ClientGUI implements ActionListener {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 542, 593);
+		frame.setBounds(100, 100, 583, 593);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new CardLayout(0, 0));
 
@@ -77,17 +82,9 @@ public class ClientGUI implements ActionListener {
 		frame.getContentPane().add(gameRoomPanel, "name_891421322563457");
 		gameRoomPanel.setLayout(null);
 
-		visitPlayerdPanel = new JPanel();
-		visitPlayerdPanel.setBackground(SystemColor.scrollbar);
-		visitPlayerdPanel.setForeground(UIManager.getColor("Button.shadow"));
-		visitPlayerdPanel.setBorder(UIManager.getBorder("FileChooser.listViewBorder"));
-		visitPlayerdPanel.setBounds(380, 0, 146, 554);
-		gameRoomPanel.add(visitPlayerdPanel);
-		visitPlayerdPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-
 		JPanel gamersPanel = new JPanel();
 		gamersPanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 1, true));
-		gamersPanel.setBounds(0, 0, 381, 93);
+		gamersPanel.setBounds(0, 0, 383, 93);
 		gameRoomPanel.add(gamersPanel);
 		gamersPanel.setLayout(null);
 
@@ -104,11 +101,12 @@ public class ClientGUI implements ActionListener {
 		gameTable = new JTable();
 		gameTable.addInputMethodListener(new InputMethodListener() {
 			public void inputMethodTextChanged(InputMethodEvent arg0) {
+				
 			}
 
 			@Override
 			public void caretPositionChanged(InputMethodEvent arg0) {
-				// TODO Auto-generated method stub
+
 				
 			}
 		});
@@ -175,17 +173,27 @@ public class ClientGUI implements ActionListener {
 		
 		voidPanel = new JPanel();
 		btnPanel.add(voidPanel, "name_965239449619613");
+		
+		scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(383, 0, 184, 554);
+		gameRoomPanel.add(scrollPane_1);
+		
+		panel_2 = new JPanel();
+		scrollPane_1.setViewportView(panel_2);
+		panel_2.setBackground(SystemColor.controlHighlight);
+		panel_2.setLayout(null);
+		
+		visitingPanel = new JPanel();
+		visitingPanel.setBounds(0, 0, 182, 40);
+		panel_2.add(visitingPanel);
+		visitingPanel.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		visitingLabel = new JLabel("");
+		visitingPanel.add(visitingLabel);
 
 		JPanel gameLobbyPanel = new JPanel();
 		frame.getContentPane().add(gameLobbyPanel, "name_891358432709494");
 		gameLobbyPanel.setLayout(null);
-
-		playersPanel = new JPanel();
-		playersPanel.setBackground(UIManager.getColor("Button.light"));
-		playersPanel.setBorder(UIManager.getBorder("ScrollPane.border"));
-		playersPanel.setBounds(380, 0, 146, 554);
-		gameLobbyPanel.add(playersPanel);
-		playersPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
 		lblCurrentGameState = new JLabel("Current Game State");
 		lblCurrentGameState.setBounds(128, 179, 115, 15);
@@ -206,6 +214,32 @@ public class ClientGUI implements ActionListener {
 		InvitedPlayersLabel = new JLabel("");
 		InvitedPlayersLabel.setBounds(10, 10, 165, 15);
 		panel.add(InvitedPlayersLabel);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(382, 0, 185, 554);
+		gameLobbyPanel.add(scrollPane);
+		
+		panel_1 = new JPanel();
+		panel_1.setBackground(UIManager.getColor("Button.light"));
+		scrollPane.setViewportView(panel_1);
+		panel_1.setLayout(null);
+		
+		listPanel = new JPanel();
+		listPanel.setBounds(10, 10, 167, 38);
+		panel_1.add(listPanel);
+		listPanel.setLayout(new GridLayout(1, 0, 0, 0));
+		
+		JPanel invitePanel = new JPanel();
+		listPanel.add(invitePanel);
+		invitePanel.setLayout(null);
+		
+		JButton addButton = new JButton("+");
+		addButton.setBounds(118, 10, 39, 23);
+		invitePanel.add(addButton);
+		
+		JLabel playerLabel = new JLabel("");
+		playerLabel.setBounds(10, 14, 98, 15);
+		invitePanel.add(playerLabel);
 	}
 
 	public void actionPerformed(ActionEvent arg0) {

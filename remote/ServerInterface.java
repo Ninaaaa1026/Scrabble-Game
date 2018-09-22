@@ -11,7 +11,7 @@ public interface ServerInterface extends Remote{
 	public boolean createRoom(String userName)throws RemoteException;
 	
 	// invite player one by one 
-	public void invitePlayer(String userName)throws RemoteException;
+	public void invitePlayer(String userName )throws RemoteException;
 	
 	//clients choose if he/she agrees to play a game
 	public void respondToInvitation(boolean agree,String userName)throws RemoteException;

@@ -22,11 +22,13 @@ public class GameLogin {
 	private JTextField IPTextField;
 	private JTextField portTextField;
 	private JLabel lblWelcomeToScrabble;
+	ClientGUI window;
 
 	/**
 	 * Create the application.
 	 */
-	public GameLogin() {
+	public GameLogin(ClientGUI gui) {
+		window=gui;
 		initialize();
 	}
 
@@ -48,7 +50,6 @@ public class GameLogin {
 							public void run() {
 								try {
 									//获取游戏状态，玩家列表
-									ClientGUI window = new ClientGUI();
 									window.getFrame().setVisible(true);
 								} catch (Exception e) {
 									e.printStackTrace();
