@@ -47,6 +47,7 @@ public class GameLogin {
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								try {
+									//获取游戏状态，玩家列表
 									ClientGUI window = new ClientGUI();
 									window.getFrame().setVisible(true);
 								} catch (Exception e) {
