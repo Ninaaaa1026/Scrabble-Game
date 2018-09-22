@@ -37,7 +37,7 @@ public interface ClientInterface extends Remote {
 	public void pass(String nextUserName) throws RemoteException;
 
 	// let the players to vote if the string is valid
-	public boolean beginVote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
+	public void beginVote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
 			String userName) throws RemoteException;
 
 	// if all players think the string is valid , the people get the score. ???????
