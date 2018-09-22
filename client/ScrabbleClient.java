@@ -36,7 +36,7 @@ public class ScrabbleClient implements ClientInterface {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GameLogin window = new GameLogin(gui);
+					GameLogin window = new GameLogin(player.gui);
 					window.getFrame().setVisible(true);
 					try {
 						//Connect to the rmiregistry that is running on localhost
@@ -133,7 +133,7 @@ public class ScrabbleClient implements ClientInterface {
 	public void beginVote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
 			String userName) throws RemoteException {
 		// TODO Auto-generated method stub
-		return false;
+		return;
 	}
 
 	@Override
