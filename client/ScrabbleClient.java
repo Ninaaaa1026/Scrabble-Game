@@ -212,7 +212,7 @@ public class ScrabbleClient implements ClientInterface {
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.ensureCapacity(gamers.size());
 		Collections.fill(this.gamerScores, 0);
-		Arrays.fill(this.grid, null);
+		Arrays.fill(this.grid, ' ');
 		gui.showLobby();
 	}
 	@Override
