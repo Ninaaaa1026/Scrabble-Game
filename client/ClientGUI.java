@@ -262,8 +262,8 @@ public class ClientGUI implements ActionListener {
 					rowIndex = e.getFirstRow();
 					colIndex = e.getColumn();
 					inputString = gameTable.getValueAt(rowIndex, colIndex).toString();
-					tableChanged = true;
 					if (!Pattern.matches("\\s+", inputString) && !inputString.equals("")) {
+						tableChanged = true;
 						character = inputString.toCharArray()[0];
 						btnLayout.show(btnPanel, "name_957948997083501");
 					} else {
@@ -276,9 +276,9 @@ public class ClientGUI implements ActionListener {
 							rowIndex = e.getFirstRow();
 							colIndex = e.getColumn();
 							inputString = gameTable.getValueAt(rowIndex, colIndex).toString();
-							tableChanged = true;
 						}
 						if (!Pattern.matches("\\s+", inputString) && !inputString.equals("")) {
+							tableChanged = true;
 							character = inputString.toCharArray()[0];
 							btnLayout.show(btnPanel, "name_957948997083501");
 						} else {
