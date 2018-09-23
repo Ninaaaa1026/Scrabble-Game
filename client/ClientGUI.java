@@ -1,7 +1,5 @@
 package client;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import java.awt.CardLayout;
 import javax.swing.JPanel;
@@ -14,10 +12,7 @@ import javax.swing.JFormattedTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
-import javax.swing.table.TableModel;
 import javax.swing.text.MaskFormatter;
-
-import remote.ServerInterface;
 
 import javax.swing.UIManager;
 import javax.swing.ListSelectionModel;
@@ -27,10 +22,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import java.awt.Color;
-import java.awt.Desktop.Action;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Vector;
