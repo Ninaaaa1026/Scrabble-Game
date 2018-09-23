@@ -4,8 +4,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
 
 import remote.ClientInterface;
 import remote.ServerInterface;
@@ -23,10 +23,10 @@ public class ScrabbleClient implements ClientInterface {
 	private boolean roomState = false;
 	private String roomCreatorName;
 	private String currentPlayer;
-	private ArrayList<String> playerUserName;
-	private ArrayList<String> gamerUserName;
-	private ArrayList<Integer> gamerScores;
-	private char[][] grid;
+	private ArrayList<String> playerUserName = new ArrayList<>(); //all the players
+	private ArrayList<String> gamerUserName = new ArrayList<>(); //the players that are playing or in the game room
+	private ArrayList<Integer> gamerScores = new ArrayList<>();
+	private char[][] grid = new char[20][20];
 
 	String userName;
 	public static ScrabbleClient player=new ScrabbleClient();
@@ -90,108 +90,182 @@ public class ScrabbleClient implements ClientInterface {
 		return this.gamerScores;
 	}
 
+	public char[][] getGrid() {
+		return this.grid;
+	}
 
+	public String getCurrentPlayer() {
+		return this.currentPlayer;
+	}
+
+	private void updateMark(String gamer, Integer score) {
+		for (int i=0; i<this.gamerUserName.size(); i++) {
+			if (this.gamerUserName.get(i) == gamer) {
+				this.gamerScores.set(i, score);
+				return;
+			}
+		}
+		//log
+		System.out.println("Vote beginner not in the game!!!");
+	}
 	@Override
-	public void clientAdded(String playerUserName) throws RemoteException {
-		// TODO Auto-generated method stub
+	public void clientAdded(String playerUserName)
+			throws RemoteException {
+		// a new player logged in
 		this.playerUserName.add(playerUserName);
+		//TODO GUI refresh player list
 	}
 
 	@Override
-	public void roomCreated(String createplayerusername) throws RemoteException {
-		// TODO show room and the creator in the room
+	public void roomCreated(String createplayerusername)
+			throws RemoteException {
+		//this.gameState = false;
 		this.roomState = true;
-		this.playerUserName.remove(createplayerusername);
-		//TODO GUI: remove from player list
+		this.gamerUserName.clear();
+		this.gamerScores.clear();
+		this.roomCreatorName = createplayerusername;
 		this.gamerUserName.add(createplayerusername);
 		this.gamerScores.add(0);
-		this.roomCreatorName = createplayerusername;
+		// TODO GUI show room and the creator in the room
 	}
 
 	@Override
 	public void playerInvited() throws RemoteException {
-		// TODO Auto-generated method stub
+		boolean accept = false;
 		//TODO: GUI shows the dialog for the player respond to the invitaion
 		//TODO: GUI get response and deal with it
-		boolean accept = false;
 		if (accept) {
-			this.playerUserName.remove(this.userName);
 			this.gamerUserName.add(this.userName);
 			this.gamerScores.add(0);
 		}
 		remoteServer.respondToInvitation(accept, getUserName());
+		//TODO: GUI shows this player in game room, or GUI do it automatically?
 	}
 
 	@Override
-	public void invitationResponse(String invitedplayer, boolean agree) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+	public void invitationResponse(String invitedplayer, boolean agree)
+			throws RemoteException {
+		if (!agree) return;
+		if (invitedplayer != getUserName()) {
+			this.gamerUserName.add(this.userName);
+			this.gamerScores.add(0);
+			// TODO: GUI shows the gamer in game room
+			if (getUserName() == roomCreatorName) {
+				//TODO: GUI disable invite button of this invited player
+			}
+		}
 	}
 
 	@Override
-	public void nextPlayer(char character, int rowIndex, int colIndex, String currentPlayer) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+	public void nextPlayer(char character, int rowIndex, int colIndex, String currentPlayer)
+			throws RemoteException {
+		// next turn
+		grid[rowIndex][colIndex] = character;
+		this.currentPlayer = currentPlayer;
+		//TODO: GUI refresh grid and current player
+		if (currentPlayer == getUserName()) {
+			//TODO: GUI enable this player to play
+		}
 	}
 
 	@Override
-	public void pass(String nextUserName) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+	public void pass(String nextUserName)
+			throws RemoteException {
+		// current player pass
+		this.currentPlayer = nextUserName;
+		//TODO: GUI displays a message that shows pass and refresh the current player
 	}
 
 	@Override
 	public void beginVote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
-			String userName) throws RemoteException {
-		// TODO Auto-generated method stub
+			String userName)
+			throws RemoteException {
+		// TODO: GUI displays vote dialog and highlight the voted word
 		return;
 	}
 
 	@Override
-	public void voteSuccess(Map<String, Integer> player) throws RemoteException {
+	public void voteSuccess(String beginVoteUserName, boolean accepted, int totalMark, String nextUserName)
+			throws RemoteException {
 		// TODO Auto-generated method stub
-		
+		if (accepted) {
+			updateMark(beginVoteUserName, totalMark);
+		}
+		//TODO GUI displays message and update mark if accepted
+		this.currentPlayer = nextUserName;
 	}
 
 	@Override
-	public void gameOver() throws RemoteException {
-		// TODO Auto-generated method stub
-		
+	public void gameOver(ArrayList<String> players, ArrayList<String> gamers, ArrayList<Integer> scores)
+			throws RemoteException {
+		//TODO GUI displays result of the game
+		this.gameState = false;
+		this.roomState = false;
+		this.playerUserName.clear();
+		this.gamerUserName.clear();
+		this.gamerScores.clear();
+		Arrays.fill(this.grid, null);
+		this.playerUserName.addAll(players);
+		//TODO GUI shows initial state of the table and the player list
 	}
 
 	@Override
-	public void clientExited(String playerUserName) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+	public void clientExited(String playerUserName)
+			throws RemoteException {
+		this.playerUserName.remove(playerUserName);
+		//TODO GUI refresh player list
 	}
 
 	@Override
-	public void initiateGame(boolean)
+	public void initiateGame(boolean gameState,
+							 boolean roomState,
+							 ArrayList<String> players,
+							 ArrayList<String> gamers) {
+		this.gameState = gameState;
+		this.roomState = roomState;
+		this.playerUserName.clear();
+		this.gamerUserName.clear();
+		this.gamerScores.clear();
+		this.playerUserName.addAll(players);
+		this.gamerUserName.addAll(gamers);
+		this.gamerScores.ensureCapacity(gamers.size());
+		Collections.fill(this.gamerScores, 0);
+		//TODO GUI displays player list, if there's a room, displays the room and gamers
+	}
 	@Override
 	public void viewGame(ArrayList<String> playerUserName,
-			ArrayList<String> gamerUserName, ArrayList<Integer> scores, String currentPlayer) throws RemoteException {
-		// TODO GUI display: who's turn, current grid, players, gamers, scores
+						 ArrayList<String> gamerUserName,
+						 ArrayList<Integer> scores,
+						 String currentPlayer,
+						 char[][] table)
+			throws RemoteException {
 		this.gameState = true;
 		this.roomState = true;
-		this.currentPlayer = currentPlayer;
-		this.playerUserName = new ArrayList<String>(playerUserName.size());
+		this.playerUserName.clear();
+		this.gamerUserName.clear();
+		this.gamerScores.clear();
 		this.playerUserName.addAll(playerUserName);
-		this.gamerUserName = new ArrayList<String>(gamerUserName.size());
 		this.gamerUserName.addAll(gamerUserName);
-		this.gamerScores = new ArrayList<Integer>(scores.size());
 		this.gamerScores.addAll(scores);
+		this.currentPlayer = currentPlayer;
+		Arrays.fill(this.grid, table);
+		// TODO GUI display: who's turn, current grid, players, gamers, scores
 	}
 
 	@Override
-	public void gameStarted(ArrayList<String> gamers, ArrayList<String> players, String currentPlayer) throws RemoteException {
-		// TODO Auto-generated method stub
-		this.playerUserName = new ArrayList<String>(players.size());
+	public void gameStarted(ArrayList<String> gamers, ArrayList<String> players, String currentPlayer)
+			throws RemoteException {
+		this.playerUserName.clear();
+		this.gamerUserName.clear();
+		this.gamerScores.clear();
 		this.playerUserName.addAll(players);
-		this.gamerUserName = new ArrayList<String>(gamers.size());
 		this.gamerUserName.addAll(gamers);
-		this.gamerScores = new ArrayList<Integer>(gamers.size());
+		this.gamerScores.ensureCapacity(gamers.size());
 		Collections.fill(this.gamerScores, 0);
 		this.currentPlayer = currentPlayer;
+		//TODO: GUI refresh grid and current player
+		if (currentPlayer == getUserName()) {
+			//TODO: GUI enable this player to play
+		}
 	}
-
 }
