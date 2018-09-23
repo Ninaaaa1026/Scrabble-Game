@@ -42,10 +42,10 @@ public interface ClientInterface extends Remote {
 			String userName) throws RemoteException;
 
 	// if all players think the string is valid , the people get the score. ???????
-	public void voteSuccess(String beginVoteUserName, int totalMark, String nextUserName) throws RemoteException;
+	public void voteSuccess(String beginVoteUserName, boolean accepted, int totalMark, String nextUserName)throws RemoteException;
 
 	// gameover
-	public void gameOver(ArrayList<String> playerUserName) throws RemoteException;
+	public void gameOver(ArrayList<String> players, ArrayList<String> gamers, ArrayList<Integer> scores) throws RemoteException;
 
 	// remove the client in other clients'list
 	public void clientExited(String playerUserName) throws RemoteException;

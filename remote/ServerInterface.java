@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 public interface ServerInterface extends Remote{
 	//transmit client instance and username and return if the username is valid
-	public  boolean addClient(String userName, ClientInterface clientinstance, String ipAddress, int portNumber)throws RemoteException;
+	public boolean addClient(String userName, ClientInterface clientinstance, String ipAddress, int portNumber)throws RemoteException;
 	
 	//transmit the username who createroom and return if he/she creates the room successfully
 	public boolean createRoom(String userName)throws RemoteException;
@@ -30,13 +30,13 @@ public interface ServerInterface extends Remote{
 	
 	//after player add a character, he/she could start a vote to get a score
 	public void vote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
-			String userName)throws RemoteException;
+			String userName,int rowIndex, int colIndex)throws RemoteException;
 	
 	//after a player start a vote, the rest player could choose to aggree or not
 	public void agreeVote(boolean agree,String userName)throws RemoteException;
 	
 	//if a player who is playing a game exit, the game is over; if a player
 	//who is not playing a game, just remove the usrname from the list
-	public void exit(String userName)throws RemoteException;
+	public void notify(ClientInterface clientinstance)throws RemoteException;
 
 }

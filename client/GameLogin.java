@@ -49,7 +49,12 @@ public class GameLogin {
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								try {
-									//获取游戏状态，玩家列表
+									if(ScrabbleClient.player.getGameState()) {
+										window.showGame();
+									}
+									else {
+										window.showLobby();
+									}
 									window.getFrame().setVisible(true);
 								} catch (Exception e) {
 									e.printStackTrace();
