@@ -31,9 +31,9 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 import java.awt.GridLayout;
 import javax.swing.JScrollPane;
-import java.awt.Font;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.ScrollPaneConstants;
+import java.awt.Font;
 
 public class ClientGUI implements ActionListener {
 
@@ -60,7 +60,8 @@ public class ClientGUI implements ActionListener {
 	protected GridLayout listGridLayout;
 	protected CardLayout cardLayout;
 	protected JButton btnReturnToGame;
-	
+	protected JScrollPane scrollPane_2;
+	protected JPanel panel;
 	char character;
 	int rowIndex = -1;
 	int colIndex = -1;
@@ -72,6 +73,8 @@ public class ClientGUI implements ActionListener {
 	private JPanel gameOverPanel;
 	private JScrollPane scrollPane_3;
 	private JTable gameResultTable;
+	private JLabel lblCreatRoom;
+	private JButton btnStartGame;
 
 	/**
 	 * Create the application.
@@ -102,40 +105,55 @@ public class ClientGUI implements ActionListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		cardLayout = new CardLayout(0, 0);
 		frame.getContentPane().setLayout(cardLayout);
-		
-				JPanel gameLobbyPanel = new JPanel();
-				frame.getContentPane().add(gameLobbyPanel, "name_891358432709494");
-				gameLobbyPanel.setLayout(null);
-				
-						lblCurrentGameState = new JLabel("Current Game State");
-						lblCurrentGameState.setBounds(128, 179, 115, 15);
-						gameLobbyPanel.add(lblCurrentGameState);
-						
-								btnCreateRoom = new JButton("Create Room");
-								btnCreateRoom.addActionListener(this);
-								btnCreateRoom.setBackground(UIManager.getColor("Button.light"));
-								btnCreateRoom.setBounds(133, 247, 110, 23);
-								gameLobbyPanel.add(btnCreateRoom);
-								
-										JPanel panel = new JPanel();
-										panel.setBorder(UIManager.getBorder("ProgressBar.border"));
-										panel.setBounds(0, 347, 381, 207);
-										gameLobbyPanel.add(panel);
-										panel.setLayout(null);
-										
-												invitedTable = new JTable();
-												invitedTable.setRowSelectionAllowed(false);
-												invitedTable.setEnabled(false);
-												invitedTable.setBounds(10, 10, 361, 187);
-												panel.add(invitedTable);
-												
-														JScrollPane scrollPane = new JScrollPane();
-														scrollPane.setBounds(382, 0, 185, 554);
-														gameLobbyPanel.add(scrollPane);
-														
-																playerTable = new JTable();
-																playerTable.setRowSelectionAllowed(false);
-																scrollPane.setViewportView(playerTable);
+
+		JPanel gameLobbyPanel = new JPanel();
+		frame.getContentPane().add(gameLobbyPanel, "name_891358432709494");
+		gameLobbyPanel.setLayout(null);
+
+		lblCurrentGameState = new JLabel("Welcome to Scrabble Game!");
+		lblCurrentGameState.setFont(new Font("Century", Font.PLAIN, 15));
+		lblCurrentGameState.setBounds(105, 156, 198, 33);
+		gameLobbyPanel.add(lblCurrentGameState);
+
+		btnCreateRoom = new JButton("Create Room");
+		btnCreateRoom.setFont(new Font("Century", Font.PLAIN, 12));
+		btnCreateRoom.addActionListener(this);
+		btnCreateRoom.setBackground(UIManager.getColor("Button.light"));
+		btnCreateRoom.setBounds(143, 247, 110, 23);
+		gameLobbyPanel.add(btnCreateRoom);
+
+		panel = new JPanel();
+		panel.setBorder(UIManager.getBorder("ProgressBar.border"));
+		panel.setVisible(false);
+		panel.setBounds(0, 347, 383, 207);
+		gameLobbyPanel.add(panel);
+		panel.setLayout(null);
+
+		invitedTable = new JTable();
+		invitedTable.setShowGrid(false);
+		invitedTable.setBackground(SystemColor.control);
+		invitedTable.setRowSelectionAllowed(false);
+		invitedTable.setEnabled(false);
+		invitedTable.setBounds(10, 10, 361, 187);
+		panel.add(invitedTable);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(382, 0, 185, 554);
+		gameLobbyPanel.add(scrollPane);
+
+		playerTable = new JTable();
+		playerTable.setRowSelectionAllowed(false);
+		scrollPane.setViewportView(playerTable);
+
+		lblCreatRoom = new JLabel("");
+		lblCreatRoom.setBounds(28, 237, 332, 33);
+		gameLobbyPanel.add(lblCreatRoom);
+
+		btnStartGame = new JButton("Start Game");
+		btnStartGame.setFont(new Font("Century", Font.PLAIN, 12));
+		btnStartGame.addActionListener(this);
+		btnStartGame.setBounds(144, 247, 109, 23);
+		gameLobbyPanel.add(btnStartGame);
 
 		JPanel gameRoomPanel = new JPanel();
 		frame.getContentPane().add(gameRoomPanel, "name_891421322563457");
@@ -151,9 +169,10 @@ public class ClientGUI implements ActionListener {
 		lblCurrentPlayers.setBounds(10, 0, 114, 15);
 		gamersPanel.add(lblCurrentPlayers);
 
-		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2 = new JScrollPane();
 		scrollPane_2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane_2.setBounds(0, 25, 383, 70);
+		scrollPane_2.setVisible(false);
 		gamersPanel.add(scrollPane_2);
 
 		gamerListTable = new JTable();
@@ -180,7 +199,7 @@ public class ClientGUI implements ActionListener {
 		gameTable.setModel(myModel);
 		JFormattedTextField ftf;
 
-		lblPlayersTurn = new JLabel("Player 's Turn");
+		lblPlayersTurn = new JLabel();
 		lblPlayersTurn.setBounds(10, 103, 254, 15);
 		gameRoomPanel.add(lblPlayersTurn);
 
@@ -237,25 +256,31 @@ public class ClientGUI implements ActionListener {
 		visitingTable.setEnabled(false);
 		visitingTable.setRowSelectionAllowed(false);
 		scrollPane_1.setViewportView(visitingTable);
-		
+
 		gameOverPanel = new JPanel();
 		frame.getContentPane().add(gameOverPanel, "name_1037193997593739");
 		gameOverPanel.setLayout(null);
-		
+
 		btnReturnToGame = new JButton("Return To Game Lobby");
 		btnReturnToGame.addActionListener(this);
 		btnReturnToGame.setBounds(203, 471, 175, 23);
 		gameOverPanel.add(btnReturnToGame);
-		
+
 		scrollPane_3 = new JScrollPane();
 		scrollPane_3.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane_3.setBounds(85, 49, 404, 383);
+		scrollPane_3.setBounds(84, 67, 404, 383);
 		gameOverPanel.add(scrollPane_3);
-		
+
 		gameResultTable = new JTable();
 		gameResultTable.setRowSelectionAllowed(false);
 		gameResultTable.setEnabled(false);
 		scrollPane_3.setViewportView(gameResultTable);
+
+		JLabel lblGameOver = new JLabel("Game Over!");
+		lblGameOver.setFont(new Font("Century", Font.BOLD, 15));
+		lblGameOver.setEnabled(false);
+		lblGameOver.setBounds(241, 24, 99, 15);
+		gameOverPanel.add(lblGameOver);
 
 		gameTable.getModel().addTableModelListener(new TableModelListener() {
 			public void tableChanged(TableModelEvent e) {
@@ -308,7 +333,6 @@ public class ClientGUI implements ActionListener {
 				ScrabbleClient.remoteServer.passTurn(ScrabbleClient.player.getUserName());
 				passPanel.setVisible(false);
 				voidPanel.setVisible(true);
-
 			} else if (arg0.getSource().equals(btnVote)) {
 				if (gameTable.getSelectedColumnCount() == 0 && gameTable.getSelectedRowCount() == 0) {
 					JOptionPane.showMessageDialog(null,
@@ -374,17 +398,13 @@ public class ClientGUI implements ActionListener {
 
 			} else if (arg0.getSource().equals(btnCreateRoom)) {
 				if (ScrabbleClient.remoteServer.createRoom(ScrabbleClient.player.getUserName())) {
-					freshPlayerList();
-					freshGamerList();
-					lblPlayersTurn.setText(ScrabbleClient.player.getCurrentPlayer());
-					cardLayout.show(frame.getContentPane(), "name_891421322563457");
+					showLobby();
 				}
 			} else if (arg0.getSource().equals(btnReturnToGame)) {
-					ScrabbleClient.remoteServer.agreeVote(false, ScrabbleClient.player.getUserName());
-					votePanel.setVisible(false);
-					voidPanel.setVisible(true);
-
-				}
+				showLobby();
+			} else if (arg0.getSource().equals(btnStartGame)) {
+				showGame();
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -479,7 +499,13 @@ public class ClientGUI implements ActionListener {
 		DefaultTableModel model;
 		ArrayList<String> gamers = ScrabbleClient.player.getGamers();
 		ArrayList<Integer> scores = ScrabbleClient.player.getGamerScores();
-
+		if(gamers.size()==0) {
+			scrollPane_2.setVisible(false);
+			panel.setVisible(false);
+		}
+		else {
+			scrollPane_2.setVisible(true);
+			panel.setVisible(true);
 		Vector<String> vGamers = new Vector<String>();
 		Vector<Integer> vScores = new Vector<Integer>();
 		Vector information = new Vector();
@@ -494,11 +520,12 @@ public class ClientGUI implements ActionListener {
 
 		model = new DefaultTableModel(information, vCol);
 		invitedTable.setModel(model);
-				
+
 		vCol.add("Score");
 		information.add(vScores);
 		model = new DefaultTableModel(information, vCol);
 		gamerListTable.setModel(model);
+		}
 
 	}
 
@@ -506,21 +533,36 @@ public class ClientGUI implements ActionListener {
 		// table change
 		// ScrabbleClient.player.getGrid();
 	}
-	
+
 	public void showLobby() {
+		if (ScrabbleClient.player.getRoomState()) {
+			if (!ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
+				btnCreateRoom.setVisible(false);
+				btnStartGame.setVisible(false);
+				lblCreatRoom.setText("Room has been already created.Please wait for invitation or game starting.");
+			} else {
+				lblCreatRoom.setText("Create room successfully! Invite other players into a game");
+				btnCreateRoom.setVisible(false);
+				btnStartGame.setVisible(true);
+			}
+		} else {
+			btnCreateRoom.setVisible(true);
+			btnStartGame.setVisible(false);
+			lblCreatRoom.setText(null);
+		}
 		freshPlayerList();
 		freshGamerList();
 		cardLayout.show(frame.getContentPane(), "name_891358432709494");
 	}
-	
+
 	public void showGame() {
-		lblPlayersTurn.setText(ScrabbleClient.player.getCurrentPlayer()+"'s turn.");
+		lblPlayersTurn.setText(ScrabbleClient.player.getCurrentPlayer() + "'s turn.");
 		freshTable();
 		freshPlayerList();
 		freshGamerList();
 		cardLayout.show(frame.getContentPane(), "name_891421322563457");
 	}
-	
+
 	public void showGameResult() {
 		DefaultTableModel model;
 		ArrayList<String> gamers = ScrabbleClient.player.getGamers();
@@ -540,7 +582,6 @@ public class ClientGUI implements ActionListener {
 
 		model = new DefaultTableModel(information, vCol);
 		gameResultTable.setModel(model);
-		cardLayout.show(frame.getContentPane(),"name_1037193997593739");
+		cardLayout.show(frame.getContentPane(), "name_1037193997593739");
 	}
-	
 }
