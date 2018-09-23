@@ -112,7 +112,7 @@ public class ScrabbleClient implements ClientInterface {
 			throws RemoteException {
 		// a new player logged in
 		this.playerUserName.add(playerUserName);
-		//TODO GUI refresh player list
+		gui.freshPlayerList();
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class ScrabbleClient implements ClientInterface {
 		this.roomCreatorName = createplayerusername;
 		this.gamerUserName.add(createplayerusername);
 		this.gamerScores.add(0);
-		// TODO GUI show room and the creator in the room
+		gui.showLobby();
 	}
 
 	@Override
@@ -139,7 +139,7 @@ public class ScrabbleClient implements ClientInterface {
 		if (!agree) return;
 		this.gamerUserName.add(this.userName);
 		this.gamerScores.add(0);
-		// TODO: GUI shows the gamer in game room
+		gui.showLobby();
 	}
 
 	@Override
@@ -148,10 +148,7 @@ public class ScrabbleClient implements ClientInterface {
 		// next turn
 		grid[rowIndex][colIndex] = character;
 		this.currentPlayer = currentPlayer;
-		//TODO: GUI refresh grid and current player
-		if (currentPlayer == getUserName()) {
-			//TODO: GUI enable this player to play
-		}
+		gui.showGame();
 	}
 
 	@Override
@@ -159,7 +156,7 @@ public class ScrabbleClient implements ClientInterface {
 			throws RemoteException {
 		// current player pass
 		this.currentPlayer = nextUserName;
-		//TODO: GUI displays a message that shows pass and refresh the current player
+		gui.showGame();
 	}
 
 	@Override
@@ -173,33 +170,31 @@ public class ScrabbleClient implements ClientInterface {
 	@Override
 	public void voteSuccess(String beginVoteUserName, boolean accepted, int totalMark, String nextUserName)
 			throws RemoteException {
-		// TODO Auto-generated method stub
 		if (accepted) {
 			updateMark(beginVoteUserName, totalMark);
 		}
-		//TODO GUI displays message and update mark if accepted
+		//TODO GUI displays message
 		this.currentPlayer = nextUserName;
+		gui.showGame();
 	}
 
 	@Override
 	public void gameOver(ArrayList<String> players, ArrayList<String> gamers, ArrayList<Integer> scores)
 			throws RemoteException {
-		//TODO GUI displays result of the game
-		this.gameState = false;
-		this.roomState = false;
 		this.playerUserName.clear();
 		this.gamerUserName.clear();
 		this.gamerScores.clear();
-		Arrays.fill(this.grid, null);
 		this.playerUserName.addAll(players);
-		//TODO GUI shows initial state of the table and the player list
+		this.gamerUserName.addAll(gamers);
+		this.gamerScores.addAll(scores);
+		gui.showGameResult();
 	}
 
 	@Override
 	public void clientExited(String playerUserName)
 			throws RemoteException {
 		this.playerUserName.remove(playerUserName);
-		//TODO GUI refresh player list
+		gui.freshPlayerList();
 	}
 
 	@Override
@@ -216,7 +211,8 @@ public class ScrabbleClient implements ClientInterface {
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.ensureCapacity(gamers.size());
 		Collections.fill(this.gamerScores, 0);
-		//TODO GUI displays player list, if there's a room, displays the room and gamers
+		Arrays.fill(this.grid, null);
+		gui.showLobby();
 	}
 	@Override
 	public void viewGame(ArrayList<String> playerUserName,
@@ -235,7 +231,7 @@ public class ScrabbleClient implements ClientInterface {
 		this.gamerScores.addAll(scores);
 		this.currentPlayer = currentPlayer;
 		Arrays.fill(this.grid, table);
-		// TODO GUI display: who's turn, current grid, players, gamers, scores
+		gui.showGame();
 	}
 
 	@Override
@@ -249,9 +245,6 @@ public class ScrabbleClient implements ClientInterface {
 		this.gamerScores.ensureCapacity(gamers.size());
 		Collections.fill(this.gamerScores, 0);
 		this.currentPlayer = currentPlayer;
-		//TODO: GUI refresh grid and current player
-		if (currentPlayer == getUserName()) {
-			//TODO: GUI enable this player to play
-		}
+		gui.showGame();
 	}
 }
