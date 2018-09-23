@@ -24,6 +24,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import java.awt.Color;
+import java.awt.Desktop.Action;
 import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -38,7 +39,6 @@ import java.awt.Font;
 public class ClientGUI implements ActionListener {
 
 	protected JFrame frame;
-	protected JTable gameTable;
 	protected JButton btnPass;
 	protected JButton btnVote;
 	protected JButton btnAgreeVote;
@@ -51,7 +51,8 @@ public class ClientGUI implements ActionListener {
 	protected JPanel votePanel;
 	protected JPanel selectPenel;
 	protected JPanel passPanel;
-	protected MyDefaultTableModel myModel;
+	protected MyDefaultTableModel myModel = new MyDefaultTableModel(20, 20);
+	protected JTable gameTable = new JTable(myModel);
 	protected JPanel voidPanel;
 	protected JPanel listPanel;
 	protected JScrollPane scrollPane_1;
@@ -76,25 +77,12 @@ public class ClientGUI implements ActionListener {
 	private JTable gameResultTable;
 	private JLabel lblCreatRoom;
 	private JButton btnStartGame;
-
+	String inputString="";
 	/**
 	 * Create the application.
 	 */
 	public ClientGUI() {
 		initialize();
-	}
-
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ClientGUI window = new ClientGUI();
-					window.getFrame().setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
 	}
 
 	/**
@@ -106,6 +94,55 @@ public class ClientGUI implements ActionListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		cardLayout = new CardLayout(0, 0);
 		frame.getContentPane().setLayout(cardLayout);
+		
+				JPanel gameLobbyPanel = new JPanel();
+				frame.getContentPane().add(gameLobbyPanel, "name_891358432709494");
+				gameLobbyPanel.setLayout(null);
+				
+						lblCurrentGameState = new JLabel("Welcome to Scrabble Game!");
+						lblCurrentGameState.setFont(new Font("Century", Font.PLAIN, 15));
+						lblCurrentGameState.setBounds(105, 156, 198, 33);
+						gameLobbyPanel.add(lblCurrentGameState);
+						
+								btnCreateRoom = new JButton("Create Room");
+								btnCreateRoom.setFont(new Font("Century", Font.PLAIN, 12));
+								btnCreateRoom.addActionListener(this);
+								btnCreateRoom.setBackground(UIManager.getColor("Button.light"));
+								btnCreateRoom.setBounds(143, 247, 110, 23);
+								gameLobbyPanel.add(btnCreateRoom);
+								
+										panel = new JPanel();
+										panel.setBorder(UIManager.getBorder("ProgressBar.border"));
+										panel.setVisible(false);
+										panel.setBounds(0, 347, 383, 207);
+										gameLobbyPanel.add(panel);
+										panel.setLayout(null);
+										
+												invitedTable = new JTable();
+												invitedTable.setShowGrid(false);
+												invitedTable.setBackground(SystemColor.control);
+												invitedTable.setRowSelectionAllowed(false);
+												invitedTable.setEnabled(false);
+												invitedTable.setBounds(10, 10, 361, 187);
+												panel.add(invitedTable);
+												
+														JScrollPane scrollPane = new JScrollPane();
+														scrollPane.setBounds(382, 0, 185, 554);
+														gameLobbyPanel.add(scrollPane);
+														
+																playerTable = new JTable();
+																playerTable.setRowSelectionAllowed(false);
+																scrollPane.setViewportView(playerTable);
+																
+																		lblCreatRoom = new JLabel("");
+																		lblCreatRoom.setBounds(28, 237, 332, 33);
+																		gameLobbyPanel.add(lblCreatRoom);
+																		
+																				btnStartGame = new JButton("Start Game");
+																				btnStartGame.setFont(new Font("Century", Font.PLAIN, 12));
+																				btnStartGame.addActionListener(this);
+																				btnStartGame.setBounds(144, 247, 109, 23);
+																				gameLobbyPanel.add(btnStartGame);
 
 		JPanel gameRoomPanel = new JPanel();
 		frame.getContentPane().add(gameRoomPanel, "name_891421322563457");
@@ -139,7 +176,6 @@ public class ClientGUI implements ActionListener {
 		gameRoomPanel.add(GameTablePanel);
 		GameTablePanel.setLayout(null);
 
-		gameTable = new JTable();
 		gameTable.setRowSelectionAllowed(false);
 		gameTable.setCellSelectionEnabled(true);
 		gameTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -147,7 +183,6 @@ public class ClientGUI implements ActionListener {
 
 		gameTable.setBounds(10, 10, 345, 319);
 		GameTablePanel.add(gameTable);
-		myModel=new MyDefaultTableModel(20,20);
 		gameTable.setModel(myModel);
 
 		lblPlayersTurn = new JLabel();
@@ -211,85 +246,38 @@ public class ClientGUI implements ActionListener {
 
 		gameTable.getModel().addTableModelListener(new TableModelListener() {
 			public void tableChanged(TableModelEvent e) {
-				TableModel model = (TableModel) e.getSource();
 				if (!tableChanged) {
 					rowIndex = e.getFirstRow();
 					colIndex = e.getColumn();
-
-					String data = model.getValueAt(rowIndex, colIndex).toString();
-					if (!Pattern.matches("\\s+", data) && !data.equals("")) {
-						character = data.toCharArray()[0];
-						tableChanged = true;
+					inputString = gameTable.getValueAt(rowIndex, colIndex).toString();
+					tableChanged = true;
+					if (!Pattern.matches("\\s+", inputString) && !inputString.equals("")) {
+						character = inputString.toCharArray()[0];
 						btnLayout.show(btnPanel, "name_957948997083501");
 					} else {
 						JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
 					}
 				} else {
-					model.setValueAt(null, rowIndex, colIndex);
-					rowIndex = e.getFirstRow();
-					colIndex = e.getColumn();
-
-					String data = model.getValueAt(rowIndex, colIndex).toString();
-					if (!Pattern.matches("\\s+", data) && !data.equals("")) {
-						character = data.toCharArray()[0];
-						tableChanged = true;
-						btnLayout.show(btnPanel, "name_957948997083501");
-					} else {
-						JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
+					if(gameTable.getValueAt(rowIndex, colIndex).equals(inputString)) 
+					{
+						gameTable.setValueAt("", rowIndex, colIndex);
+						if(gameTable.getValueAt(rowIndex, colIndex).equals("")){
+							rowIndex = e.getFirstRow();
+							colIndex = e.getColumn();
+							inputString = gameTable.getValueAt(rowIndex, colIndex).toString();
+							tableChanged = true;
+						}
+						if (!Pattern.matches("\\s+", inputString) && !inputString.equals("")) {
+							character = inputString.toCharArray()[0];
+							btnLayout.show(btnPanel, "name_957948997083501");
+						} else {
+							JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
+						}
 					}
-				}
+					
+				}				
 			}
 		});
-		
-
-		JPanel gameLobbyPanel = new JPanel();
-		frame.getContentPane().add(gameLobbyPanel, "name_891358432709494");
-		gameLobbyPanel.setLayout(null);
-
-		lblCurrentGameState = new JLabel("Welcome to Scrabble Game!");
-		lblCurrentGameState.setFont(new Font("Century", Font.PLAIN, 15));
-		lblCurrentGameState.setBounds(105, 156, 198, 33);
-		gameLobbyPanel.add(lblCurrentGameState);
-
-		btnCreateRoom = new JButton("Create Room");
-		btnCreateRoom.setFont(new Font("Century", Font.PLAIN, 12));
-		btnCreateRoom.addActionListener(this);
-		btnCreateRoom.setBackground(UIManager.getColor("Button.light"));
-		btnCreateRoom.setBounds(143, 247, 110, 23);
-		gameLobbyPanel.add(btnCreateRoom);
-
-		panel = new JPanel();
-		panel.setBorder(UIManager.getBorder("ProgressBar.border"));
-		panel.setVisible(false);
-		panel.setBounds(0, 347, 383, 207);
-		gameLobbyPanel.add(panel);
-		panel.setLayout(null);
-
-		invitedTable = new JTable();
-		invitedTable.setShowGrid(false);
-		invitedTable.setBackground(SystemColor.control);
-		invitedTable.setRowSelectionAllowed(false);
-		invitedTable.setEnabled(false);
-		invitedTable.setBounds(10, 10, 361, 187);
-		panel.add(invitedTable);
-
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(382, 0, 185, 554);
-		gameLobbyPanel.add(scrollPane);
-
-		playerTable = new JTable();
-		playerTable.setRowSelectionAllowed(false);
-		scrollPane.setViewportView(playerTable);
-
-		lblCreatRoom = new JLabel("");
-		lblCreatRoom.setBounds(28, 237, 332, 33);
-		gameLobbyPanel.add(lblCreatRoom);
-
-		btnStartGame = new JButton("Start Game");
-		btnStartGame.setFont(new Font("Century", Font.PLAIN, 12));
-		btnStartGame.addActionListener(this);
-		btnStartGame.setBounds(144, 247, 109, 23);
-		gameLobbyPanel.add(btnStartGame);
 		myModel = new MyDefaultTableModel(20, 20);
 		JFormattedTextField ftf;
 
@@ -362,8 +350,7 @@ public class ClientGUI implements ActionListener {
 							int[] cols = gameTable.getSelectedRows();
 							startRowIndex = cols[0];
 							endRowIndex = cols[cols.length - 1];
-						} else if (gameTable.getSelectedColumnCount() == 1
-								&& gameTable.getSelectedRowCount() == 1) {
+						} else if (gameTable.getSelectedColumnCount() == 1 && gameTable.getSelectedRowCount() == 1) {
 							startColIndex = gameTable.getSelectedColumn();
 							endColIndex = startColIndex;
 							startRowIndex = gameTable.getSelectedRow();
@@ -414,25 +401,23 @@ public class ClientGUI implements ActionListener {
 	}
 
 	public boolean checkString(int startRowIndex, int startColIndex, int endRowIndex, int endColIndex) {
-		if (rowIndex < startRowIndex || rowIndex > endRowIndex || colIndex < startColIndex || colIndex >endColIndex) {
+		if (rowIndex < startRowIndex || rowIndex > endRowIndex || colIndex < startColIndex || colIndex > endColIndex) {
 			return false;
 		}
 		if (startRowIndex == endRowIndex) {
-			if ( (startColIndex > 0 && gameTable.getValueAt(startRowIndex, startColIndex-1) != null)
-					|| (endColIndex > 19 && gameTable.getValueAt(startRowIndex, endColIndex+1) != null) ) {
+			if ((startColIndex > 0 && gameTable.getValueAt(startRowIndex, startColIndex - 1) != null)
+					|| (endColIndex > 19 && gameTable.getValueAt(startRowIndex, endColIndex + 1) != null)) {
 				return false;
 			}
-		}
-		else if (startColIndex == endColIndex){
-			if ( (startRowIndex > 0 && gameTable.getValueAt(startRowIndex-1, startColIndex) != null)
-					|| (endRowIndex < 19 && gameTable.getValueAt(endRowIndex+1, startColIndex) !=null) ) {
+		} else if (startColIndex == endColIndex) {
+			if ((startRowIndex > 0 && gameTable.getValueAt(startRowIndex - 1, startColIndex) != null)
+					|| (endRowIndex < 19 && gameTable.getValueAt(endRowIndex + 1, startColIndex) != null)) {
 				return false;
 			}
-		}
-		else {
+		} else {
 			return false;
 		}
-		for (int i = startRowIndex; i <= endRowIndex; i++){
+		for (int i = startRowIndex; i <= endRowIndex; i++) {
 			for (int j = startColIndex; j <= endColIndex; j++) {
 				if (null == gameTable.getValueAt(i, j)) {
 					return false;
@@ -555,7 +540,7 @@ public class ClientGUI implements ActionListener {
 			char[][] grid = ScrabbleClient.player.getGrid();
 			for (int i = 0; i < gameTable.getHeight(); i++) {
 				for (int j = 0; j < gameTable.getWidth(); j++) {
-					gameTable.setValueAt(grid[i][j], i, j);
+					myModel.setValueAt(grid[i][j], i, j);
 					myModel.setCellEditable(i, j, false);
 				}
 			}
@@ -620,7 +605,17 @@ public class ClientGUI implements ActionListener {
 	}
 
 	public void showInvitation() {
-
+		int input = JOptionPane.showConfirmDialog(null,
+				"Do you want to accept invitation from " + ScrabbleClient.player.getRoomCreatorName() + "?",
+				"Select an Option...", JOptionPane.YES_NO_OPTION);
+		try {
+			if (input == 0)
+				ScrabbleClient.remoteServer.respondToInvitation(true, ScrabbleClient.player.getUserName());
+			else
+				ScrabbleClient.remoteServer.respondToInvitation(false, ScrabbleClient.player.getUserName());
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void beginVote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
@@ -630,9 +625,14 @@ public class ClientGUI implements ActionListener {
 		}
 	}
 
-	public void voteResult(String beginVoteUserName, boolean accepted) {
-		if (ScrabbleClient.player.getUserName().equals(beginVoteUserName)) {
-
-		}
+	public void voteResult(String beginVoteUserName, boolean accepted, int totalMark, String nextUserName) {
+		TimeDialog d = new TimeDialog();
+		if (accepted) {
+			if (ScrabbleClient.player.getUserName().equals(beginVoteUserName))
+				d.showDialog(null, "Vote successfully!You get " + totalMark + "points!", 3);
+			else
+				d.showDialog(null, "Vote successfully!" + beginVoteUserName + " get " + totalMark + "points!", 3);
+		} else
+			d.showDialog(null, "Vote Failed! " + nextUserName + "'s turn!", 3);
 	}
 }

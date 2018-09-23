@@ -45,8 +45,9 @@ public class ScrabbleClient implements ClientInterface {
 						Registry registry = LocateRegistry.getRegistry("localhost");
 			           
 						//Retrieve the stub/proxy for the remote math object from the registry
-						remoteServer = (ServerInterface) registry.lookup("Compute");
+						remoteServer = (ServerInterface) registry.lookup("Scrabble");
 						}catch(Exception e) {
+							System.out.print(e.getMessage());
 							e.printStackTrace();
 						}
 						
@@ -173,7 +174,7 @@ public class ScrabbleClient implements ClientInterface {
 			updateMark(beginVoteUserName, totalMark);
 		}
 		//TODO GUI displays message
-		gui.voteResult(beginVoteUserName,accepted);
+		gui.voteResult(beginVoteUserName,accepted,totalMark,nextUserName);
 		this.currentPlayer = nextUserName;
 		gui.showGame();
 	}
