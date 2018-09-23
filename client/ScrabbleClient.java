@@ -61,7 +61,6 @@ public class ScrabbleClient implements ClientInterface {
 		return userName;
 	}
 	
-	
 	protected void setUserName(String userName) {
 		this.userName=userName;
 	}
@@ -131,29 +130,16 @@ public class ScrabbleClient implements ClientInterface {
 
 	@Override
 	public void playerInvited() throws RemoteException {
-		boolean accept = false;
 		//TODO: GUI shows the dialog for the player respond to the invitaion
-		//TODO: GUI get response and deal with it
-		if (accept) {
-			this.gamerUserName.add(this.userName);
-			this.gamerScores.add(0);
-		}
-		remoteServer.respondToInvitation(accept, getUserName());
-		//TODO: GUI shows this player in game room, or GUI do it automatically?
 	}
 
 	@Override
 	public void invitationResponse(String invitedplayer, boolean agree)
 			throws RemoteException {
 		if (!agree) return;
-		if (invitedplayer != getUserName()) {
-			this.gamerUserName.add(this.userName);
-			this.gamerScores.add(0);
-			// TODO: GUI shows the gamer in game room
-			if (getUserName() == roomCreatorName) {
-				//TODO: GUI disable invite button of this invited player
-			}
-		}
+		this.gamerUserName.add(this.userName);
+		this.gamerScores.add(0);
+		// TODO: GUI shows the gamer in game room
 	}
 
 	@Override
