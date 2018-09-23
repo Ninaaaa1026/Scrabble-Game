@@ -332,12 +332,14 @@ public class ClientGUI implements ActionListener {
 		try {
 			if (arg0.getSource().equals(btnPass)) {
 				ScrabbleClient.remoteServer.passTurn(ScrabbleClient.player.getUserName());
-				btnLayout.show(btnPanel, "name_965239449619613");
+				passPanel.setVisible(false);
+				voidPanel.setVisible(true);
 			} else if (arg0.getSource().equals(btnVote)) {
 				if (gameTable.getSelectedColumnCount() == 0 && gameTable.getSelectedRowCount() == 0) {
 					JOptionPane.showMessageDialog(null,
 							" You cannot begin vote without selection.Please click 'Next' button or select a word.");
 				} else {
+					myModel.setCellEditable(rowIndex, colIndex, false);
 					int startRowIndex = 0;
 					int startColIndex = 0;
 					int endRowIndex = 0;
@@ -348,32 +350,32 @@ public class ClientGUI implements ActionListener {
 						gameTable.changeSelection(-1, -1, false, false);
 						myModel.setCellEditable(rowIndex, colIndex, true);
 					} else {
-						if (checkString()) {
+						if (gameTable.getSelectedColumnCount() > 1 && gameTable.getSelectedRowCount() == 1) {
+							startRowIndex = gameTable.getSelectedRow();
+							endRowIndex = startRowIndex;
+							int[] cols = gameTable.getSelectedColumns();
+							startColIndex = cols[0];
+							endColIndex = cols[cols.length - 1];
+						} else if (gameTable.getSelectedColumnCount() == 1 && gameTable.getSelectedRowCount() > 1) {
+							startColIndex = gameTable.getSelectedColumn();
+							endColIndex = startColIndex;
+							int[] cols = gameTable.getSelectedRows();
+							startRowIndex = cols[0];
+							endRowIndex = cols[cols.length - 1];
+						} else if (gameTable.getSelectedColumnCount() == 1
+								&& gameTable.getSelectedRowCount() == 1) {
+							startColIndex = gameTable.getSelectedColumn();
+							endColIndex = startColIndex;
+							startRowIndex = gameTable.getSelectedRow();
+							endRowIndex = startRowIndex;
+						}
+						if (!checkString(startRowIndex, startColIndex, endRowIndex, endColIndex)) {
 							JOptionPane.showMessageDialog(null,
 									" You have to select a complete string without empty cells.Please select again.");
 							gameTable.changeSelection(-1, -1, false, false);
 							myModel.setCellEditable(rowIndex, colIndex, true);
 						} else {
 							myModel.setCellEditable(rowIndex, colIndex, false);
-							if (gameTable.getSelectedColumnCount() > 1 && gameTable.getSelectedRowCount() == 1) {
-								startRowIndex = gameTable.getSelectedRow();
-								endRowIndex = startRowIndex;
-								int[] cols = gameTable.getSelectedColumns();
-								startColIndex = cols[0];
-								endColIndex = cols[cols.length - 1];
-							} else if (gameTable.getSelectedColumnCount() == 1 && gameTable.getSelectedRowCount() > 1) {
-								startColIndex = gameTable.getSelectedColumn();
-								endColIndex = startColIndex;
-								int[] cols = gameTable.getSelectedRows();
-								startRowIndex = cols[0];
-								endRowIndex = cols[cols.length - 1];
-							} else if (gameTable.getSelectedColumnCount() == 1
-									&& gameTable.getSelectedRowCount() == 1) {
-								startColIndex = gameTable.getSelectedColumn();
-								endColIndex = startColIndex;
-								startRowIndex = gameTable.getSelectedRow();
-								endRowIndex = startRowIndex;
-							}
 							ScrabbleClient.remoteServer.vote(character, startRowIndex, startColIndex, endRowIndex,
 									endColIndex, ScrabbleClient.player.getUserName(), rowIndex, colIndex);
 						}
@@ -411,10 +413,33 @@ public class ClientGUI implements ActionListener {
 		return frame;
 	}
 
-	public boolean checkString() {
-		boolean validation = false;
-
-		return validation;
+	public boolean checkString(int startRowIndex, int startColIndex, int endRowIndex, int endColIndex) {
+		if (rowIndex < startRowIndex || rowIndex > endRowIndex || colIndex < startColIndex || colIndex >endColIndex) {
+			return false;
+		}
+		if (startRowIndex == endRowIndex) {
+			if ( (startColIndex > 0 && gameTable.getValueAt(startRowIndex, startColIndex-1) != null)
+					|| (endColIndex > 19 && gameTable.getValueAt(startRowIndex, endColIndex+1) != null) ) {
+				return false;
+			}
+		}
+		else if (startColIndex == endColIndex){
+			if ( (startRowIndex > 0 && gameTable.getValueAt(startRowIndex-1, startColIndex) != null)
+					|| (endRowIndex < 19 && gameTable.getValueAt(endRowIndex+1, startColIndex) !=null) ) {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+		for (int i = startRowIndex; i <= endRowIndex; i++){
+			for (int j = startColIndex; j <= endColIndex; j++) {
+				if (null == gameTable.getValueAt(i, j)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	public void freshPlayerList() {
@@ -526,8 +551,17 @@ public class ClientGUI implements ActionListener {
 	}
 
 	public void freshTable() {
-		// table change
-		// ScrabbleClient.player.getGrid();
+		try {
+			char[][] grid = ScrabbleClient.player.getGrid();
+			for (int i = 0; i < gameTable.getHeight(); i++) {
+				for (int j = 0; j < gameTable.getWidth(); j++) {
+					gameTable.setValueAt(grid[i][j], i, j);
+					myModel.setCellEditable(i, j, false);
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Error: ClientGUI -> freshTable");
+		}
 	}
 
 	public void showLobby() {
