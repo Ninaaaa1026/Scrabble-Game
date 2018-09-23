@@ -59,12 +59,13 @@ public class ClientGUI implements ActionListener {
 	protected GridLayout visitingGridLayout;
 	protected GridLayout listGridLayout;
 	protected CardLayout cardLayout;
+	protected CardLayout btnLayout;
 	protected JButton btnReturnToGame;
 	protected JScrollPane scrollPane_2;
 	protected JPanel panel;
 	char character;
-	int rowIndex = -1;
-	int colIndex = -1;
+	int rowIndex = 0;
+	int colIndex = 0;
 	boolean tableChanged = false;
 	private JTable gamerListTable;
 	private JTable invitedTable;
@@ -106,55 +107,6 @@ public class ClientGUI implements ActionListener {
 		cardLayout = new CardLayout(0, 0);
 		frame.getContentPane().setLayout(cardLayout);
 
-		JPanel gameLobbyPanel = new JPanel();
-		frame.getContentPane().add(gameLobbyPanel, "name_891358432709494");
-		gameLobbyPanel.setLayout(null);
-
-		lblCurrentGameState = new JLabel("Welcome to Scrabble Game!");
-		lblCurrentGameState.setFont(new Font("Century", Font.PLAIN, 15));
-		lblCurrentGameState.setBounds(105, 156, 198, 33);
-		gameLobbyPanel.add(lblCurrentGameState);
-
-		btnCreateRoom = new JButton("Create Room");
-		btnCreateRoom.setFont(new Font("Century", Font.PLAIN, 12));
-		btnCreateRoom.addActionListener(this);
-		btnCreateRoom.setBackground(UIManager.getColor("Button.light"));
-		btnCreateRoom.setBounds(143, 247, 110, 23);
-		gameLobbyPanel.add(btnCreateRoom);
-
-		panel = new JPanel();
-		panel.setBorder(UIManager.getBorder("ProgressBar.border"));
-		panel.setVisible(false);
-		panel.setBounds(0, 347, 383, 207);
-		gameLobbyPanel.add(panel);
-		panel.setLayout(null);
-
-		invitedTable = new JTable();
-		invitedTable.setShowGrid(false);
-		invitedTable.setBackground(SystemColor.control);
-		invitedTable.setRowSelectionAllowed(false);
-		invitedTable.setEnabled(false);
-		invitedTable.setBounds(10, 10, 361, 187);
-		panel.add(invitedTable);
-
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(382, 0, 185, 554);
-		gameLobbyPanel.add(scrollPane);
-
-		playerTable = new JTable();
-		playerTable.setRowSelectionAllowed(false);
-		scrollPane.setViewportView(playerTable);
-
-		lblCreatRoom = new JLabel("");
-		lblCreatRoom.setBounds(28, 237, 332, 33);
-		gameLobbyPanel.add(lblCreatRoom);
-
-		btnStartGame = new JButton("Start Game");
-		btnStartGame.setFont(new Font("Century", Font.PLAIN, 12));
-		btnStartGame.addActionListener(this);
-		btnStartGame.setBounds(144, 247, 109, 23);
-		gameLobbyPanel.add(btnStartGame);
-
 		JPanel gameRoomPanel = new JPanel();
 		frame.getContentPane().add(gameRoomPanel, "name_891421322563457");
 		gameRoomPanel.setLayout(null);
@@ -195,9 +147,8 @@ public class ClientGUI implements ActionListener {
 
 		gameTable.setBounds(10, 10, 345, 319);
 		GameTablePanel.add(gameTable);
-		myModel = new MyDefaultTableModel(20, 20);
+		myModel=new MyDefaultTableModel(20,20);
 		gameTable.setModel(myModel);
-		JFormattedTextField ftf;
 
 		lblPlayersTurn = new JLabel();
 		lblPlayersTurn.setBounds(10, 103, 254, 15);
@@ -206,7 +157,8 @@ public class ClientGUI implements ActionListener {
 		btnPanel = new JPanel();
 		btnPanel.setBounds(0, 469, 381, 85);
 		gameRoomPanel.add(btnPanel);
-		btnPanel.setLayout(new CardLayout(0, 0));
+		btnLayout = new CardLayout(0, 0);
+		btnPanel.setLayout(btnLayout);
 
 		voidPanel = new JPanel();
 		btnPanel.add(voidPanel, "name_965239449619613");
@@ -257,6 +209,90 @@ public class ClientGUI implements ActionListener {
 		visitingTable.setRowSelectionAllowed(false);
 		scrollPane_1.setViewportView(visitingTable);
 
+		gameTable.getModel().addTableModelListener(new TableModelListener() {
+			public void tableChanged(TableModelEvent e) {
+				TableModel model = (TableModel) e.getSource();
+				if (!tableChanged) {
+					rowIndex = e.getFirstRow();
+					colIndex = e.getColumn();
+
+					String data = model.getValueAt(rowIndex, colIndex).toString();
+					if (!Pattern.matches("\\s+", data) && !data.equals("")) {
+						character = data.toCharArray()[0];
+						tableChanged = true;
+						btnLayout.show(btnPanel, "name_957948997083501");
+					} else {
+						JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
+					}
+				} else {
+					model.setValueAt(null, rowIndex, colIndex);
+					rowIndex = e.getFirstRow();
+					colIndex = e.getColumn();
+
+					String data = model.getValueAt(rowIndex, colIndex).toString();
+					if (!Pattern.matches("\\s+", data) && !data.equals("")) {
+						character = data.toCharArray()[0];
+						tableChanged = true;
+						btnLayout.show(btnPanel, "name_957948997083501");
+					} else {
+						JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
+					}
+				}
+			}
+		});
+		
+
+		JPanel gameLobbyPanel = new JPanel();
+		frame.getContentPane().add(gameLobbyPanel, "name_891358432709494");
+		gameLobbyPanel.setLayout(null);
+
+		lblCurrentGameState = new JLabel("Welcome to Scrabble Game!");
+		lblCurrentGameState.setFont(new Font("Century", Font.PLAIN, 15));
+		lblCurrentGameState.setBounds(105, 156, 198, 33);
+		gameLobbyPanel.add(lblCurrentGameState);
+
+		btnCreateRoom = new JButton("Create Room");
+		btnCreateRoom.setFont(new Font("Century", Font.PLAIN, 12));
+		btnCreateRoom.addActionListener(this);
+		btnCreateRoom.setBackground(UIManager.getColor("Button.light"));
+		btnCreateRoom.setBounds(143, 247, 110, 23);
+		gameLobbyPanel.add(btnCreateRoom);
+
+		panel = new JPanel();
+		panel.setBorder(UIManager.getBorder("ProgressBar.border"));
+		panel.setVisible(false);
+		panel.setBounds(0, 347, 383, 207);
+		gameLobbyPanel.add(panel);
+		panel.setLayout(null);
+
+		invitedTable = new JTable();
+		invitedTable.setShowGrid(false);
+		invitedTable.setBackground(SystemColor.control);
+		invitedTable.setRowSelectionAllowed(false);
+		invitedTable.setEnabled(false);
+		invitedTable.setBounds(10, 10, 361, 187);
+		panel.add(invitedTable);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(382, 0, 185, 554);
+		gameLobbyPanel.add(scrollPane);
+
+		playerTable = new JTable();
+		playerTable.setRowSelectionAllowed(false);
+		scrollPane.setViewportView(playerTable);
+
+		lblCreatRoom = new JLabel("");
+		lblCreatRoom.setBounds(28, 237, 332, 33);
+		gameLobbyPanel.add(lblCreatRoom);
+
+		btnStartGame = new JButton("Start Game");
+		btnStartGame.setFont(new Font("Century", Font.PLAIN, 12));
+		btnStartGame.addActionListener(this);
+		btnStartGame.setBounds(144, 247, 109, 23);
+		gameLobbyPanel.add(btnStartGame);
+		myModel = new MyDefaultTableModel(20, 20);
+		JFormattedTextField ftf;
+
 		gameOverPanel = new JPanel();
 		frame.getContentPane().add(gameOverPanel, "name_1037193997593739");
 		gameOverPanel.setLayout(null);
@@ -282,46 +318,11 @@ public class ClientGUI implements ActionListener {
 		lblGameOver.setBounds(241, 24, 99, 15);
 		gameOverPanel.add(lblGameOver);
 
-		gameTable.getModel().addTableModelListener(new TableModelListener() {
-			public void tableChanged(TableModelEvent e) {
-				TableModel model = (TableModel) e.getSource();
-				if (!tableChanged) {
-					rowIndex = e.getFirstRow();
-					colIndex = e.getColumn();
-
-					String data = model.getValueAt(rowIndex, colIndex).toString();
-					if (!Pattern.matches("\\s+", data) && !data.equals("")) {
-						character = data.toCharArray()[0];
-						tableChanged = true;
-
-						selectPenel.setVisible(true);
-						passPanel.setVisible(false);
-					} else {
-						JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
-					}
-				} else {
-					model.setValueAt(null, rowIndex, colIndex);
-					rowIndex = e.getFirstRow();
-					colIndex = e.getColumn();
-
-					String data = model.getValueAt(rowIndex, colIndex).toString();
-					if (!Pattern.matches("\\s+", data) && !data.equals("")) {
-						character = data.toCharArray()[0];
-						tableChanged = true;
-						selectPenel.setVisible(true);
-						passPanel.setVisible(false);
-					} else {
-						JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
-					}
-				}
-			}
-		});
-
 		try {
 			MaskFormatter format = new MaskFormatter("L");
 			ftf = new JFormattedTextField(format);
-			DefaultCellEditor dce = new DefaultCellEditor(ftf);
-			gameTable.setCellEditor(dce);
+			DefaultCellEditor cellEditor = new DefaultCellEditor(ftf);
+			gameTable.setCellEditor(cellEditor);
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
@@ -331,14 +332,12 @@ public class ClientGUI implements ActionListener {
 		try {
 			if (arg0.getSource().equals(btnPass)) {
 				ScrabbleClient.remoteServer.passTurn(ScrabbleClient.player.getUserName());
-				passPanel.setVisible(false);
-				voidPanel.setVisible(true);
+				btnLayout.show(btnPanel, "name_965239449619613");
 			} else if (arg0.getSource().equals(btnVote)) {
 				if (gameTable.getSelectedColumnCount() == 0 && gameTable.getSelectedRowCount() == 0) {
 					JOptionPane.showMessageDialog(null,
 							" You cannot begin vote without selection.Please click 'Next' button or select a word.");
 				} else {
-					myModel.setCellEditable(rowIndex, colIndex, false);
 					int startRowIndex = 0;
 					int startColIndex = 0;
 					int endRowIndex = 0;
@@ -355,6 +354,7 @@ public class ClientGUI implements ActionListener {
 							gameTable.changeSelection(-1, -1, false, false);
 							myModel.setCellEditable(rowIndex, colIndex, true);
 						} else {
+							myModel.setCellEditable(rowIndex, colIndex, false);
 							if (gameTable.getSelectedColumnCount() > 1 && gameTable.getSelectedRowCount() == 1) {
 								startRowIndex = gameTable.getSelectedRow();
 								endRowIndex = startRowIndex;
@@ -381,20 +381,17 @@ public class ClientGUI implements ActionListener {
 				}
 			} else if (arg0.getSource().equals(btnAgreeVote)) {
 				ScrabbleClient.remoteServer.agreeVote(false, ScrabbleClient.player.getUserName());
-				votePanel.setVisible(false);
-				voidPanel.setVisible(true);
+				btnLayout.show(btnPanel, "name_965239449619613");
 
 			} else if (arg0.getSource().equals(btnNext)) {
 				myModel.setCellEditable(rowIndex, colIndex, false);
-				selectPenel.setVisible(false);
-				voidPanel.setVisible(true);
+				btnLayout.show(btnPanel, "name_965239449619613");
 				ScrabbleClient.remoteServer.nextTurn(character, rowIndex, colIndex,
 						ScrabbleClient.player.getUserName());
 
 			} else if (arg0.getSource().equals(btnDisagree)) {
 				ScrabbleClient.remoteServer.agreeVote(false, ScrabbleClient.player.getUserName());
-				votePanel.setVisible(false);
-				voidPanel.setVisible(true);
+				btnLayout.show(btnPanel, "name_965239449619613");
 
 			} else if (arg0.getSource().equals(btnCreateRoom)) {
 				if (ScrabbleClient.remoteServer.createRoom(ScrabbleClient.player.getUserName())) {
@@ -499,32 +496,31 @@ public class ClientGUI implements ActionListener {
 		DefaultTableModel model;
 		ArrayList<String> gamers = ScrabbleClient.player.getGamers();
 		ArrayList<Integer> scores = ScrabbleClient.player.getGamerScores();
-		if(gamers.size()==0) {
+		if (gamers.size() == 0) {
 			scrollPane_2.setVisible(false);
 			panel.setVisible(false);
-		}
-		else {
+		} else {
 			scrollPane_2.setVisible(true);
 			panel.setVisible(true);
-		Vector<String> vGamers = new Vector<String>();
-		Vector<Integer> vScores = new Vector<Integer>();
-		Vector information = new Vector();
-		Vector<String> vCol = new Vector<String>();
-		vCol.add("Gamers");
-		information.add(vGamers);
+			Vector<String> vGamers = new Vector<String>();
+			Vector<Integer> vScores = new Vector<Integer>();
+			Vector information = new Vector();
+			Vector<String> vCol = new Vector<String>();
+			vCol.add("Gamers");
+			information.add(vGamers);
 
-		for (int i = 0; i < gamers.size(); i++) {
-			vGamers.add(gamers.get(i));
-			vScores.add(scores.get(i));
-		}
+			for (int i = 0; i < gamers.size(); i++) {
+				vGamers.add(gamers.get(i));
+				vScores.add(scores.get(i));
+			}
 
-		model = new DefaultTableModel(information, vCol);
-		invitedTable.setModel(model);
+			model = new DefaultTableModel(information, vCol);
+			invitedTable.setModel(model);
 
-		vCol.add("Score");
-		information.add(vScores);
-		model = new DefaultTableModel(information, vCol);
-		gamerListTable.setModel(model);
+			vCol.add("Score");
+			information.add(vScores);
+			model = new DefaultTableModel(information, vCol);
+			gamerListTable.setModel(model);
 		}
 
 	}
@@ -561,6 +557,10 @@ public class ClientGUI implements ActionListener {
 		freshPlayerList();
 		freshGamerList();
 		cardLayout.show(frame.getContentPane(), "name_891421322563457");
+		if (ScrabbleClient.player.getCurrentPlayer().equals(ScrabbleClient.player.getUserName()))
+			btnLayout.show(btnPanel, "name_958014637000495");
+		else
+			btnLayout.show(btnPanel, "name_965239449619613");
 	}
 
 	public void showGameResult() {
@@ -583,5 +583,22 @@ public class ClientGUI implements ActionListener {
 		model = new DefaultTableModel(information, vCol);
 		gameResultTable.setModel(model);
 		cardLayout.show(frame.getContentPane(), "name_1037193997593739");
+	}
+
+	public void showInvitation() {
+
+	}
+
+	public void beginVote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
+			String userName) {
+		if (!ScrabbleClient.player.getUserName().equals(userName)) {
+			btnLayout.show(btnPanel, "name_957940911752561");
+		}
+	}
+
+	public void voteResult(String beginVoteUserName, boolean accepted) {
+		if (ScrabbleClient.player.getUserName().equals(beginVoteUserName)) {
+
+		}
 	}
 }

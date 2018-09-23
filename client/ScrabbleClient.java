@@ -130,7 +130,7 @@ public class ScrabbleClient implements ClientInterface {
 
 	@Override
 	public void playerInvited() throws RemoteException {
-		//TODO: GUI shows the dialog for the player respond to the invitaion
+		gui.showInvitation();
 	}
 
 	@Override
@@ -163,8 +163,7 @@ public class ScrabbleClient implements ClientInterface {
 	public void beginVote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
 			String userName)
 			throws RemoteException {
-		// TODO: GUI displays vote dialog and highlight the voted word
-		return;
+		gui.beginVote(character, startRowIndex, startColIndex, endRowIndex, endColIndex,userName);
 	}
 
 	@Override
@@ -174,6 +173,7 @@ public class ScrabbleClient implements ClientInterface {
 			updateMark(beginVoteUserName, totalMark);
 		}
 		//TODO GUI displays message
+		gui.voteResult(beginVoteUserName,accepted);
 		this.currentPlayer = nextUserName;
 		gui.showGame();
 	}

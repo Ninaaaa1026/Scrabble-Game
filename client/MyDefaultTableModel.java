@@ -12,6 +12,10 @@ public class MyDefaultTableModel extends DefaultTableModel {
     MyDefaultTableModel(int rows, int cols) { // constructor
     	super(rows, cols);
         this.editable_cells = new boolean[rows][cols];
+        for(int i=0;i<rows;i++)
+        	for(int j=0;j<cols;j++) {
+        		setCellEditable(i,j,true);
+        	}
     }
 
     @Override
