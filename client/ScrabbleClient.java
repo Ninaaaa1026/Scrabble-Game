@@ -3,6 +3,7 @@ import java.awt.EventQueue;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +17,18 @@ import remote.ServerInterface;
  * remote interface.
  *
  */
-public class ScrabbleClient implements ClientInterface {
+public class ScrabbleClient extends UnicastRemoteObject implements ClientInterface {
+	protected ScrabbleClient() throws RemoteException  {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+
 	private ClientGUI gui = new ClientGUI();
 	//mention the order of initiating the parameters and invoking them by gui
 	private boolean gameState = false;
@@ -29,15 +41,22 @@ public class ScrabbleClient implements ClientInterface {
 	private char[][] grid = new char[20][20];
 
 	String userName;
-	public static ScrabbleClient player=new ScrabbleClient();
+	public static ScrabbleClient player; //= new ScrabbleClient();
 	public static ServerInterface remoteServer;
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		try {
+			player = new ScrabbleClient();
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					
 					GameLogin window = new GameLogin(player.gui);
 					window.getFrame().setVisible(true);
 					try {
@@ -212,7 +231,12 @@ public class ScrabbleClient implements ClientInterface {
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.ensureCapacity(gamers.size());
 		Collections.fill(this.gamerScores, 0);
-		Arrays.fill(this.grid, ' ');
+		//Arrays.fill(this.grid, ' ');
+		for(int i = 0; i < 20;i++) {
+			for(int j = 0; j < 20; j++) {
+				grid[i][j]=' ';
+			}
+		}
 		gui.showLobby();
 	}
 	@Override
