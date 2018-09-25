@@ -149,7 +149,10 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	public void clientAdded(String playerUserName)
 			throws RemoteException {
 		// a new player logged in
-		this.playerUserName.add(playerUserName);
+        if (!playerUserName.equals(userName)) {
+            this.playerUserName.add(playerUserName);
+        }
+		System.out.println(this.playerUserName.toString());
 		gui.freshPlayerList();
 	}
 
