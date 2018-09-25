@@ -158,7 +158,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	
 	private void updateMark(String gamer, Integer score) {
 		for (int i = 0; i < this.gamerUserName.size(); i++) {
-			if (this.gamerUserName.get(i) == gamer) {
+			if (this.gamerUserName.get(i).equals( gamer)) {
 				this.gamerScores.set(i, score);
 				return;
 			}
