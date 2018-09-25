@@ -465,18 +465,18 @@ public class ClientGUI implements ActionListener {
 			if (ScrabbleClient.player.getRoomState()
 					&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
 				row.add(addButton);
-				visiting.add(row);
+				invite.add(row);
 			}else {
-				visiting.add(row);
-			invite.add(row);
+				invite.add(row);
+			visiting.add(row);
 			}
 		}
 
 		if (ScrabbleClient.player.getRoomState()
 				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
-			playerTable.setModel(new DefaultTableModel(visiting, vCol));
+			playerTable.setModel(new DefaultTableModel(invite, vCol));
 		} else {
-			playerTable.setModel(new DefaultTableModel(visiting, vCol));
+			playerTable.setModel(new DefaultTableModel(invite, vCol));
 			visitingTable.setModel(new DefaultTableModel(invite, vCol));
 		}
 	}
