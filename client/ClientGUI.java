@@ -32,6 +32,8 @@ import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.ScrollPaneConstants;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class ClientGUI implements ActionListener {
 
@@ -97,6 +99,19 @@ public class ClientGUI implements ActionListener {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {				
+				try {
+					ScrabbleClient.player.clientExited(ScrabbleClient.player.getUserName());
+					System.exit(0);
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+			}
+		});
 		frame.setBounds(100, 100, 583, 593);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		cardLayout = new CardLayout(0, 0);
@@ -394,6 +409,7 @@ public class ClientGUI implements ActionListener {
 			} else if (arg0.getSource().equals(btnReturnToGame)) {
 				showLobby();
 			} else if (arg0.getSource().equals(btnStartGame)) {
+				ScrabbleClient.remoteServer.startGame();
 				showGame();
 			}
 		} catch (RemoteException e) {
@@ -456,6 +472,7 @@ public class ClientGUI implements ActionListener {
 		for (int j = 0; j < players.size(); j++)
 			if (!gamers.contains(players.get(j)))
 				noGamers.add(players.get(j));
+		
 		ButtonRenderer renderer = new ButtonRenderer();
 		for (int i = 0; i < noGamers.size(); i++) {	
 			Vector<Object> inviteRow = new Vector<Object>();
@@ -474,16 +491,12 @@ public class ClientGUI implements ActionListener {
 				}
 			});
 			inviteRow.add(addButton);
-			
-			if (ScrabbleClient.player.getRoomState()
-					&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
-				vCol.add("Invite");
-				invite.add(inviteRow);
-			}
+			invite.add(inviteRow);
 		}
 		
 		if (ScrabbleClient.player.getRoomState()
 				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
+			vCol.add("Invite");
 			playerTable.setModel(new MyDefaultTableModel(invite, vCol));
 		}else {
 			playerTable.setModel(new MyDefaultTableModel(visiting, vCol));
