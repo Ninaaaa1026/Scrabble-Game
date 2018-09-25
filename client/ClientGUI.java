@@ -410,7 +410,6 @@ public class ClientGUI implements ActionListener {
 				showLobby();
 			} else if (arg0.getSource().equals(btnStartGame)) {
 				ScrabbleClient.remoteServer.startGame();
-				showGame();
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
