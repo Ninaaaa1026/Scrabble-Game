@@ -1,5 +1,7 @@
 package client;
 
+import java.util.Vector;
+
 import javax.swing.table.DefaultTableModel;
 
 public class MyDefaultTableModel extends DefaultTableModel {
@@ -14,6 +16,15 @@ public class MyDefaultTableModel extends DefaultTableModel {
         this.editable_cells = new boolean[rows][cols];
         for(int i=0;i<rows;i++)
         	for(int j=0;j<cols;j++) {
+        		setCellEditable(i,j,true);
+        	}
+    }
+    
+    MyDefaultTableModel(Vector<Object> rows, Vector<String> cols) { // constructor
+    	super(rows, cols);
+        this.editable_cells = new boolean[rows.size()][cols.size()];
+        for(int i=0;i<rows.size();i++)
+        	for(int j=0;j<cols.size();j++) {
         		setCellEditable(i,j,true);
         	}
     }
