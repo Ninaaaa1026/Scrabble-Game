@@ -437,8 +437,7 @@ public class ClientGUI implements ActionListener {
 	}
 
 	public void freshPlayerList() {
-		ArrayList<String> players = ScrabbleClient.player.getPlayers();
-		Vector<Object> row = new Vector<Object>();
+		ArrayList<String> players = ScrabbleClient.player.getPlayers();	
 		Vector<Object> visiting = new Vector<Object>();
 		Vector<Object> invite = new Vector<Object>();
 		Vector<String> vCol = new Vector<String>();
@@ -449,6 +448,7 @@ public class ClientGUI implements ActionListener {
 		}
 
 		for (int i = 0; i < players.size(); i++) {
+			Vector<Object> row = new Vector<Object>();
 			String playersName = players.get(i);
 			JButton addButton = new JButton("+");
 			addButton.setBounds(118, 10, 39, 23);
