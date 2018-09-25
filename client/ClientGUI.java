@@ -147,7 +147,7 @@ public class ClientGUI implements ActionListener {
 		scrollPane.setViewportView(playerTable);
 
 		lblCreatRoom = new JLabel("");
-		lblCreatRoom.setBounds(28, 237, 332, 33);
+		lblCreatRoom.setBounds(29, 212, 332, 33);
 		gameLobbyPanel.add(lblCreatRoom);
 
 		btnStartGame = new JButton("Start Game");
@@ -454,7 +454,7 @@ public class ClientGUI implements ActionListener {
 		ArrayList<String> players = ScrabbleClient.player.getPlayers();
 		Vector<String> vPlayers = new Vector<String>();
 		Vector<JButton> inviteButton = new Vector<JButton>();
-		Vector information = new Vector();
+		Vector<Object> information = new Vector<Object>();
 		Vector<String> vCol = new Vector<String>();
 		vCol.add("Online Players");
 		information.add(vPlayers);
@@ -463,7 +463,7 @@ public class ClientGUI implements ActionListener {
 			String playersName = players.get(i);
 			vPlayers.add(playersName);
 			JButton addButton = new JButton("+");
-			addButton.setBounds(118, 10, 39, 23);
+			//addButton.setBounds(118, 10, 39, 23);
 			addButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
@@ -477,7 +477,7 @@ public class ClientGUI implements ActionListener {
 		}
 
 		if (ScrabbleClient.player.getRoomState()
-				&& !ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
+				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
 			vCol.add("Invite Player");
 			information.add(inviteButton);
 			model = new DefaultTableModel(information, vCol);
@@ -529,7 +529,7 @@ public class ClientGUI implements ActionListener {
 			panel.setVisible(true);
 			Vector<String> vGamers = new Vector<String>();
 			Vector<Integer> vScores = new Vector<Integer>();
-			Vector information = new Vector();
+			Vector<Object> information = new Vector<Object>();
 			Vector<String> vCol = new Vector<String>();
 			vCol.add("Gamers");
 			information.add(vGamers);
@@ -606,7 +606,7 @@ public class ClientGUI implements ActionListener {
 
 		Vector<String> vGamers = new Vector<String>();
 		Vector<Integer> vScores = new Vector<Integer>();
-		Vector information = new Vector();
+		Vector<Object> information = new Vector<Object>();
 		Vector<String> vCol = new Vector<String>();
 		vCol.add("Gamers");
 		information.add(vGamers);
