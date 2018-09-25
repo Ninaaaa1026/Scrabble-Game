@@ -33,8 +33,8 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	//mention the order of initiating the parameters and invoking them by gui
 	private boolean gameState = false;
 	private boolean roomState = false;
-	private String roomCreatorName;
-	private String currentPlayer;
+	private String roomCreatorName = "";
+	private String currentPlayer = "";
 	private ArrayList<String> playerUserName = new ArrayList<>(); //all the players
 	private ArrayList<String> gamerUserName = new ArrayList<>(); //the players that are playing or in the game room
 	private ArrayList<Integer> gamerScores = new ArrayList<>();
