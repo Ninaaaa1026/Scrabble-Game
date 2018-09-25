@@ -142,7 +142,6 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 				return;
 			}
 		}
-		//log
 		System.out.println("Vote beginner not in the game!!!");
 	}
 	@Override
