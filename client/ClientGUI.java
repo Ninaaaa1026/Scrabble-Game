@@ -447,6 +447,7 @@ public class ClientGUI implements ActionListener {
 			vCol.add("Invite Player");
 		}
 
+		ButtonRenderer renderer = new ButtonRenderer();
 		for (int i = 0; i < players.size(); i++) {
 			Vector<Object> row = new Vector<Object>();
 			String playersName = players.get(i);
@@ -465,20 +466,16 @@ public class ClientGUI implements ActionListener {
 			if (ScrabbleClient.player.getRoomState()
 					&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
 				row.add(addButton);
-				visiting.add(row);
+				invite.add(row);
 			}else {
+				invite.add(row);
 				visiting.add(row);
-			invite.add(row);
 			}
 		}
 
-		if (ScrabbleClient.player.getRoomState()
-				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
-			playerTable.setModel(new DefaultTableModel(visiting, vCol));
-		} else {
-			playerTable.setModel(new DefaultTableModel(visiting, vCol));
-			visitingTable.setModel(new DefaultTableModel(invite, vCol));
-		}
+		playerTable.getColumn("Invite Player").setCellRenderer(renderer);
+		playerTable.setModel(new DefaultTableModel(invite, vCol));
+		visitingTable.setModel(new DefaultTableModel(visiting, vCol));
 	}
 
 	public void freshGamerList() {
