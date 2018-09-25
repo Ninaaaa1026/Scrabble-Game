@@ -476,8 +476,8 @@ public class ClientGUI implements ActionListener {
 			}
 		}
 
-		playerTable.setModel(new DefaultTableModel(invite, vCol));
-		visitingTable.setModel(new DefaultTableModel(visiting, vCol));
+		playerTable.setModel(new MyDefaultTableModel(invite, vCol));
+		visitingTable.setModel(new MyDefaultTableModel(visiting, vCol));
 		if (vCol.contains("Invite")) {
 			playerTable.getColumn("Invite").setCellRenderer(renderer);
 			playerTable.addMouseListener(new ButtonMouseListener(playerTable));
