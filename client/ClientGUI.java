@@ -443,10 +443,10 @@ public class ClientGUI implements ActionListener {
 		Vector<Object> visiting = new Vector<Object>();
 		Vector<Object> invite = new Vector<Object>();
 		Vector<String> vCol = new Vector<String>();
-		vCol.add("Online Players");
+		vCol.add("Players");
 		if (ScrabbleClient.player.getRoomState()
 				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
-			vCol.add("Invite Player");
+			vCol.add("Invite");
 		}
 
 		ButtonRenderer renderer = new ButtonRenderer();
@@ -475,9 +475,11 @@ public class ClientGUI implements ActionListener {
 			}
 		}
 
-		playerTable.getColumn("Invite Player").setCellRenderer(renderer);
 		playerTable.setModel(new DefaultTableModel(invite, vCol));
 		visitingTable.setModel(new DefaultTableModel(visiting, vCol));
+		if (vCol.contains("Invite")) {
+			playerTable.getColumn("Invite").setCellRenderer(renderer);
+		}
 	}
 
 	public void freshGamerList() {
