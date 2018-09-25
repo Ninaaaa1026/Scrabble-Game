@@ -171,7 +171,9 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 
 	@Override
 	public void playerInvited() throws RemoteException {
-		gui.showInvitation();
+		if (userName != roomCreatorName) {
+			gui.showInvitation();
+		}
 	}
 
 	@Override
