@@ -341,8 +341,7 @@ public class ClientGUI implements ActionListener {
 			if (arg0.getSource().equals(btnPass)) {
 				setTableEditable(false);
 				ScrabbleClient.remoteServer.passTurn(ScrabbleClient.player.getUserName());
-				passPanel.setVisible(false);
-				voidPanel.setVisible(true);
+				btnLayout.show(btnPanel, "name_965239449619613");
 			} else if (arg0.getSource().equals(btnVote)) {
 				if (gameTable.getSelectedColumnCount() == 0 && gameTable.getSelectedRowCount() == 0) {
 					JOptionPane.showMessageDialog(null,
@@ -387,6 +386,7 @@ public class ClientGUI implements ActionListener {
 							ScrabbleClient.remoteServer.vote(character, startRowIndex, startColIndex, endRowIndex,
 									endColIndex, ScrabbleClient.player.getUserName(), rowIndex, colIndex);
 							setTableEditable(false);
+							btnLayout.show(btnPanel, "name_965239449619613");
 						}
 					}
 				}
