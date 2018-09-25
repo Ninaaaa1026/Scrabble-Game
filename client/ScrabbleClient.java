@@ -251,11 +251,10 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		this.roomState = roomState;
 		this.playerUserName.clear();
 		this.gamerUserName.clear();
-		this.gamerScores.clear();
 		this.playerUserName.addAll(players);
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.ensureCapacity(gamers.size());
-		Collections.fill(this.gamerScores, 0);
+		initiateScores(gamers.size());
 		//Arrays.fill(this.grid, ' ');
 		for(int i = 0; i < 20;i++) {
 			for(int j = 0; j < 20; j++) {
@@ -289,12 +288,20 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 			throws RemoteException {
 		this.playerUserName.clear();
 		this.gamerUserName.clear();
-		this.gamerScores.clear();
 		this.playerUserName.addAll(players);
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.ensureCapacity(gamers.size());
-		Collections.fill(this.gamerScores, 0);
+		//this.gamerScores.clear();
+		//Collections.fill(this.gamerScores, 0);
+		initiateScores(gamers.size());
 		this.currentPlayer = currentPlayer;
 		gui.showGame();
+	}
+
+	private void initiateScores(int size) {
+		this.gamerScores.clear();
+		for (int i = 0; i < size; i++) {
+			this.gamerScores.add(0);
+		}
 	}
 }
