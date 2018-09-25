@@ -223,6 +223,14 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 					notify(player);
 				}
 			}
+			
+			for(int i = 0; i < 20;i++) {
+				for(int j = 0; j < 20; j++) {
+					table[i][j]=' ';
+				}
+			}
+			
+			passGamerNumber = 0;
 			gamers.clear();
 			gamerScores.clear();
 			this.roomState=false;
@@ -247,6 +255,7 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 
 	@Override
 	public void nextTurn(char character, int rowIndex, int colIndex, String userName)throws RemoteException{
+		passGamerNumber = 0;
 		table[rowIndex][colIndex]= character;
 		int current = gamers.indexOf(userName);
 		System.out.println(userName);
