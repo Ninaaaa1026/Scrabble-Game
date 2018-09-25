@@ -64,7 +64,7 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 		
 		//If not exists, add
 		players.add (clientinstance);
-		playerNames.add(clientinstance.getUserName());
+		playerNames.add(userName);
 		
 		//callback the newplayer
 		try{
