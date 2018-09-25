@@ -77,7 +77,7 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 			notify(clientinstance);
 		}
 		
-		//callback all players. 需要客户端排除这个新用户
+		//callback all players. 
 		for (ClientInterface e : players){
 			ClientInterface player = e;
 			try{
@@ -305,8 +305,8 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 		if (agree) {
 			this.totalVote = totalVote+1;
 			this.agreeVote = agreeVote+1;
-			if (totalVote == gamers.size()) {
-				if (agreeVote == gamers.size()) {
+			if (totalVote == gamers.size()-1) {
+				if (agreeVote == gamers.size()-1) {
 					boolean accepted = true;
 					int current = gamers.indexOf(voteBeginner);
 					int currentScore = gamerScores.get(current);

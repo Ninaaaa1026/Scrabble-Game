@@ -127,6 +127,18 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	public int getPortNumber() {
 		return this.portNumber;
 	}
+	
+	public void setRoomState(boolean roomState) {
+		this.roomState = roomState;
+	}
+	
+	public void setGameState(boolean gameState) {
+		this.gameState = gameState;
+	}
+	
+	public void setCurrentPlayer(String currentPlayer) {
+		this.currentPlayer = currentPlayer;
+	}
 
 	public void setIPAddress(String ip) {
 		this.IPAddress = ip;
@@ -135,7 +147,15 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	public void setPortNumber(int port) {
 		this.portNumber = port;
 	}
-
+	
+	public void ClearGamerUserName() {
+		this.gamerUserName.clear();
+	}
+	
+	public void ClearGamerScores() {
+		this.gamerScores.clear();
+	}
+	
 	private void updateMark(String gamer, Integer score) {
 		for (int i = 0; i < this.gamerUserName.size(); i++) {
 			if (this.gamerUserName.get(i) == gamer) {

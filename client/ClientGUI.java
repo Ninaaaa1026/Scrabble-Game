@@ -103,7 +103,7 @@ public class ClientGUI implements ActionListener {
 			@Override
 			public void windowClosing(WindowEvent e) {				
 				try {
-					ScrabbleClient.player.clientExited(ScrabbleClient.player.getUserName());
+					ScrabbleClient.remoteServer.notify(ScrabbleClient.player);
 					System.exit(0);
 				} catch (RemoteException e1) {
 					// TODO Auto-generated catch block
@@ -389,7 +389,7 @@ public class ClientGUI implements ActionListener {
 					}
 				}
 			} else if (arg0.getSource().equals(btnAgreeVote)) {
-				ScrabbleClient.remoteServer.agreeVote(false, ScrabbleClient.player.getUserName());
+				ScrabbleClient.remoteServer.agreeVote(true, ScrabbleClient.player.getUserName());
 				btnLayout.show(btnPanel, "name_965239449619613");
 
 			} else if (arg0.getSource().equals(btnNext)) {
@@ -407,6 +407,11 @@ public class ClientGUI implements ActionListener {
 					showLobby();
 				}
 			} else if (arg0.getSource().equals(btnReturnToGame)) {
+				ScrabbleClient.player.ClearGamerUserName();
+				ScrabbleClient.player.ClearGamerScores();
+				ScrabbleClient.player.setRoomState(false);
+				ScrabbleClient.player.setGameState(false);
+				ScrabbleClient.player.setCurrentPlayer("");
 				showLobby();
 			} else if (arg0.getSource().equals(btnStartGame)) {
 				ScrabbleClient.remoteServer.startGame();
@@ -596,16 +601,17 @@ public class ClientGUI implements ActionListener {
 		ArrayList<String> gamers = ScrabbleClient.player.getGamers();
 		ArrayList<Integer> scores = ScrabbleClient.player.getGamerScores();
 
-		Vector<String> vGamers = new Vector<String>();
-		Vector<Integer> vScores = new Vector<Integer>();
+		//Vector<String> vGamers = new Vector<String>();
+		//Vector<Integer> vScores = new Vector<Integer>();
 		Vector<Object> information = new Vector<Object>();
 		Vector<String> vCol = new Vector<String>();
 		vCol.add("Gamers");
-		information.add(vGamers);
+		//information.add(vGamers);
 
 		for (int i = 0; i < gamers.size(); i++) {
-			vGamers.add(gamers.get(i));
-			vScores.add(scores.get(i));
+			Vector<Object> row = new Vector<Object>();
+			row.add(gamers.get(i));
+			row.add(scores.get(i));
 		}
 
 		model = new DefaultTableModel(information, vCol);
@@ -630,6 +636,7 @@ public class ClientGUI implements ActionListener {
 	public void beginVote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
 			String userName) {
 		if (!ScrabbleClient.player.getUserName().equals(userName)) {
+			freshTable();
 			btnLayout.show(btnPanel, "name_957940911752561");
 		}
 	}
