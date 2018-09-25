@@ -39,6 +39,8 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	private ArrayList<String> gamerUserName = new ArrayList<>(); //the players that are playing or in the game room
 	private ArrayList<Integer> gamerScores = new ArrayList<>();
 	private char[][] grid = new char[20][20];
+	private String IPAddress;
+	private String portNumber;
 
 	String userName;
 	public static ScrabbleClient player; //= new ScrabbleClient();
@@ -117,6 +119,22 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		return this.currentPlayer;
 	}
 
+	public String getIPAddress() {
+	    return this.IPAddress;
+    }
+
+    public String getPortNumber() {
+	    return this.portNumber;
+    }
+
+    public void setIPAddress(String ip) {
+	    this.IPAddress = ip;
+    }
+
+    public void setPortNumber(String port) {
+	    this.portNumber = port;
+    }
+
 	private void updateMark(String gamer, Integer score) {
 		for (int i=0; i<this.gamerUserName.size(); i++) {
 			if (this.gamerUserName.get(i) == gamer) {
@@ -145,6 +163,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		this.roomCreatorName = createplayerusername;
 		this.gamerUserName.add(createplayerusername);
 		this.gamerScores.add(0);
+		System.out.println("roomCreatorName:" + this.roomCreatorName);
 		gui.showLobby();
 	}
 
