@@ -448,6 +448,7 @@ public class ClientGUI implements ActionListener {
 			vCol.add("Invite Player");
 		}
 
+		ButtonRenderer renderer = new ButtonRenderer();
 		for (int i = 0; i < players.size(); i++) {
 			String playersName = players.get(i);
 			JButton addButton = new JButton("+");
@@ -474,6 +475,7 @@ public class ClientGUI implements ActionListener {
 
 		if (ScrabbleClient.player.getRoomState()
 				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
+			playerTable.getColumn("Invite Player").setCellRenderer(renderer);
 			playerTable.setModel(new DefaultTableModel(visiting, vCol));
 		} else {
 			playerTable.setModel(new DefaultTableModel(visiting, vCol));
