@@ -5,6 +5,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import remote.ClientInterface;
 import remote.ServerInterface;
@@ -30,8 +31,9 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 	
 	
 	public static void main(String[] args) {
+		
 		  try {
-		   ServerInterface scrabble = new ScrabbleServer();
+			  ScrabbleServer scrabble = new ScrabbleServer();
 		            
 		            //Publish the remote object's stub in the registry under the name "Compute"
 		            Registry registry = LocateRegistry.createRegistry(1099);
@@ -47,6 +49,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 
 	protected ScrabbleServer() throws RemoteException {
 		super();
+		
 		// TODO Auto-generated constructor stub
 	}
 
@@ -164,6 +167,12 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 	@Override
 	//creater start the game and let
 	public void startGame() throws RemoteException {
+		for(int i = 0; i < 20;i++) {
+			for(int j = 0; j < 20; j++) {
+				table[i][j]=' ';
+			}
+		}
+		//Arrays.fill(this.table, ' ');
 		String currentPlayer = gamers.get(0);
 		for(int i = 0; i < gamers.size(); i++) {
 			gamerScores.add(0);
