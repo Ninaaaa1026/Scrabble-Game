@@ -83,19 +83,13 @@ public class ClientGUI implements ActionListener {
 		initialize();
 	}
 
-	/*public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ClientGUI window = new ClientGUI();
-					window.getFrame().setVisible(true);
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
+	/*
+	 * public static void main(String[] args) { EventQueue.invokeLater(new
+	 * Runnable() { public void run() { try { ClientGUI window = new ClientGUI();
+	 * window.getFrame().setVisible(true);
+	 * 
+	 * } catch (Exception e) { e.printStackTrace(); } } }); }
+	 */
 
 	/**
 	 * Initialize the contents of the frame.
@@ -419,14 +413,14 @@ public class ClientGUI implements ActionListener {
 			if ((startColIndex > 0 && gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
 					&& gameTable.getValueAt(startRowIndex, startColIndex - 1) != "")
 					|| (endColIndex > 19 && gameTable.getValueAt(startRowIndex, endColIndex + 1) != null
-					&& gameTable.getValueAt(startRowIndex, endColIndex + 1) != "")) {
+							&& gameTable.getValueAt(startRowIndex, endColIndex + 1) != "")) {
 				return false;
 			}
 		} else if (startColIndex == endColIndex) {
-			if ((startRowIndex > 0 && gameTable.getValueAt(startRowIndex - 1, startColIndex) != null 
-					&& gameTable.getValueAt(startRowIndex-1, startColIndex) != "")
+			if ((startRowIndex > 0 && gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
+					&& gameTable.getValueAt(startRowIndex - 1, startColIndex) != "")
 					|| (endRowIndex < 19 && gameTable.getValueAt(endRowIndex + 1, startColIndex) != null
-					&& gameTable.getValueAt(endRowIndex + 1, startColIndex) != "")) {
+							&& gameTable.getValueAt(endRowIndex + 1, startColIndex) != "")) {
 				return false;
 			}
 		} else {
@@ -443,27 +437,21 @@ public class ClientGUI implements ActionListener {
 	}
 
 	public void freshPlayerList() {
-		/*
-		 * visitingPanel = new JPanel(); panel_2.add(visitingPanel); visitingGridLayout
-		 * = new GridLayout(0, 1, 0, 0);
-		 * 
-		 * listPanel = new JPanel(); panel_1.add(listPanel); listGridLayout = new
-		 * GridLayout(0, 1, 0, 0);
-		 */
-		DefaultTableModel model;
 		ArrayList<String> players = ScrabbleClient.player.getPlayers();
-		Vector<String> vPlayers = new Vector<String>();
-		Vector<JButton> inviteButton = new Vector<JButton>();
-		Vector<Object> information = new Vector<Object>();
+		Vector<Object> row = new Vector<Object>();
+		Vector<Object> visiting = new Vector<Object>();
+		Vector<Object> invite = new Vector<Object>();
 		Vector<String> vCol = new Vector<String>();
 		vCol.add("Online Players");
-		information.add(vPlayers);
+		if (ScrabbleClient.player.getRoomState()
+				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
+			vCol.add("Invite Player");
+		}
 
 		for (int i = 0; i < players.size(); i++) {
 			String playersName = players.get(i);
-			vPlayers.add(playersName);
 			JButton addButton = new JButton("+");
-			//addButton.setBounds(118, 10, 39, 23);
+			addButton.setBounds(118, 10, 39, 23);
 			addButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
@@ -473,48 +461,24 @@ public class ClientGUI implements ActionListener {
 					}
 				}
 			});
-			inviteButton.add(addButton);
+			row.add(playersName);
+			if (ScrabbleClient.player.getRoomState()
+					&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
+				row.add(addButton);
+				visiting.add(row);
+			}else {
+				visiting.add(row);
+			invite.add(row);
+			}
 		}
 
 		if (ScrabbleClient.player.getRoomState()
 				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
-			vCol.add("Invite Player");
-			information.add(inviteButton);
-			model = new DefaultTableModel(information, vCol);
+			playerTable.setModel(new DefaultTableModel(visiting, vCol));
 		} else {
-			model = new DefaultTableModel(information, vCol);
-			visitingTable.setModel(model);
+			playerTable.setModel(new DefaultTableModel(visiting, vCol));
+			visitingTable.setModel(new DefaultTableModel(invite, vCol));
 		}
-		playerTable.setModel(model);
-		/*
-		 * visitingPanel.setBounds(0, 0, 182, 40 * (i + 1));
-		 * visitingGridLayout.setColumns(i + 1);
-		 * visitingPanel.setLayout(visitingGridLayout);
-		 * 
-		 * JLabel visitingLabel = new JLabel(players.get(i)); visitingLabel.setFont(new
-		 * Font("Century", Font.PLAIN, 12)); visitingLabel.setBounds(10, 10, 162, 21);
-		 * visitingPanel.add(visitingLabel);
-		 * 
-		 * listPanel.setBounds(0, 0, 182, 40 * (i + 1)); listGridLayout.setColumns(i +
-		 * 1); listPanel.setLayout(listGridLayout);
-		 * 
-		 * JPanel invitePanel = new JPanel(); listPanel.add(invitePanel);
-		 * invitePanel.setLayout(null);
-		 * 
-		 * String playersName=players.get(i); if (ScrabbleClient.player.getRoomState())
-		 * { if
-		 * (!ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.
-		 * getUserName())) {
-		 * 
-		 * invitePanel.add(addButton);
-		 * 
-		 * addButton.addActionListener(new ActionListener() { public void
-		 * actionPerformed(ActionEvent arg0) { try {
-		 * ScrabbleClient.remoteServer.invitePlayer(playersName); } catch
-		 * (RemoteException e) { e.printStackTrace(); } } }); } } JLabel playerLabel =
-		 * new JLabel(playersName); playerLabel.setBounds(10, 14, 98, 15);
-		 * invitePanel.add(playerLabel); listPanel.add(invitePanel);
-		 */
 	}
 
 	public void freshGamerList() {
@@ -557,7 +521,7 @@ public class ClientGUI implements ActionListener {
 				for (int j = 0; j < gameTable.getWidth(); j++) {
 					if (grid[i][j] != ' ') {
 						gameTable.setValueAt(grid[i][j], i, j);
-						myModel.setCellEditable(i, j, false);						
+						myModel.setCellEditable(i, j, false);
 					}
 				}
 			}
