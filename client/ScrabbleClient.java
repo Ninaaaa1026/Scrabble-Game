@@ -40,7 +40,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	private ArrayList<Integer> gamerScores = new ArrayList<>();
 	private char[][] grid = new char[20][20];
 	private String IPAddress;
-	private String portNumber;
+	private int portNumber;
 
 	String userName;
 	public static ScrabbleClient player; //= new ScrabbleClient();
@@ -123,7 +123,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	    return this.IPAddress;
     }
 
-    public String getPortNumber() {
+    public int getPortNumber() {
 	    return this.portNumber;
     }
 
@@ -131,7 +131,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	    this.IPAddress = ip;
     }
 
-    public void setPortNumber(String port) {
+    public void setPortNumber(int port) {
 	    this.portNumber = port;
     }
 

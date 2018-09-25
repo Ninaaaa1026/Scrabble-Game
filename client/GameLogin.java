@@ -45,7 +45,12 @@ public class GameLogin {
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {		
 				try {
-					if(ScrabbleClient.remoteServer.addClient(loginTextField.getText(), (ClientInterface)ScrabbleClient.player,IPTextField.getText(), Integer.parseInt(portTextField.getText()))) {
+					int port=Integer.parseInt(portTextField.getText());
+					ScrabbleClient.player.setUserName(loginTextField.getText());
+					ScrabbleClient.player.setIPAddress(IPTextField.getText());
+					ScrabbleClient.player.setPortNumber(port);
+					if(ScrabbleClient.remoteServer.addClient(loginTextField.getText(), (ClientInterface)ScrabbleClient.player,IPTextField.getText(), port)) {
+						
 						EventQueue.invokeLater(new Runnable() {
 							public void run() {
 								try {
