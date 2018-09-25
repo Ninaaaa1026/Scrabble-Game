@@ -392,6 +392,11 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 			this.gameState = false;
 			gamers.clear();
 			gamerScores.clear();
+			for(int i = 0; i < 20;i++) {
+				for(int j = 0; j < 20; j++) {
+					table[i][j]=' ';
+				}
+			}
 		} else {
 
 			for (ClientInterface e : players) {

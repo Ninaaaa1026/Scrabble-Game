@@ -101,7 +101,7 @@ public class ClientGUI implements ActionListener {
 		frame = new JFrame();
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(WindowEvent e) {				
+			public void windowClosing(WindowEvent e) {
 				try {
 					ScrabbleClient.remoteServer.notify(ScrabbleClient.player);
 					System.exit(0);
@@ -109,7 +109,7 @@ public class ClientGUI implements ActionListener {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
+
 			}
 		});
 		frame.setBounds(100, 100, 583, 593);
@@ -457,7 +457,7 @@ public class ClientGUI implements ActionListener {
 		}
 		return true;
 	}
-
+	
 	public void freshPlayerList() {
 		ArrayList<String> players = ScrabbleClient.player.getPlayers();
 		ArrayList<String> gamers = ScrabbleClient.player.getGamers();
@@ -473,20 +473,23 @@ public class ClientGUI implements ActionListener {
 			visiting.add(visitRow);
 		}
 		visitingTable.setModel(new MyDefaultTableModel(visiting, vCol));
-		
+
 		ArrayList<String> noGamers = new ArrayList<String>();
 		for (int j = 0; j < players.size(); j++)
 			if (!gamers.contains(players.get(j)))
 				noGamers.add(players.get(j));
-		
+
 		ButtonRenderer renderer = new ButtonRenderer();
-		for (int i = 0; i < noGamers.size(); i++) {	
+		//renderer.getTableCellRendererComponent(gameTable, value, isSelected, hasFocus, i, 1);
+		for (int i = 0; i < noGamers.size(); i++) {
 			Vector<Object> inviteRow = new Vector<Object>();
 			String noGamerName = noGamers.get(i);
 			inviteRow.add(noGamerName);
 			JButton addButton = new JButton(noGamerName);
 			addButton.setText("+");
 			addButton.setBounds(118, 10, 39, 23);
+			
+			
 			addButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
@@ -496,23 +499,36 @@ public class ClientGUI implements ActionListener {
 					}
 				}
 			});
+			
 			inviteRow.add(addButton);
 			invite.add(inviteRow);
 		}
-		
+
 		if (ScrabbleClient.player.getRoomState()
 				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
 			vCol.add("Invite");
+			
+			//MyButtonEditor editor = new MyButtonEditor(e);			
+			//gameTable.getColumnModel().getColumn(1).setCellEditor(editor);
+			
 			playerTable.setModel(new MyDefaultTableModel(invite, vCol));
-		}else {
+		} else {
 			playerTable.setModel(new MyDefaultTableModel(visiting, vCol));
 		}
-		
+
 		if (vCol.contains("Invite")) {
 			playerTable.getColumn("Invite").setCellRenderer(renderer);
 			playerTable.addMouseListener(new ButtonMouseListener(playerTable));
 		}
 	}
+	
+	/*MyEvent e = new MyEvent() {
+		@Override
+		public void invoke(ActionEvent e) {
+			MyButton button = (MyButton) e.getSource();
+			button.getRow();
+		}
+	};*/
 
 	public void freshGamerList() {
 		ArrayList<String> gamers = ScrabbleClient.player.getGamers();
@@ -560,6 +576,7 @@ public class ClientGUI implements ActionListener {
 					}
 				}
 			}
+			tableChanged=false;
 		} catch (Exception e) {
 			System.out.println("Error: ClientGUI -> freshTable");
 		}
@@ -574,7 +591,7 @@ public class ClientGUI implements ActionListener {
 			} else {
 				lblCreatRoom.setText("Create room successfully! Invite other players into a game");
 				btnCreateRoom.setVisible(false);
-				if(ScrabbleClient.player.getGamers().size()>1)
+				if (ScrabbleClient.player.getGamers().size() > 1)
 					btnStartGame.setVisible(true);
 			}
 		} else {
