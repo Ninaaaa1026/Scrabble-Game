@@ -262,6 +262,7 @@ public class ClientGUI implements ActionListener {
 						btnLayout.show(btnPanel, "name_957948997083501");
 					} else {
 						JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
+						btnLayout.show(btnPanel,"name_958014637000495");
 					}
 				} else {
 					if (gameTable.getValueAt(rowIndex, colIndex).equals(inputString)) {
@@ -277,6 +278,7 @@ public class ClientGUI implements ActionListener {
 							btnLayout.show(btnPanel, "name_957948997083501");
 						} else {
 							JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
+							btnLayout.show(btnPanel,"name_958014637000495");
 						}
 					}
 
@@ -479,7 +481,6 @@ public class ClientGUI implements ActionListener {
 	}
 
 	public void freshGamerList() {
-		DefaultTableModel model;
 		ArrayList<String> gamers = ScrabbleClient.player.getGamers();
 		ArrayList<Integer> scores = ScrabbleClient.player.getGamerScores();
 		if (gamers.size() == 0) {
@@ -487,26 +488,27 @@ public class ClientGUI implements ActionListener {
 			panel.setVisible(false);
 		} else {
 			scrollPane_2.setVisible(true);
-			panel.setVisible(true);
-			Vector<String> vGamers = new Vector<String>();
-			Vector<Integer> vScores = new Vector<Integer>();
-			Vector<Object> information = new Vector<Object>();
+			panel.setVisible(true);			
+			Vector<Object> game = new Vector<Object>();
+			Vector<Object> invite = new Vector<Object>();
 			Vector<String> vCol = new Vector<String>();
 			vCol.add("Gamers");
-			information.add(vGamers);
 
 			for (int i = 0; i < gamers.size(); i++) {
-				vGamers.add(gamers.get(i));
-				vScores.add(scores.get(i));
+				Vector<Object> gameRow = new Vector<Object>();
+				Vector<Object> inviteRow = new Vector<Object>();
+				gameRow.add(gamers.get(i));
+				gameRow.add(scores.get(i));
+				inviteRow.add(gamers.get(i));
+				
+				game.add(gameRow);
+				invite.add(inviteRow);
 			}
 
-			model = new DefaultTableModel(information, vCol);
-			invitedTable.setModel(model);
+			invitedTable.setModel(new DefaultTableModel(invite, vCol));
 
 			vCol.add("Score");
-			information.add(vScores);
-			model = new DefaultTableModel(information, vCol);
-			gamerListTable.setModel(model);
+			gamerListTable.setModel(new DefaultTableModel(game, vCol));
 		}
 
 	}
