@@ -262,7 +262,7 @@ public class ClientGUI implements ActionListener {
 						btnLayout.show(btnPanel, "name_957948997083501");
 					} else {
 						JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
-						btnLayout.show(btnPanel,"name_958014637000495");
+						btnLayout.show(btnPanel, "name_958014637000495");
 					}
 				} else {
 					if (gameTable.getValueAt(rowIndex, colIndex).equals(inputString)) {
@@ -278,7 +278,7 @@ public class ClientGUI implements ActionListener {
 							btnLayout.show(btnPanel, "name_957948997083501");
 						} else {
 							JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
-							btnLayout.show(btnPanel,"name_958014637000495");
+							btnLayout.show(btnPanel, "name_958014637000495");
 						}
 					}
 
@@ -326,6 +326,7 @@ public class ClientGUI implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		try {
 			if (arg0.getSource().equals(btnPass)) {
+				setTableEditable(false);
 				ScrabbleClient.remoteServer.passTurn(ScrabbleClient.player.getUserName());
 				passPanel.setVisible(false);
 				voidPanel.setVisible(true);
@@ -380,7 +381,7 @@ public class ClientGUI implements ActionListener {
 				btnLayout.show(btnPanel, "name_965239449619613");
 
 			} else if (arg0.getSource().equals(btnNext)) {
-				myModel.setCellEditable(rowIndex, colIndex, false);
+				setTableEditable(false);
 				btnLayout.show(btnPanel, "name_965239449619613");
 				ScrabbleClient.remoteServer.nextTurn(character, rowIndex, colIndex,
 						ScrabbleClient.player.getUserName());
@@ -439,7 +440,7 @@ public class ClientGUI implements ActionListener {
 	}
 
 	public void freshPlayerList() {
-		ArrayList<String> players = ScrabbleClient.player.getPlayers();	
+		ArrayList<String> players = ScrabbleClient.player.getPlayers();
 		Vector<Object> visiting = new Vector<Object>();
 		Vector<Object> invite = new Vector<Object>();
 		Vector<String> vCol = new Vector<String>();
@@ -469,7 +470,7 @@ public class ClientGUI implements ActionListener {
 					&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
 				row.add(addButton);
 				invite.add(row);
-			}else {
+			} else {
 				invite.add(row);
 				visiting.add(row);
 			}
@@ -491,7 +492,7 @@ public class ClientGUI implements ActionListener {
 			panel.setVisible(false);
 		} else {
 			scrollPane_2.setVisible(true);
-			panel.setVisible(true);			
+			panel.setVisible(true);
 			Vector<Object> game = new Vector<Object>();
 			Vector<Object> invite = new Vector<Object>();
 			Vector<String> vCol = new Vector<String>();
@@ -503,7 +504,7 @@ public class ClientGUI implements ActionListener {
 				gameRow.add(gamers.get(i));
 				gameRow.add(scores.get(i));
 				inviteRow.add(gamers.get(i));
-				
+
 				game.add(gameRow);
 				invite.add(inviteRow);
 			}
@@ -617,5 +618,11 @@ public class ClientGUI implements ActionListener {
 				d.showDialog(null, "Vote successfully!" + beginVoteUserName + " get " + totalMark + "points!", 3);
 		} else
 			d.showDialog(null, "Vote Failed! " + nextUserName + "'s turn!", 3);
+	}
+
+	private void setTableEditable(boolean editable) {
+		for (int i = 0; i < 20; i++)
+			for (int j = 0; j < 20; j++)
+				myModel.setCellEditable(i, j, editable);
 	}
 }
