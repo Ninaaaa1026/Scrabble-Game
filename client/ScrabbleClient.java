@@ -7,7 +7,6 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 import remote.ClientInterface;
 import remote.ServerInterface;
@@ -224,7 +223,8 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 
 	@Override
 	public void beginVote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
-			String userName) throws RemoteException {
+			String userName,int rowIndex,int colIndex) throws RemoteException {
+		grid[rowIndex][colIndex] = character;
 		gui.beginVote(character, startRowIndex, startColIndex, endRowIndex, endColIndex, userName);
 	}
 

@@ -5,7 +5,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import remote.ClientInterface;
 import remote.ServerInterface;
@@ -287,7 +286,7 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 			ClientInterface player = e;
 			
 			try {
-				 player.beginVote(character, startRowIndex, startColIndex, endRowIndex, endColIndex, userName);
+				 player.beginVote(character, startRowIndex, startColIndex, endRowIndex, endColIndex, userName, rowIndex, colIndex);
 				
 			} catch (RemoteException re) {
 				System.out.println("vote error");
@@ -305,59 +304,57 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 		if (agree) {
 			this.totalVote = totalVote+1;
 			this.agreeVote = agreeVote+1;
-			if (totalVote == gamers.size()-1) {
-				if (agreeVote == gamers.size()-1) {
-					boolean accepted = true;
-					int current = gamers.indexOf(voteBeginner);
-					int currentScore = gamerScores.get(current);
-					gamerScores.set(current, currentScore+wordLength);
-					  
-					  if (current == gamers.size()-1) {
-					   current = -1;
-					  }
-					  this.nextPlayer = gamers.get(current+1);
-					  
-					for (ClientInterface e : players) {
-						ClientInterface player = e;
-						
-						try {
-							 player.voteSuccess(voteBeginner,accepted,currentScore+wordLength,nextPlayer);//voteSuccess(String beginVoteUserName, boolean accepted, int totalMark, String nextUserName)throws RemoteException;
-							
-						} catch (RemoteException re) {
-							System.out.println("vote error");
-							notify(player);
-						}
-					}
-
-				}else {
-					boolean accepted = false;
-					int current = gamers.indexOf(voteBeginner);
-					int currentScore = gamerScores.get(current);
-					  if (current == gamers.size()-1) {
-					   current = -1;
-					  }
-					  this.nextPlayer = gamers.get(current+1);
-					for (ClientInterface e : players) {
-						ClientInterface player = e;
-						
-						try {
-							 player.voteSuccess(voteBeginner,accepted,currentScore,nextPlayer);
-							
-						} catch (RemoteException re) {
-							System.out.println("vote error");
-							notify(player);
-						}
-					}
-				}
-				wordLength = 0;
-			}
-			
 			
 		}else {
 			this.totalVote = totalVote +1;
 		}
 		
+		if (totalVote == gamers.size()-1) {
+			if (agreeVote == gamers.size()-1) {
+				boolean accepted = true;
+				int current = gamers.indexOf(voteBeginner);
+				int currentScore = gamerScores.get(current);
+				gamerScores.set(current, currentScore+wordLength);
+				  
+				  if (current == gamers.size()-1) {
+				   current = -1;
+				  }
+				  this.nextPlayer = gamers.get(current+1);
+				  
+				for (ClientInterface e : players) {
+					ClientInterface player = e;
+					
+					try {
+						 player.voteSuccess(voteBeginner,accepted,currentScore+wordLength,nextPlayer);//voteSuccess(String beginVoteUserName, boolean accepted, int totalMark, String nextUserName)throws RemoteException;
+						
+					} catch (RemoteException re) {
+						System.out.println("vote error");
+						notify(player);
+					}
+				}
 
+			}else {
+				boolean accepted = false;
+				int current = gamers.indexOf(voteBeginner);
+				int currentScore = gamerScores.get(current);
+				  if (current == gamers.size()-1) {
+				   current = -1;
+				  }
+				  this.nextPlayer = gamers.get(current+1);
+				for (ClientInterface e : players) {
+					ClientInterface player = e;
+					
+					try {
+						 player.voteSuccess(voteBeginner,accepted,currentScore,nextPlayer);
+						
+					} catch (RemoteException re) {
+						System.out.println("vote error");
+						notify(player);
+					}
+				}
+			}
+			wordLength = 0;
+		}
 	}
 
 	@Override

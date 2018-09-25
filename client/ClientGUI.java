@@ -149,6 +149,7 @@ public class ClientGUI implements ActionListener {
 		gameLobbyPanel.add(scrollPane);
 
 		playerTable = new JTable();
+		playerTable.setEnabled(false);
 		playerTable.setRowSelectionAllowed(false);
 		scrollPane.setViewportView(playerTable);
 
@@ -385,6 +386,7 @@ public class ClientGUI implements ActionListener {
 							myModel.setCellEditable(rowIndex, colIndex, false);
 							ScrabbleClient.remoteServer.vote(character, startRowIndex, startColIndex, endRowIndex,
 									endColIndex, ScrabbleClient.player.getUserName(), rowIndex, colIndex);
+							setTableEditable(false);
 						}
 					}
 				}
@@ -635,6 +637,8 @@ public class ClientGUI implements ActionListener {
 			String userName) {
 		if (!ScrabbleClient.player.getUserName().equals(userName)) {
 			freshTable();
+			gameTable.setColumnSelectionInterval(startColIndex, endColIndex);
+			gameTable.setRowSelectionInterval(startRowIndex, endRowIndex);
 			btnLayout.show(btnPanel, "name_957940911752561");
 		}
 	}
@@ -643,9 +647,9 @@ public class ClientGUI implements ActionListener {
 		TimeDialog d = new TimeDialog();
 		if (accepted) {
 			if (ScrabbleClient.player.getUserName().equals(beginVoteUserName))
-				d.showDialog(null, "Vote successfully!You get " + totalMark + "points!", 3);
+				d.showDialog(null, "Vote successfully!You get " + totalMark + "points!", 2);
 			else
-				d.showDialog(null, "Vote successfully!" + beginVoteUserName + " get " + totalMark + "points!", 3);
+				d.showDialog(null, "Vote successfully!" + beginVoteUserName + " gets " + totalMark + "points!", 2);
 		} else
 			d.showDialog(null, "Vote Failed! " + nextUserName + "'s turn!", 3);
 	}
