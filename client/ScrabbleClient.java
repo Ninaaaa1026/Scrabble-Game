@@ -180,9 +180,11 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	public void invitationResponse(String invitedplayer, boolean agree)
 			throws RemoteException {
 		if (!agree) return;
-		this.gamerUserName.add(this.userName);
-		this.gamerScores.add(0);
-		gui.showLobby();
+		if (!this.gamerUserName.contains(invitedplayer)) {
+			this.gamerUserName.add(this.userName);
+			this.gamerScores.add(0);
+			gui.showLobby();
+		}
 	}
 
 	@Override
