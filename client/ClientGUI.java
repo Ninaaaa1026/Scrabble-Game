@@ -572,7 +572,8 @@ public class ClientGUI implements ActionListener {
 			} else {
 				lblCreatRoom.setText("Create room successfully! Invite other players into a game");
 				btnCreateRoom.setVisible(false);
-				btnStartGame.setVisible(true);
+				if(ScrabbleClient.player.getGamers().size()>1)
+					btnStartGame.setVisible(true);
 			}
 		} else {
 			btnCreateRoom.setVisible(true);
@@ -597,25 +598,22 @@ public class ClientGUI implements ActionListener {
 	}
 
 	public void showGameResult() {
-		DefaultTableModel model;
 		ArrayList<String> gamers = ScrabbleClient.player.getGamers();
 		ArrayList<Integer> scores = ScrabbleClient.player.getGamerScores();
 
-		//Vector<String> vGamers = new Vector<String>();
-		//Vector<Integer> vScores = new Vector<Integer>();
 		Vector<Object> information = new Vector<Object>();
 		Vector<String> vCol = new Vector<String>();
-		vCol.add("Gamers");
-		//information.add(vGamers);
+		vCol.add("Gamers Ranking");
+		vCol.add("Score");
 
 		for (int i = 0; i < gamers.size(); i++) {
 			Vector<Object> row = new Vector<Object>();
 			row.add(gamers.get(i));
 			row.add(scores.get(i));
+			information.add(row);
 		}
 
-		model = new DefaultTableModel(information, vCol);
-		gameResultTable.setModel(model);
+		gameResultTable.setModel(new MyDefaultTableModel(information, vCol));
 		cardLayout.show(frame.getContentPane(), "name_1037193997593739");
 	}
 
