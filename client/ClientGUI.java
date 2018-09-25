@@ -526,6 +526,9 @@ public class ClientGUI implements ActionListener {
 						gameTable.setValueAt(grid[i][j], i, j);
 						myModel.setCellEditable(i, j, false);
 					}
+					else {
+						myModel.setCellEditable(i, j, true);
+					}
 				}
 			}
 		} catch (Exception e) {
