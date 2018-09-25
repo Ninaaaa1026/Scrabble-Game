@@ -116,6 +116,7 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 		} else {
 			System.out.println("you can create room");
 			this.creator = userName;
+			gamers.add(userName);
 			roomState = true;
 			// Call back to all clients
 			for (ClientInterface e : players) {
@@ -153,6 +154,7 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 	//clients choose if he/she agrees to play a game
 		public void respondToInvitation(boolean agree, String userName)throws RemoteException{
 			if (agree) {
+				gamers.add(userName);
 				for (ClientInterface e : players){
 					ClientInterface player = e;
 					try{
@@ -246,9 +248,12 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 	public void nextTurn(char character, int rowIndex, int colIndex, String userName)throws RemoteException{
 		table[rowIndex][colIndex]= character;
 		int current = gamers.indexOf(userName);
+		System.out.println(userName);
+		System.out.println("current is "+current);
 		if (current == gamers.size()-1) {
 			current = -1;
 		}
+		System.out.println("current is "+current);
 		nextPlayer = gamers.get(current+1);
 		
 		for (ClientInterface e : players){
