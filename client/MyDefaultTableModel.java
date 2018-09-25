@@ -25,7 +25,7 @@ public class MyDefaultTableModel extends DefaultTableModel {
         this.editable_cells = new boolean[rows.size()][cols.size()];
         for(int i=0;i<rows.size();i++)
         	for(int j=0;j<cols.size();j++) {
-        		setCellEditable(i,j,true);
+        		setCellEditable(i,j,false);
         	}
     }
 
