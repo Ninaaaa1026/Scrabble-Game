@@ -41,7 +41,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	private char[][] grid = new char[20][20];
 	private String IPAddress;
 	private int portNumber;
-
+	public static GameLogin window;
 	String userName;
 	public static ScrabbleClient player; //= new ScrabbleClient();
 	public static ServerInterface remoteServer;
@@ -59,7 +59,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 			public void run() {
 				try {
 					
-					GameLogin window = new GameLogin(player.gui);
+					window = new GameLogin(player.gui);
 					window.getFrame().setVisible(true);
 					try {
 						//Connect to the rmiregistry that is running on localhost

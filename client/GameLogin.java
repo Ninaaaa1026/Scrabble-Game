@@ -61,6 +61,7 @@ public class GameLogin {
 										window.showLobby();
 									}
 									window.getFrame().setVisible(true);
+									ScrabbleClient.window.getFrame().setVisible(false);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
