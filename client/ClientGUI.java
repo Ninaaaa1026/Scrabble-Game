@@ -517,8 +517,8 @@ public class ClientGUI implements ActionListener {
 	public void freshTable() {
 		try {
 			char[][] grid = ScrabbleClient.player.getGrid();
-			for (int i = 0; i < gameTable.getHeight(); i++) {
-				for (int j = 0; j < gameTable.getWidth(); j++) {
+			for (int i = 0; i < grid.length; i++) {
+				for (int j = 0; j < grid[0].length; j++) {
 					if (grid[i][j] != ' ') {
 						gameTable.setValueAt(grid[i][j], i, j);
 						myModel.setCellEditable(i, j, false);
