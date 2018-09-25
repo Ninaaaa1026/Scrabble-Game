@@ -469,22 +469,13 @@ public class ClientGUI implements ActionListener {
 				invite.add(row);
 			}else {
 				invite.add(row);
-			visiting.add(row);
+				visiting.add(row);
 			}
 		}
 
-		if (ScrabbleClient.player.getRoomState()
-				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
-<<<<<<< HEAD
-			playerTable.getColumn("Invite Player").setCellRenderer(renderer);
-			playerTable.setModel(new DefaultTableModel(visiting, vCol));
-=======
-			playerTable.setModel(new DefaultTableModel(invite, vCol));
->>>>>>> 0dab5e10ca20958305a115c8ef0315e5b6ca82d6
-		} else {
-			playerTable.setModel(new DefaultTableModel(invite, vCol));
-			visitingTable.setModel(new DefaultTableModel(invite, vCol));
-		}
+		playerTable.getColumn("Invite Player").setCellRenderer(renderer);
+		playerTable.setModel(new DefaultTableModel(invite, vCol));
+		visitingTable.setModel(new DefaultTableModel(visiting, vCol));
 	}
 
 	public void freshGamerList() {
