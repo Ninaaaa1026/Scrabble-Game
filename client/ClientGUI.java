@@ -68,6 +68,7 @@ public class ClientGUI implements ActionListener {
 	int rowIndex = 0;
 	int colIndex = 0;
 	boolean tableChanged = false;
+	boolean newTable = true;
 	private JTable gamerListTable;
 	private JTable invitedTable;
 	private JTable playerTable;
@@ -86,19 +87,12 @@ public class ClientGUI implements ActionListener {
 		initialize();
 	}
 
-	/*
-	 * public static void main(String[] args) { EventQueue.invokeLater(new
-	 * Runnable() { public void run() { try { ClientGUI window = new ClientGUI();
-	 * window.getFrame().setVisible(true);
-	 * 
-	 * } catch (Exception e) { e.printStackTrace(); } } }); }
-	 */
-
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setResizable(false);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -106,13 +100,12 @@ public class ClientGUI implements ActionListener {
 					ScrabbleClient.remoteServer.notify(ScrabbleClient.player);
 					System.exit(0);
 				} catch (RemoteException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
 			}
 		});
-		frame.setBounds(100, 100, 583, 593);
+		frame.setBounds(100, 100, 571, 581);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		cardLayout = new CardLayout(0, 0);
 		frame.getContentPane().setLayout(cardLayout);
@@ -265,26 +258,11 @@ public class ClientGUI implements ActionListener {
 
 		gameTable.getModel().addTableModelListener(new TableModelListener() {
 			public void tableChanged(TableModelEvent e) {
-				if (!tableChanged) {
-					rowIndex = e.getFirstRow();
-					colIndex = e.getColumn();
-					inputString = gameTable.getValueAt(rowIndex, colIndex).toString();
-					if (!Pattern.matches("\\s+", inputString) && !inputString.equals("")) {
-						tableChanged = true;
-						character = inputString.toCharArray()[0];
-						btnLayout.show(btnPanel, "name_957948997083501");
-					} else {
-						JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
-						btnLayout.show(btnPanel, "name_958014637000495");
-					}
-				} else {
-					if (gameTable.getValueAt(rowIndex, colIndex).equals(inputString)) {
-						gameTable.setValueAt("", rowIndex, colIndex);
-						if (gameTable.getValueAt(rowIndex, colIndex).equals("")) {
-							rowIndex = e.getFirstRow();
-							colIndex = e.getColumn();
-							inputString = gameTable.getValueAt(rowIndex, colIndex).toString();
-						}
+				if (!newTable) {
+					if (!tableChanged) {
+						rowIndex = e.getFirstRow();
+						colIndex = e.getColumn();
+						inputString = gameTable.getValueAt(rowIndex, colIndex).toString();
 						if (!Pattern.matches("\\s+", inputString) && !inputString.equals("")) {
 							tableChanged = true;
 							character = inputString.toCharArray()[0];
@@ -293,8 +271,26 @@ public class ClientGUI implements ActionListener {
 							JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
 							btnLayout.show(btnPanel, "name_958014637000495");
 						}
-					}
+					} else {
+						if (gameTable.getValueAt(rowIndex, colIndex).equals(inputString)) {
+							gameTable.setValueAt("", rowIndex, colIndex);
+							if (gameTable.getValueAt(rowIndex, colIndex).equals("")) {
+								rowIndex = e.getFirstRow();
+								colIndex = e.getColumn();
+								inputString = gameTable.getValueAt(rowIndex, colIndex).toString();
+							}
+							if (!Pattern.matches("\\s+", inputString) && !inputString.equals("")) {
+								tableChanged = true;
+								character = inputString.toCharArray()[0];
+								btnLayout.show(btnPanel, "name_957948997083501");
+							} else {
+								JOptionPane.showMessageDialog(null,
+										"You can only type one character without whitespace.");
+								btnLayout.show(btnPanel, "name_958014637000495");
+							}
+						}
 
+					}
 				}
 			}
 		});
@@ -457,7 +453,7 @@ public class ClientGUI implements ActionListener {
 		}
 		return true;
 	}
-	
+
 	public void freshPlayerList() {
 		ArrayList<String> players = ScrabbleClient.player.getPlayers();
 		ArrayList<String> gamers = ScrabbleClient.player.getGamers();
@@ -480,7 +476,8 @@ public class ClientGUI implements ActionListener {
 				noGamers.add(players.get(j));
 
 		ButtonRenderer renderer = new ButtonRenderer();
-		//renderer.getTableCellRendererComponent(gameTable, value, isSelected, hasFocus, i, 1);
+		// renderer.getTableCellRendererComponent(gameTable, value, isSelected,
+		// hasFocus, i, 1);
 		for (int i = 0; i < noGamers.size(); i++) {
 			Vector<Object> inviteRow = new Vector<Object>();
 			String noGamerName = noGamers.get(i);
@@ -488,8 +485,7 @@ public class ClientGUI implements ActionListener {
 			JButton addButton = new JButton(noGamerName);
 			addButton.setText("+");
 			addButton.setBounds(118, 10, 39, 23);
-			
-			
+
 			addButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
@@ -499,7 +495,7 @@ public class ClientGUI implements ActionListener {
 					}
 				}
 			});
-			
+
 			inviteRow.add(addButton);
 			invite.add(inviteRow);
 		}
@@ -507,10 +503,10 @@ public class ClientGUI implements ActionListener {
 		if (ScrabbleClient.player.getRoomState()
 				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
 			vCol.add("Invite");
-			
-			//MyButtonEditor editor = new MyButtonEditor(e);			
-			//gameTable.getColumnModel().getColumn(1).setCellEditor(editor);
-			
+
+			// MyButtonEditor editor = new MyButtonEditor(e);
+			// gameTable.getColumnModel().getColumn(1).setCellEditor(editor);
+
 			playerTable.setModel(new MyDefaultTableModel(invite, vCol));
 		} else {
 			playerTable.setModel(new MyDefaultTableModel(visiting, vCol));
@@ -521,14 +517,13 @@ public class ClientGUI implements ActionListener {
 			playerTable.addMouseListener(new ButtonMouseListener(playerTable));
 		}
 	}
-	
-	/*MyEvent e = new MyEvent() {
-		@Override
-		public void invoke(ActionEvent e) {
-			MyButton button = (MyButton) e.getSource();
-			button.getRow();
-		}
-	};*/
+
+	/*
+	 * MyEvent e = new MyEvent() {
+	 * 
+	 * @Override public void invoke(ActionEvent e) { MyButton button = (MyButton)
+	 * e.getSource(); button.getRow(); } };
+	 */
 
 	public void freshGamerList() {
 		ArrayList<String> gamers = ScrabbleClient.player.getGamers();
@@ -565,18 +560,28 @@ public class ClientGUI implements ActionListener {
 
 	public void freshTable() {
 		try {
+			newTable = true;
 			char[][] grid = ScrabbleClient.player.getGrid();
+			for (int i = 0; i < grid.length; i++)
+				for (int j = 0; j < grid.length; j++)
+					if (grid[i][j] != ' ')
+						newTable = false;
+
 			for (int i = 0; i < grid.length; i++) {
 				for (int j = 0; j < grid[0].length; j++) {
 					if (grid[i][j] != ' ') {
 						gameTable.setValueAt(grid[i][j], i, j);
 						myModel.setCellEditable(i, j, false);
 					} else {
+						if (newTable) {
+							gameTable.setValueAt("", i, j);
+						}
 						myModel.setCellEditable(i, j, true);
 					}
 				}
 			}
-			tableChanged=false;
+			tableChanged = false;
+			newTable = false;
 		} catch (Exception e) {
 			System.out.println("Error: ClientGUI -> freshTable");
 		}

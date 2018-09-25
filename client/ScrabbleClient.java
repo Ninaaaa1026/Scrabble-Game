@@ -254,6 +254,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		this.playerUserName.addAll(players);
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.addAll(scores);
+		//gui.newTable();
 		gui.showGameResult();
 	}
 
@@ -295,7 +296,12 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		this.gamerUserName.addAll(gamerUserName);
 		this.gamerScores.addAll(scores);
 		this.currentPlayer = currentPlayer;
-		Arrays.fill(this.grid, table);
+		for (int i = 0; i < 20; i++) {
+			for (int j = 0; j < 20; j++) {
+				grid[i][j] = table[i][j];
+			}
+		}
+		//Arrays.fill(this.grid, table);
 		gui.showGame();
 	}
 
@@ -307,8 +313,11 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		this.playerUserName.addAll(players);
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.ensureCapacity(gamers.size());
-		// this.gamerScores.clear();
-		// Collections.fill(this.gamerScores, 0);
+		for (int i = 0; i < 20; i++) {
+			for (int j = 0; j < 20; j++) {
+				grid[i][j] = ' ';
+			}
+		}
 		initiateScores(gamers.size());
 		this.currentPlayer = currentPlayer;
 		gui.showGame();
