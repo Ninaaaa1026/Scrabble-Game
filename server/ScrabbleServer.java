@@ -154,7 +154,9 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 	//clients choose if he/she agrees to play a game
 		public void respondToInvitation(boolean agree, String userName)throws RemoteException{
 			if (agree) {
-				gamers.add(userName);
+				if (!gamers.contains(userName)) {
+					gamers.add(userName);
+				}
 				for (ClientInterface e : players){
 					ClientInterface player = e;
 					try{
