@@ -60,7 +60,8 @@ public class ClientGUI implements ActionListener {
 	protected CardLayout btnLayout;
 	protected JButton btnReturnToGame;
 	protected JScrollPane scrollPane_2;
-	protected JPanel panel;
+	JScrollPane scrollPane_4;
+
 	char character;
 	int rowIndex = 0;
 	int colIndex = 0;
@@ -105,6 +106,17 @@ public class ClientGUI implements ActionListener {
 		frame.getContentPane().add(gameLobbyPanel, "name_891358432709494");
 		gameLobbyPanel.setLayout(null);
 
+		scrollPane_4 = new JScrollPane();
+		scrollPane_4.setBounds(0, 354, 384, 200);
+		gameLobbyPanel.add(scrollPane_4);
+
+		invitedTable = new JTable();
+		scrollPane_4.setViewportView(invitedTable);
+		invitedTable.setShowGrid(false);
+		invitedTable.setBackground(SystemColor.control);
+		invitedTable.setRowSelectionAllowed(false);
+		invitedTable.setEnabled(false);
+
 		lblCurrentGameState = new JLabel("Welcome to Scrabble Game!");
 		lblCurrentGameState.setFont(new Font("Century", Font.PLAIN, 15));
 		lblCurrentGameState.setBounds(105, 156, 198, 33);
@@ -116,21 +128,6 @@ public class ClientGUI implements ActionListener {
 		btnCreateRoom.setBackground(UIManager.getColor("Button.light"));
 		btnCreateRoom.setBounds(143, 247, 110, 23);
 		gameLobbyPanel.add(btnCreateRoom);
-
-		panel = new JPanel();
-		panel.setBorder(UIManager.getBorder("ProgressBar.border"));
-		panel.setVisible(false);
-		panel.setBounds(0, 347, 383, 207);
-		gameLobbyPanel.add(panel);
-		panel.setLayout(null);
-
-		invitedTable = new JTable();
-		invitedTable.setShowGrid(false);
-		invitedTable.setBackground(SystemColor.control);
-		invitedTable.setRowSelectionAllowed(false);
-		invitedTable.setEnabled(false);
-		invitedTable.setBounds(10, 10, 361, 187);
-		panel.add(invitedTable);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(382, 0, 185, 554);
@@ -441,43 +438,57 @@ public class ClientGUI implements ActionListener {
 
 	public void freshPlayerList() {
 		ArrayList<String> players = ScrabbleClient.player.getPlayers();
+		ArrayList<String> gamers = ScrabbleClient.player.getGamers();
+
 		Vector<Object> visiting = new Vector<Object>();
 		Vector<Object> invite = new Vector<Object>();
 		Vector<String> vCol = new Vector<String>();
 		vCol.add("Players");
-		if (ScrabbleClient.player.getRoomState()
-				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
-			vCol.add("Invite");
-		}
-
-		ButtonRenderer renderer = new ButtonRenderer();
 		for (int i = 0; i < players.size(); i++) {
-			Vector<Object> row = new Vector<Object>();
 			String playersName = players.get(i);
-			JButton addButton = new JButton("+");
+			Vector<Object> visitRow = new Vector<Object>();
+			visitRow.add(playersName);
+			visiting.add(visitRow);
+		}
+		visitingTable.setModel(new MyDefaultTableModel(visiting, vCol));
+		
+		ArrayList<String> noGamers = new ArrayList<String>();
+		for (int j = 0; j < players.size(); j++)
+			if (!gamers.contains(players.get(j)))
+				noGamers.add(players.get(j));
+		ButtonRenderer renderer = new ButtonRenderer();
+		for (int i = 0; i < noGamers.size(); i++) {	
+			Vector<Object> inviteRow = new Vector<Object>();
+			String noGamerName = noGamers.get(i);
+			inviteRow.add(noGamerName);
+			JButton addButton = new JButton(noGamerName);
+			addButton.setText("+");
 			addButton.setBounds(118, 10, 39, 23);
 			addButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-						ScrabbleClient.remoteServer.invitePlayer(playersName);
+						ScrabbleClient.remoteServer.invitePlayer(noGamerName);
 					} catch (RemoteException e) {
 						e.printStackTrace();
 					}
 				}
 			});
-			row.add(playersName);
+			inviteRow.add(addButton);
+			
 			if (ScrabbleClient.player.getRoomState()
 					&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
-				row.add(addButton);
-				invite.add(row);
-			} else {
-				invite.add(row);
-				visiting.add(row);
+				vCol.add("Invite");
+				invite.add(inviteRow);
 			}
 		}
-
-		playerTable.setModel(new MyDefaultTableModel(invite, vCol));
-		visitingTable.setModel(new MyDefaultTableModel(visiting, vCol));
+		
+		if (ScrabbleClient.player.getRoomState()
+				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
+			playerTable.setModel(new MyDefaultTableModel(invite, vCol));
+		}else {
+			playerTable.setModel(new MyDefaultTableModel(visiting, vCol));
+		}
+		
 		if (vCol.contains("Invite")) {
 			playerTable.getColumn("Invite").setCellRenderer(renderer);
 			playerTable.addMouseListener(new ButtonMouseListener(playerTable));
@@ -489,10 +500,10 @@ public class ClientGUI implements ActionListener {
 		ArrayList<Integer> scores = ScrabbleClient.player.getGamerScores();
 		if (gamers.size() == 0) {
 			scrollPane_2.setVisible(false);
-			panel.setVisible(false);
+			scrollPane_4.setVisible(false);
 		} else {
 			scrollPane_2.setVisible(true);
-			panel.setVisible(true);
+			scrollPane_4.setVisible(true);
 			Vector<Object> game = new Vector<Object>();
 			Vector<Object> invite = new Vector<Object>();
 			Vector<String> vCol = new Vector<String>();
@@ -525,8 +536,7 @@ public class ClientGUI implements ActionListener {
 					if (grid[i][j] != ' ') {
 						gameTable.setValueAt(grid[i][j], i, j);
 						myModel.setCellEditable(i, j, false);
-					}
-					else {
+					} else {
 						myModel.setCellEditable(i, j, true);
 					}
 				}
