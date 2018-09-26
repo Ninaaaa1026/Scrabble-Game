@@ -425,30 +425,29 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 					roomState = false;
 					gamers.clear();
 					gamerScores.clear();
+					for (ClientInterface e : players) {
+						ClientInterface player = e;
+						try {
+							player.initiateGame(gameState, roomState, playerNames, gamers);
+						} catch (RemoteException re) {
+							System.out.println("removing player -");
+							// Remove the listener
+							notify(player);
+						}
+					}
 				} else {
 					int currentGamer = gamers.indexOf(deleteName);
 					gamers.remove(currentGamer);
 					gamerScores.remove(currentGamer);
 				}
-			} else {
-				for (ClientInterface e : players) {
-					ClientInterface player = e;
-					try {
-						player.initiateGame(gameState, roomState, playerNames, gamers);
-					} catch (RemoteException re) {
-						System.out.println("removing player -");
-						// Remove the listener
-						notify(player);
-					}
-				}
 			}
 		}
-		
+
 		for (ClientInterface e : players) {
 			ClientInterface player = e;
 			try {
 				player.clientExited(deleteName);
-				player.freshGamer(gamers, playerNames, gamerScores,gameState,roomState);
+				player.freshGamer(gamers, playerNames, gamerScores, gameState, roomState);
 			} catch (RemoteException re) {
 				System.out.println("removing player -");
 				// Remove the listener
