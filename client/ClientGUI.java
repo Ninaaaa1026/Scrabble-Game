@@ -82,6 +82,7 @@ public class ClientGUI implements ActionListener {
 	private JButton btnStartGame;
 	String inputString = "";
 	boolean beginSetVoid = false;
+	protected JPanel GameTablePanel;
 
 	/**
 	 * Create the application.
@@ -188,8 +189,8 @@ public class ClientGUI implements ActionListener {
 		gamerListTable.setRowSelectionAllowed(false);
 		gamerListTable.setEnabled(false);
 
-		JPanel GameTablePanel = new JPanel();
-		GameTablePanel.setBorder(new LineBorder(new Color(130, 135, 144), 2));
+		GameTablePanel = new JPanel();
+		GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2));
 		GameTablePanel.setBounds(10, 128, 363, 337);
 		gameRoomPanel.add(GameTablePanel);
 		GameTablePanel.setLayout(null);
@@ -198,7 +199,7 @@ public class ClientGUI implements ActionListener {
 		gameTable.setRowSelectionAllowed(false);
 		gameTable.setCellSelectionEnabled(true);
 		gameTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		gameTable.setBorder(new LineBorder(new Color(171, 173, 179)));
+		gameTable.setBorder(new LineBorder(Color.LIGHT_GRAY));
 
 		gameTable.setBounds(10, 10, 345, 319);
 		GameTablePanel.add(gameTable);

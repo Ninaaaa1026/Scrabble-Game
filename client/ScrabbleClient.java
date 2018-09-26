@@ -1,5 +1,6 @@
 package client;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -8,6 +9,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
+import javax.swing.border.LineBorder;
 
 import remote.ClientInterface;
 import remote.ServerInterface;
@@ -238,8 +240,11 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 			updateMark(beginVoteUserName, totalMark);
 		}
 		this.currentPlayer = nextUserName;
-		gui.showGame(this.currentPlayer);
+		if(userName.equals(nextUserName))
+			gui.GameTablePanel.setBorder(new LineBorder(Color.RED, 2, true));
+		else gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
 		gui.voteResult(beginVoteUserName, accepted, totalMark, nextUserName);
+		gui.showGame(this.currentPlayer);
 	}
 
 	@Override
