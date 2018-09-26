@@ -411,8 +411,8 @@ public class ClientGUI implements ActionListener {
 							endRowIndex = startRowIndex;
 						}
 						if (!checkString(startRowIndex, startColIndex, endRowIndex, endColIndex)) {
-							JOptionPane.showMessageDialog(null,
-									" You have to select a complete string without empty cells.Please select again.");
+							//JOptionPane.showMessageDialog(null,
+							//		" You have to select a complete string without empty cells.Please select again.");
 							myModel.setCellEditable(rowIndex, colIndex, true);
 						} else {
 							myModel.setCellEditable(rowIndex, colIndex, false);
@@ -459,28 +459,40 @@ public class ClientGUI implements ActionListener {
 
 	public boolean checkString(int startRowIndex, int startColIndex, int endRowIndex, int endColIndex) {
 		if (rowIndex < startRowIndex || rowIndex > endRowIndex || colIndex < startColIndex || colIndex > endColIndex) {
+			JOptionPane.showMessageDialog(null,
+					"You have to select a word including the character you put. Please select again.");
 			return false;
 		}
 		if (startRowIndex == endRowIndex) {
 			if ((startColIndex > 0 && gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
-					&& gameTable.getValueAt(startRowIndex, startColIndex - 1) != "")
+					&& !gameTable.getValueAt(startRowIndex, startColIndex - 1).equals(""))
 					|| (endColIndex > 19 && gameTable.getValueAt(startRowIndex, endColIndex + 1) != null
-							&& gameTable.getValueAt(startRowIndex, endColIndex + 1) != "")) {
+							&& !gameTable.getValueAt(startRowIndex, endColIndex + 1).equals(""))) {
+				JOptionPane.showMessageDialog(null,
+						"You have to select a whole word . Please select again."
+								+ gameTable.getValueAt(startRowIndex, startColIndex - 1) + ".");
 				return false;
 			}
 		} else if (startColIndex == endColIndex) {
 			if ((startRowIndex > 0 && gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
-					&& gameTable.getValueAt(startRowIndex - 1, startColIndex) != "")
+					&& !gameTable.getValueAt(startRowIndex - 1, startColIndex).equals(""))
 					|| (endRowIndex < 19 && gameTable.getValueAt(endRowIndex + 1, startColIndex) != null
-							&& gameTable.getValueAt(endRowIndex + 1, startColIndex) != "")) {
+							&& !gameTable.getValueAt(endRowIndex + 1, startColIndex).equals(""))) {
+				JOptionPane.showMessageDialog(null,
+						"You have to select a whole word. Please select again."
+								+ gameTable.getValueAt(startRowIndex - 1, startColIndex) + ".");
 				return false;
 			}
 		} else {
+			JOptionPane.showMessageDialog(null,
+					" You have to select a word in a vertical or horizontal line. Please select again.");
 			return false;
 		}
 		for (int i = startRowIndex; i <= endRowIndex; i++) {
 			for (int j = startColIndex; j <= endColIndex; j++) {
-				if (null == gameTable.getValueAt(i, j)) {
+				if (null == gameTable.getValueAt(i, j) || gameTable.getValueAt(i, j).equals("")) {
+					JOptionPane.showMessageDialog(null,
+							" You have to select a whole word without empty cells. Please select again.");
 					return false;
 				}
 			}
