@@ -6,7 +6,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Arrays;
+
+import javax.swing.JOptionPane;
 
 import remote.ClientInterface;
 import remote.ServerInterface;
@@ -20,7 +21,6 @@ import remote.ServerInterface;
 public class ScrabbleClient extends UnicastRemoteObject implements ClientInterface {
 	protected ScrabbleClient() throws RemoteException {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -52,7 +52,6 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		try {
 			player = new ScrabbleClient();
 		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		EventQueue.invokeLater(new Runnable() {
@@ -68,8 +67,10 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 						// Retrieve the stub/proxy for the remote math object from the registry
 						remoteServer = (ServerInterface) registry.lookup("Scrabble");
 					} catch (Exception e) {
-						System.out.print(e.getMessage());
-						e.printStackTrace();
+						if (e.getMessage().contains("java.net.ConnectException: Connection refused: connect")) {
+							JOptionPane.showMessageDialog(null, "Server is closed. Please try later.");
+							System.exit(0);
+						}
 					}
 
 				} catch (Exception e) {
@@ -126,15 +127,15 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	public int getPortNumber() {
 		return this.portNumber;
 	}
-	
+
 	public void setRoomState(boolean roomState) {
 		this.roomState = roomState;
 	}
-	
+
 	public void setGameState(boolean gameState) {
 		this.gameState = gameState;
 	}
-	
+
 	public void setCurrentPlayer(String currentPlayer) {
 		this.currentPlayer = currentPlayer;
 	}
@@ -146,18 +147,18 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	public void setPortNumber(int port) {
 		this.portNumber = port;
 	}
-	
+
 	public void ClearGamerUserName() {
 		this.gamerUserName.clear();
 	}
-	
+
 	public void ClearGamerScores() {
 		this.gamerScores.clear();
 	}
-	
+
 	private void updateMark(String gamer, Integer score) {
 		for (int i = 0; i < this.gamerUserName.size(); i++) {
-			if (this.gamerUserName.get(i).equals( gamer)) {
+			if (this.gamerUserName.get(i).equals(gamer)) {
 				this.gamerScores.set(i, score);
 				return;
 			}
@@ -185,7 +186,8 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		this.gamerUserName.add(createplayerusername);
 		this.gamerScores.add(0);
 		System.out.println("roomCreatorName:" + this.roomCreatorName);
-		gui.showLobby();
+		if (gui.returnLobby)
+			gui.showLobby();
 	}
 
 	@Override
@@ -201,9 +203,9 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 			if (!this.gamerUserName.contains(invitedplayer)) {
 				this.gamerUserName.add(invitedplayer);
 				this.gamerScores.add(0);
-				gui.showLobby();
 			}
 		}
+		gui.showLobby();
 	}
 
 	@Override
@@ -211,19 +213,19 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		// next turn
 		grid[rowIndex][colIndex] = character;
 		this.currentPlayer = currentPlayer;
-		gui.showGame();
+		gui.showGame(this.currentPlayer);
 	}
 
 	@Override
 	public void pass(String nextUserName) throws RemoteException {
 		// current player pass
 		this.currentPlayer = nextUserName;
-		gui.showGame();
+		gui.showGame(this.currentPlayer);
 	}
 
 	@Override
 	public void beginVote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
-			String userName,int rowIndex,int colIndex) throws RemoteException {
+			String userName, int rowIndex, int colIndex) throws RemoteException {
 		grid[rowIndex][colIndex] = character;
 		gui.beginVote(character, startRowIndex, startColIndex, endRowIndex, endColIndex, userName);
 	}
@@ -234,10 +236,9 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		if (accepted) {
 			updateMark(beginVoteUserName, totalMark);
 		}
-		// TODO GUI displays message
-		gui.voteResult(beginVoteUserName, accepted, totalMark, nextUserName);
 		this.currentPlayer = nextUserName;
-		gui.showGame();
+		gui.showGame(this.currentPlayer);
+		gui.voteResult(beginVoteUserName, accepted, totalMark, nextUserName);
 	}
 
 	@Override
@@ -254,7 +255,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		this.playerUserName.addAll(players);
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.addAll(scores);
-		//gui.newTable();
+		// gui.newTable();
 		gui.showGameResult();
 	}
 
@@ -301,8 +302,8 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 				grid[i][j] = table[i][j];
 			}
 		}
-		//Arrays.fill(this.grid, table);
-		gui.showGame();
+		// Arrays.fill(this.grid, table);
+		gui.showGame(this.currentPlayer);
 	}
 
 	@Override
@@ -320,7 +321,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		}
 		initiateScores(gamers.size());
 		this.currentPlayer = currentPlayer;
-		gui.showGame();
+		gui.showGame(this.currentPlayer);
 	}
 
 	private void initiateScores(int size) {
@@ -328,5 +329,15 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		for (int i = 0; i < size; i++) {
 			this.gamerScores.add(0);
 		}
+	}
+	
+	public void freshGamer(ArrayList<String> gamers, ArrayList<String> players,ArrayList<Integer> scores ) {
+		this.playerUserName.clear();
+		this.gamerUserName.clear();
+		this.gamerScores.clear();
+		this.playerUserName.addAll(players);
+		this.gamerUserName.addAll(gamers);
+		this.gamerScores.addAll(scores);
+		gui.freshGamerList();
 	}
 }

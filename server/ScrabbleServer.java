@@ -116,6 +116,7 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 			System.out.println("you can create room");
 			this.creator = userName;
 			gamers.add(userName);
+			gamerScores.add(0);
 			roomState = true;
 			// Call back to all clients
 			for (ClientInterface e : players) {
@@ -155,16 +156,17 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 			if (agree) {
 				if (!gamers.contains(userName)) {
 					gamers.add(userName);
+					gamerScores.add(0);
 				}
-				for (ClientInterface e : players){
-					ClientInterface player = e;
-					try{
-						player.invitationResponse(userName,agree);
-					}catch (RemoteException re){
-						notify(player);
-					}
-				} 
 			}
+			for (ClientInterface e : players){
+				ClientInterface player = e;
+				try{
+					player.invitationResponse(userName,agree);
+				}catch (RemoteException re){
+					notify(player);
+				}
+			} 
 		}
 
 	@Override
@@ -177,9 +179,10 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 		}
 		//Arrays.fill(this.table, ' ');
 		String currentPlayer = gamers.get(0);
-		for(int i = 0; i < gamers.size(); i++) {
+		/*for(int i = 0; i < gamers.size(); i++) {
 			gamerScores.add(0);
 		}
+		*/
 		// TODO Auto-generated method stub
 		for (ClientInterface e : players) {
 			ClientInterface player = e;
@@ -368,11 +371,18 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 
 	@Override
 	public void notify(ClientInterface delete) {
-		int current = players.indexOf(delete);
-		String deleteName = playerNames.get(current);
+		int currentPlayer = players.indexOf(delete);
+		String deleteName = playerNames.get(currentPlayer);
 		players.remove(delete);
 		playerNames.remove(deleteName);
-		if (gamers.contains(deleteName)) {
+		
+		if(deleteName.equals(creator)) {
+			roomState=false;	
+			gamers.clear();
+			gamerScores.clear();
+		}
+		
+		if (gamers.contains(deleteName)&&gameState) {
 			for (int i = 0; i < gamers.size(); i++){
 		        for(int j = i; j > 0; j--){
 		          // Switch 2 continous players
@@ -406,18 +416,29 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 					table[i][j]=' ';
 				}
 			}
-		} else {
-
+		} else {			
 			for (ClientInterface e : players) {
 				ClientInterface player = e;
 				try {
 					player.clientExited(deleteName);
+					player.freshGamer(gamers, playerNames, gamerScores);
 				} catch (RemoteException re) {
 					System.out.println("removing player -");
 					// Remove the listener
 					notify(player);
 				}
 			}
+			if(!roomState)
+				for (ClientInterface e : players) {
+					ClientInterface player = e;
+					try {
+						player.initiateGame(gameState, roomState, playerNames, gamers);
+					} catch (RemoteException re) {
+						System.out.println("removing player -");
+						// Remove the listener
+						notify(player);
+					}
+				}
 		}
 	}
 

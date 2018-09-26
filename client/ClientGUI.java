@@ -51,7 +51,7 @@ public class ClientGUI implements ActionListener {
 	protected JPanel selectPenel;
 	protected JPanel passPanel;
 	protected MyDefaultTableModel myModel = new MyDefaultTableModel(20, 20);
-	protected JTable gameTable = new JTable(myModel);
+	protected JTable gameTable = new JTable();
 	protected JPanel voidPanel;
 	protected JPanel listPanel;
 	protected JScrollPane scrollPane_1;
@@ -62,8 +62,10 @@ public class ClientGUI implements ActionListener {
 	protected CardLayout btnLayout;
 	protected JButton btnReturnToGame;
 	protected JScrollPane scrollPane_2;
+	protected JLabel lblMessage;
 	JScrollPane scrollPane_4;
-
+	
+	protected boolean returnLobby=true;
 	char character;
 	int rowIndex = 0;
 	int colIndex = 0;
@@ -79,6 +81,7 @@ public class ClientGUI implements ActionListener {
 	private JLabel lblCreatRoom;
 	private JButton btnStartGame;
 	String inputString = "";
+	boolean beginSetVoid=false;
 
 	/**
 	 * Create the application.
@@ -142,6 +145,7 @@ public class ClientGUI implements ActionListener {
 		gameLobbyPanel.add(scrollPane);
 
 		playerTable = new JTable();
+		playerTable.setBackground(SystemColor.control);
 		playerTable.setEnabled(false);
 		playerTable.setRowSelectionAllowed(false);
 		scrollPane.setViewportView(playerTable);
@@ -177,32 +181,33 @@ public class ClientGUI implements ActionListener {
 		gamersPanel.add(scrollPane_2);
 
 		gamerListTable = new JTable();
+		gamerListTable.setBorder(new LineBorder(SystemColor.controlHighlight));
 		scrollPane_2.setViewportView(gamerListTable);
-		gamerListTable.setBackground(SystemColor.control);
+		gamerListTable.setBackground(SystemColor.window);
 		gamerListTable.setRowSelectionAllowed(false);
 		gamerListTable.setEnabled(false);
 
 		JPanel GameTablePanel = new JPanel();
-		GameTablePanel.setBorder(UIManager.getBorder("FileChooser.listViewBorder"));
+		GameTablePanel.setBorder(new LineBorder(new Color(130, 135, 144), 2));
 		GameTablePanel.setBounds(10, 128, 363, 337);
 		gameRoomPanel.add(GameTablePanel);
 		GameTablePanel.setLayout(null);
+		gameTable.setEnabled(false);
 
 		gameTable.setRowSelectionAllowed(false);
 		gameTable.setCellSelectionEnabled(true);
 		gameTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		gameTable.setBorder(UIManager.getBorder("ComboBox.border"));
+		gameTable.setBorder(new LineBorder(new Color(171, 173, 179)));
 
 		gameTable.setBounds(10, 10, 345, 319);
 		GameTablePanel.add(gameTable);
-		gameTable.setModel(myModel);
 
 		lblPlayersTurn = new JLabel();
 		lblPlayersTurn.setBounds(10, 103, 254, 15);
 		gameRoomPanel.add(lblPlayersTurn);
 
 		btnPanel = new JPanel();
-		btnPanel.setBounds(0, 469, 381, 85);
+		btnPanel.setBounds(0, 469, 381, 54);
 		gameRoomPanel.add(btnPanel);
 		btnLayout = new CardLayout(0, 0);
 		btnPanel.setLayout(btnLayout);
@@ -215,7 +220,7 @@ public class ClientGUI implements ActionListener {
 		passPanel.setLayout(null);
 
 		btnPass = new JButton("Pass");
-		btnPass.setBounds(140, 31, 104, 23);
+		btnPass.setBounds(140, 21, 104, 23);
 		passPanel.add(btnPass);
 		btnPass.addActionListener(this);
 
@@ -224,12 +229,12 @@ public class ClientGUI implements ActionListener {
 		votePanel.setLayout(null);
 
 		btnAgreeVote = new JButton("Agree");
-		btnAgreeVote.setBounds(71, 30, 92, 23);
+		btnAgreeVote.setBounds(71, 21, 92, 23);
 		votePanel.add(btnAgreeVote);
 
 		btnDisagree = new JButton("Disagree");
 		btnDisagree.addActionListener(this);
-		btnDisagree.setBounds(221, 30, 92, 23);
+		btnDisagree.setBounds(221, 21, 92, 23);
 		votePanel.add(btnDisagree);
 		btnAgreeVote.addActionListener(this);
 
@@ -238,11 +243,11 @@ public class ClientGUI implements ActionListener {
 		selectPenel.setLayout(null);
 
 		btnNext = new JButton("Next");
-		btnNext.setBounds(50, 35, 99, 23);
+		btnNext.setBounds(63, 21, 99, 23);
 		selectPenel.add(btnNext);
 
 		btnVote = new JButton("Vote");
-		btnVote.setBounds(213, 35, 99, 23);
+		btnVote.setBounds(226, 21, 99, 23);
 		selectPenel.add(btnVote);
 		btnVote.addActionListener(this);
 		btnNext.addActionListener(this);
@@ -252,13 +257,20 @@ public class ClientGUI implements ActionListener {
 		gameRoomPanel.add(scrollPane_1);
 
 		visitingTable = new JTable();
+		visitingTable.setBackground(SystemColor.control);
 		visitingTable.setEnabled(false);
 		visitingTable.setRowSelectionAllowed(false);
 		scrollPane_1.setViewportView(visitingTable);
-
-		gameTable.getModel().addTableModelListener(new TableModelListener() {
+		
+		gameTable.setModel(myModel);
+		myModel.addTableModelListener(new TableModelListener() {
 			public void tableChanged(TableModelEvent e) {
 				if (!newTable) {
+					if (tableChanged)
+						if (rowIndex == e.getFirstRow() && colIndex == e.getColumn() && !beginSetVoid)
+							tableChanged = false;
+						else
+							tableChanged = true;
 					if (!tableChanged) {
 						rowIndex = e.getFirstRow();
 						colIndex = e.getColumn();
@@ -267,13 +279,17 @@ public class ClientGUI implements ActionListener {
 							tableChanged = true;
 							character = inputString.toCharArray()[0];
 							btnLayout.show(btnPanel, "name_957948997083501");
+							lblMessage.setText("");
 						} else {
 							JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
+							tableChanged = false;
 							btnLayout.show(btnPanel, "name_958014637000495");
 						}
 					} else {
 						if (gameTable.getValueAt(rowIndex, colIndex).equals(inputString)) {
+							beginSetVoid=true;
 							gameTable.setValueAt("", rowIndex, colIndex);
+							beginSetVoid=false;
 							if (gameTable.getValueAt(rowIndex, colIndex).equals("")) {
 								rowIndex = e.getFirstRow();
 								colIndex = e.getColumn();
@@ -283,13 +299,14 @@ public class ClientGUI implements ActionListener {
 								tableChanged = true;
 								character = inputString.toCharArray()[0];
 								btnLayout.show(btnPanel, "name_957948997083501");
+								lblMessage.setText("");
 							} else {
 								JOptionPane.showMessageDialog(null,
 										"You can only type one character without whitespace.");
+								tableChanged = false;
 								btnLayout.show(btnPanel, "name_958014637000495");
 							}
 						}
-
 					}
 				}
 			}
@@ -327,6 +344,11 @@ public class ClientGUI implements ActionListener {
 			ftf = new JFormattedTextField(format);
 			DefaultCellEditor cellEditor = new DefaultCellEditor(ftf);
 			gameTable.setCellEditor(cellEditor);
+
+			lblMessage = new JLabel("");
+			lblMessage.setFont(new Font("Century", Font.PLAIN, 12));
+			lblMessage.setBounds(1, 525, 382, 23);
+			gameRoomPanel.add(lblMessage);
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
@@ -381,7 +403,7 @@ public class ClientGUI implements ActionListener {
 							myModel.setCellEditable(rowIndex, colIndex, false);
 							ScrabbleClient.remoteServer.vote(character, startRowIndex, startColIndex, endRowIndex,
 									endColIndex, ScrabbleClient.player.getUserName(), rowIndex, colIndex);
-							setTableEditable(false);
+							gameTable.setEnabled(false);
 							btnLayout.show(btnPanel, "name_965239449619613");
 						}
 					}
@@ -405,12 +427,10 @@ public class ClientGUI implements ActionListener {
 					showLobby();
 				}
 			} else if (arg0.getSource().equals(btnReturnToGame)) {
-				ScrabbleClient.player.ClearGamerUserName();
-				ScrabbleClient.player.ClearGamerScores();
-				ScrabbleClient.player.setRoomState(false);
-				ScrabbleClient.player.setGameState(false);
-				ScrabbleClient.player.setCurrentPlayer("");
-				showLobby();
+				returnLobby=true;
+				if(ScrabbleClient.player.getGameState())
+					showGame(ScrabbleClient.player.getCurrentPlayer());
+				else showLobby();
 			} else if (arg0.getSource().equals(btnStartGame)) {
 				ScrabbleClient.remoteServer.startGame();
 			}
@@ -428,7 +448,7 @@ public class ClientGUI implements ActionListener {
 			return false;
 		}
 		if (startRowIndex == endRowIndex) {
-			if ((startColIndex > 0 && gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
+			if ((startColIndex > 0 &&gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
 					&& gameTable.getValueAt(startRowIndex, startColIndex - 1) != "")
 					|| (endColIndex > 19 && gameTable.getValueAt(startRowIndex, endColIndex + 1) != null
 							&& gameTable.getValueAt(startRowIndex, endColIndex + 1) != "")) {
@@ -482,11 +502,10 @@ public class ClientGUI implements ActionListener {
 			Vector<Object> inviteRow = new Vector<Object>();
 			String noGamerName = noGamers.get(i);
 			inviteRow.add(noGamerName);
-			JButton addButton = new JButton(noGamerName);
-			addButton.setText("+");
+			JButton addButton = new JButton("+");
 			addButton.setBounds(118, 10, 39, 23);
 
-			addButton.addActionListener(new ActionListener() {
+			/*addButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
 						ScrabbleClient.remoteServer.invitePlayer(noGamerName);
@@ -495,7 +514,7 @@ public class ClientGUI implements ActionListener {
 					}
 				}
 			});
-
+*/
 			inviteRow.add(addButton);
 			invite.add(inviteRow);
 		}
@@ -609,16 +628,20 @@ public class ClientGUI implements ActionListener {
 		cardLayout.show(frame.getContentPane(), "name_891358432709494");
 	}
 
-	public void showGame() {
+	public void showGame(String currentPlayer) {
 		lblPlayersTurn.setText(ScrabbleClient.player.getCurrentPlayer() + "'s turn.");
 		freshTable();
 		freshPlayerList();
 		freshGamerList();
-		cardLayout.show(frame.getContentPane(), "name_891421322563457");
-		if (ScrabbleClient.player.getCurrentPlayer().equals(ScrabbleClient.player.getUserName()))
+		if (currentPlayer.equals(ScrabbleClient.player.getUserName())) {
 			btnLayout.show(btnPanel, "name_958014637000495");
-		else
+			gameTable.setEnabled(true);
+		} else {
 			btnLayout.show(btnPanel, "name_965239449619613");
+			setTableEditable(false);
+			gameTable.setEnabled(false);
+		}
+		cardLayout.show(frame.getContentPane(), "name_891421322563457");
 	}
 
 	public void showGameResult() {
@@ -636,7 +659,7 @@ public class ClientGUI implements ActionListener {
 			row.add(scores.get(i));
 			information.add(row);
 		}
-
+		lblMessage.setText("");
 		gameResultTable.setModel(new MyDefaultTableModel(information, vCol));
 		cardLayout.show(frame.getContentPane(), "name_1037193997593739");
 	}
@@ -661,19 +684,24 @@ public class ClientGUI implements ActionListener {
 			freshTable();
 			gameTable.setColumnSelectionInterval(startColIndex, endColIndex);
 			gameTable.setRowSelectionInterval(startRowIndex, endRowIndex);
+			lblMessage.setText("");
 			btnLayout.show(btnPanel, "name_957940911752561");
 		}
 	}
 
 	public void voteResult(String beginVoteUserName, boolean accepted, int totalMark, String nextUserName) {
-		TimeDialog d = new TimeDialog();
+		// TimeDialog d = new TimeDialog();
 		if (accepted) {
 			if (ScrabbleClient.player.getUserName().equals(beginVoteUserName))
-				d.showDialog(null, "Vote successfully!You get " + totalMark + "points!", 2);
+				lblMessage.setText("Vote successfully! You get " + totalMark + "point(s)!");
+			// d.showDialog(null, "Vote successfully!You get " + totalMark + "points!", 2);
 			else
-				d.showDialog(null, "Vote successfully!" + beginVoteUserName + " gets " + totalMark + "points!", 2);
+				lblMessage.setText("Vote successfully! " + beginVoteUserName + " gets " + totalMark + "point(s)!");
+			// d.showDialog(null, "Vote successfully!" + beginVoteUserName + " gets " +
+			// totalMark + "points!", 2);
 		} else
-			d.showDialog(null, "Vote Failed! " + nextUserName + "'s turn!", 3);
+			lblMessage.setText("Vote Failed! " + nextUserName + "'s turn!");
+		// d.showDialog(null, "Vote Failed! " + nextUserName + "'s turn!", 2);
 	}
 
 	private void setTableEditable(boolean editable) {

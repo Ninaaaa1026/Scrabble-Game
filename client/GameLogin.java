@@ -55,7 +55,7 @@ public class GameLogin {
 							public void run() {
 								try {
 									if(ScrabbleClient.player.getGameState()) {
-										window.showGame();
+										window.showGame(ScrabbleClient.player.getCurrentPlayer());
 									}
 									else {
 										window.showLobby();
