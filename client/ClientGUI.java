@@ -424,9 +424,9 @@ public class ClientGUI implements ActionListener {
 					}
 				}
 			} else if (arg0.getSource().equals(btnAgreeVote)) {
-				ScrabbleClient.remoteServer.agreeVote(true, ScrabbleClient.player.getUserName());
 				btnLayout.show(btnPanel, "voidPanel");
 				gameTable.clearSelection();
+				ScrabbleClient.remoteServer.agreeVote(true, ScrabbleClient.player.getUserName());
 			} else if (arg0.getSource().equals(btnNext)) {
 				setTableEditable(false);
 				btnLayout.show(btnPanel, "voidPanel");
@@ -434,9 +434,9 @@ public class ClientGUI implements ActionListener {
 						ScrabbleClient.player.getUserName());
 
 			} else if (arg0.getSource().equals(btnDisagree)) {
-				ScrabbleClient.remoteServer.agreeVote(false, ScrabbleClient.player.getUserName());
 				btnLayout.show(btnPanel, "voidPanel");
 				gameTable.clearSelection();
+				ScrabbleClient.remoteServer.agreeVote(false, ScrabbleClient.player.getUserName());
 			} else if (arg0.getSource().equals(btnCreateRoom)) {
 				ScrabbleClient.remoteServer.createRoom(ScrabbleClient.player.getUserName());
 			} else if (arg0.getSource().equals(btnReturnToGame)) {

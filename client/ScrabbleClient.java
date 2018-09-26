@@ -343,6 +343,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		else
 			gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
 		gui.showGame(this.currentPlayer);
+		gui.lblInvitemessage.setText("");
 		gui.lblMessage.setText("");
 		gui.gameTable.clearSelection();
 	}
