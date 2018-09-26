@@ -188,9 +188,8 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		this.gamerUserName.add(createplayerusername);
 		this.gamerScores.add(0);
 		System.out.println("roomCreatorName:" + this.roomCreatorName);
-		if(!createplayerusername.equals(userName))
-			if (gui.returnLobby)
-				gui.showLobby();
+		if (gui.returnLobby)
+			gui.showLobby();
 	}
 
 	@Override
@@ -207,6 +206,10 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 				this.gamerUserName.add(invitedplayer);
 				this.gamerScores.add(0);
 			}
+			gui.lblInvitemessage.setText(invitedplayer + " joins the game.");
+		} else {
+			if (roomCreatorName.equals(userName))
+				gui.lblInvitemessage.setText(invitedplayer + " refuses your invitation.");
 		}
 		gui.showLobby();
 	}
@@ -216,20 +219,26 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		// next turn
 		grid[rowIndex][colIndex] = character;
 		this.currentPlayer = currentPlayer;
-		if(userName.equals(currentPlayer))
+		if (userName.equals(currentPlayer))
 			gui.GameTablePanel.setBorder(new LineBorder(Color.RED, 2, true));
-		else gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
+		else
+			gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
 		gui.showGame(this.currentPlayer);
+		gui.lblMessage.setText("");
+		// gui.gameTable.clearSelection();
 	}
 
 	@Override
 	public void pass(String nextUserName) throws RemoteException {
 		// current player pass
 		this.currentPlayer = nextUserName;
-		if(userName.equals(nextUserName))
+		if (userName.equals(nextUserName))
 			gui.GameTablePanel.setBorder(new LineBorder(Color.RED, 2, true));
-		else gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
+		else
+			gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
 		gui.showGame(this.currentPlayer);
+		gui.lblMessage.setText("");
+		gui.gameTable.clearSelection();
 	}
 
 	@Override
@@ -240,17 +249,19 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	}
 
 	@Override
-	public void voteSuccess(String beginVoteUserName, boolean accepted, int totalMark,int mark, String nextUserName)
+	public void voteSuccess(String beginVoteUserName, boolean accepted, int totalMark, int mark, String nextUserName)
 			throws RemoteException {
 		if (accepted) {
 			updateMark(beginVoteUserName, totalMark);
 		}
 		this.currentPlayer = nextUserName;
-		gui.voteResult(beginVoteUserName, accepted, mark, nextUserName);
-		if(userName.equals(nextUserName))
+		if (userName.equals(nextUserName))
 			gui.GameTablePanel.setBorder(new LineBorder(Color.RED, 2, true));
-		else gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
+		else
+			gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
 		gui.showGame(nextUserName);
+		gui.voteResult(beginVoteUserName, accepted, mark, nextUserName);
+		gui.gameTable.clearSelection();
 	}
 
 	@Override
@@ -259,25 +270,17 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		this.playerUserName.clear();
 		this.gamerUserName.clear();
 		this.gamerScores.clear();
-		for (int i = 0; i < 20; i++) {
-			for (int j = 0; j < 20; j++) {
-				grid[i][j] = ' ';
-			}
-		}
+		emptyTalbe();
 		this.playerUserName.addAll(players);
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.addAll(scores);
 		gui.showGameResult();
 		this.gamerUserName.clear();
 		this.gamerScores.clear();
-		for (int i = 0; i < 20; i++) {
-			for (int j = 0; j < 20; j++) {
-				grid[i][j] = ' ';
-			}
-		}
+		emptyTalbe();
 		gui.returnLobby = false;
-		roomState=false;
-		gameState=false;
+		roomState = false;
+		gameState = false;
 		roomCreatorName = "";
 		currentPlayer = "";
 	}
@@ -289,22 +292,18 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	}
 
 	@Override
-	public void initiateGame(boolean gameState, boolean roomState, ArrayList<String> players,
+	public void initiateGame(boolean gameState, boolean roomState, String creator, ArrayList<String> players,
 			ArrayList<String> gamers) {
 		this.gameState = gameState;
 		this.roomState = roomState;
+		this.roomCreatorName = creator;
 		this.playerUserName.clear();
 		this.gamerUserName.clear();
 		this.playerUserName.addAll(players);
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.ensureCapacity(gamers.size());
 		initiateScores(gamers.size());
-		// Arrays.fill(this.grid, ' ');
-		for (int i = 0; i < 20; i++) {
-			for (int j = 0; j < 20; j++) {
-				grid[i][j] = ' ';
-			}
-		}
+		emptyTalbe();
 		gui.showLobby();
 	}
 
@@ -325,7 +324,6 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 				grid[i][j] = table[i][j];
 			}
 		}
-		// Arrays.fill(this.grid, table);
 		gui.showGame(this.currentPlayer);
 	}
 
@@ -337,17 +335,16 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		this.playerUserName.addAll(players);
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.ensureCapacity(gamers.size());
-		for (int i = 0; i < 20; i++) {
-			for (int j = 0; j < 20; j++) {
-				grid[i][j] = ' ';
-			}
-		}
+		emptyTalbe();
 		initiateScores(gamers.size());
 		this.currentPlayer = currentPlayer;
-		if(userName.equals(currentPlayer))
+		if (userName.equals(currentPlayer))
 			gui.GameTablePanel.setBorder(new LineBorder(Color.RED, 2, true));
-		else gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
+		else
+			gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
 		gui.showGame(this.currentPlayer);
+		gui.lblMessage.setText("");
+		gui.gameTable.clearSelection();
 	}
 
 	private void initiateScores(int size) {
@@ -356,16 +353,25 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 			this.gamerScores.add(0);
 		}
 	}
-	
-	public void freshGamer(ArrayList<String> gamers, ArrayList<String> players,ArrayList<Integer> scores, boolean gameState, boolean roomState) {
+
+	public void freshGamer(ArrayList<String> gamers, ArrayList<String> players, ArrayList<Integer> scores,
+			boolean gameState, boolean roomState) {
 		this.playerUserName.clear();
 		this.gamerUserName.clear();
 		this.gamerScores.clear();
 		this.playerUserName.addAll(players);
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.addAll(scores);
-		this.gameState=gameState;
-		this.roomState=roomState;
+		this.gameState = gameState;
+		this.roomState = roomState;
 		gui.freshGamerList();
+	}
+
+	private void emptyTalbe() {
+		for (int i = 0; i < 20; i++) {
+			for (int j = 0; j < 20; j++) {
+				grid[i][j] = ' ';
+			}
+		}
 	}
 }

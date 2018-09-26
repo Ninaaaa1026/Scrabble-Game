@@ -45,8 +45,6 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 
 	protected ScrabbleServer() throws RemoteException {
 		super();
-
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -68,7 +66,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 			if (gameState) {
 				clientinstance.viewGame(playerNames, gamers, gamerScores, nextPlayer, table);
 			} else {
-				clientinstance.initiateGame(gameState, roomState, playerNames, gamers);
+				clientinstance.initiateGame(gameState, roomState, creator, playerNames, gamers);
 			}
 		} catch (RemoteException re) {
 			notify(clientinstance);
@@ -97,7 +95,6 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 	 * @see remote.ServerInterface#createRoom(java.lang.String)
 	 */
 	public synchronized boolean createRoom(String userName) throws RemoteException {
-		// TODO Auto-generated method stub
 		/*
 		 * if (gameState) { System.out.println("the game is playing"); for
 		 * (ClientInterface e : players) { ClientInterface player = e; if
@@ -155,7 +152,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 			if (!gamers.contains(userName)) {
 				gamers.add(userName);
 				gamerScores.add(0);
-			}
+			}			
 		}
 		for (ClientInterface e : players) {
 			ClientInterface player = e;
@@ -180,11 +177,10 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 		/*
 		 * for(int i = 0; i < gamers.size(); i++) { gamerScores.add(0); }
 		 */
-		// TODO Auto-generated method stub
 		for (ClientInterface e : players) {
 			ClientInterface player = e;
 			try {
-				nextPlayer=currentPlayer;
+				nextPlayer = currentPlayer;
 				player.gameStarted(gamers, playerNames, currentPlayer);// ArrayList<String> gamers, ArrayList<String>
 																		// players, String currentPlayer
 			} catch (RemoteException re) {
@@ -283,7 +279,6 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 	// as others
 	public void vote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
 			String userName, int rowIndex, int colIndex) throws RemoteException {
-		// TODO Auto-generated method stub
 		this.totalVote = 0;
 		this.agreeVote = 0;
 		this.table[rowIndex][colIndex] = character;
@@ -296,18 +291,12 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 		voteBeginner = userName;
 		for (ClientInterface e : players) {
 			ClientInterface player = e;
-
-			int currentPlayer = players.indexOf(player);
-			String playerName = playerNames.get(currentPlayer);
-			if (gamers.contains(playerName)) {
-				try {
-					player.beginVote(character, startRowIndex, startColIndex, endRowIndex, endColIndex, userName,
-							rowIndex, colIndex);
-
-				} catch (RemoteException re) {
-					System.out.println("vote error");
-					notify(player);
-				}
+			try {
+				player.beginVote(character, startRowIndex, startColIndex, endRowIndex, endColIndex, userName, rowIndex,
+						colIndex);
+			} catch (RemoteException re) {
+				System.out.println("vote error");
+				notify(player);
 			}
 		}
 
@@ -316,7 +305,6 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 	@Override
 	//
 	public void agreeVote(boolean agree, String userName) throws RemoteException {
-		// TODO Auto-generated method stub
 		if (agree) {
 			this.totalVote = totalVote + 1;
 			this.agreeVote = agreeVote + 1;
@@ -433,7 +421,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 					for (ClientInterface e : players) {
 						ClientInterface player = e;
 						try {
-							player.initiateGame(gameState, roomState, playerNames, gamers);
+							player.initiateGame(gameState, roomState, creator, playerNames, gamers);
 						} catch (RemoteException re) {
 							System.out.println("removing player -");
 							// Remove the listener

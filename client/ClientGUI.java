@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.text.MaskFormatter;
@@ -34,6 +35,7 @@ import javax.swing.ScrollPaneConstants;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.SwingConstants;
 
 public class ClientGUI implements ActionListener {
 
@@ -62,7 +64,7 @@ public class ClientGUI implements ActionListener {
 	protected CardLayout btnLayout;
 	protected JButton btnReturnToGame;
 	protected JScrollPane scrollPane_2;
-	private JLabel lblMessage;
+	protected JLabel lblMessage;
 	JScrollPane scrollPane_4;
 
 	protected boolean returnLobby = true;
@@ -83,6 +85,8 @@ public class ClientGUI implements ActionListener {
 	String inputString = "";
 	boolean beginSetVoid = false;
 	protected JPanel GameTablePanel;
+	protected ArrayList<String> notGamers;
+	protected JLabel lblInvitemessage;
 
 	/**
 	 * Create the application.
@@ -153,7 +157,9 @@ public class ClientGUI implements ActionListener {
 		scrollPane.setViewportView(playerTable);
 
 		lblCreatRoom = new JLabel("");
-		lblCreatRoom.setBounds(29, 212, 332, 33);
+		lblCreatRoom.setFont(new Font("Century", Font.PLAIN, 12));
+		lblCreatRoom.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCreatRoom.setBounds(0, 214, 384, 23);
 		gameLobbyPanel.add(lblCreatRoom);
 
 		btnStartGame = new JButton("Start Game");
@@ -162,23 +168,28 @@ public class ClientGUI implements ActionListener {
 		btnStartGame.setBounds(144, 247, 109, 23);
 		gameLobbyPanel.add(btnStartGame);
 
+		lblInvitemessage = new JLabel("");
+		lblInvitemessage.setFont(new Font("Century", Font.PLAIN, 12));
+		lblInvitemessage.setBounds(10, 396, 351, 23);
+		gameLobbyPanel.add(lblInvitemessage);
+
 		JPanel gameRoomPanel = new JPanel();
 		frame.getContentPane().add(gameRoomPanel, "name_891421322563457");
 		gameRoomPanel.setLayout(null);
 
 		JPanel gamersPanel = new JPanel();
 		gamersPanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 1, true));
-		gamersPanel.setBounds(0, 0, 383, 86);
+		gamersPanel.setBounds(0, 0, 383, 97);
 		gameRoomPanel.add(gamersPanel);
 		gamersPanel.setLayout(null);
 
 		JLabel lblCurrentPlayers = new JLabel("Current Players:");
-		lblCurrentPlayers.setBounds(10, 0, 114, 15);
+		lblCurrentPlayers.setBounds(0, 10, 114, 15);
 		gamersPanel.add(lblCurrentPlayers);
 
 		scrollPane_2 = new JScrollPane();
 		scrollPane_2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane_2.setBounds(0, 25, 383, 58);
+		scrollPane_2.setBounds(0, 25, 383, 72);
 		scrollPane_2.setVisible(false);
 		gamersPanel.add(scrollPane_2);
 
@@ -342,7 +353,7 @@ public class ClientGUI implements ActionListener {
 		lblGameOver.setEnabled(false);
 		lblGameOver.setBounds(241, 24, 99, 15);
 		gameOverPanel.add(lblGameOver);
-		
+
 		lblMessage = new JLabel("");
 		lblMessage.setFont(new Font("Century", Font.PLAIN, 12));
 		lblMessage.setBounds(1, 525, 382, 23);
@@ -402,7 +413,7 @@ public class ClientGUI implements ActionListener {
 						if (!checkString(startRowIndex, startColIndex, endRowIndex, endColIndex)) {
 							JOptionPane.showMessageDialog(null,
 									" You have to select a complete string without empty cells.Please select again.");
-							myModel.setCellEditable(rowIndex, colIndex, true);							
+							myModel.setCellEditable(rowIndex, colIndex, true);
 						} else {
 							myModel.setCellEditable(rowIndex, colIndex, false);
 							ScrabbleClient.remoteServer.vote(character, startRowIndex, startColIndex, endRowIndex,
@@ -427,9 +438,7 @@ public class ClientGUI implements ActionListener {
 				btnLayout.show(btnPanel, "voidPanel");
 				gameTable.clearSelection();
 			} else if (arg0.getSource().equals(btnCreateRoom)) {
-				if (ScrabbleClient.remoteServer.createRoom(ScrabbleClient.player.getUserName())) {
-					showLobby();
-				}
+				ScrabbleClient.remoteServer.createRoom(ScrabbleClient.player.getUserName());
 			} else if (arg0.getSource().equals(btnReturnToGame)) {
 				returnLobby = true;
 				if (ScrabbleClient.player.getGameState())
@@ -486,7 +495,8 @@ public class ClientGUI implements ActionListener {
 		Vector<Object> visiting = new Vector<Object>();
 		Vector<Object> invite = new Vector<Object>();
 		Vector<String> vCol = new Vector<String>();
-		vCol.add("Players");
+
+		vCol.add("Online Players");
 		for (int i = 0; i < players.size(); i++) {
 			String playersName = players.get(i);
 			Vector<Object> visitRow = new Vector<Object>();
@@ -495,55 +505,37 @@ public class ClientGUI implements ActionListener {
 		}
 		visitingTable.setModel(new MyDefaultTableModel(visiting, vCol));
 
-		ArrayList<String> noGamers = new ArrayList<String>();
-		for (int j = 0; j < players.size(); j++)
-			if (!gamers.contains(players.get(j)))
-				noGamers.add(players.get(j));
-
-		ButtonRenderer renderer = new ButtonRenderer();
-		// renderer.getTableCellRendererComponent(gameTable, value, isSelected,
-		// hasFocus, i, 1);
-		for (int i = 0; i < noGamers.size(); i++) {
-			Vector<Object> inviteRow = new Vector<Object>();
-			String noGamerName = noGamers.get(i);
-			inviteRow.add(noGamerName);
-			JButton addButton = new JButton("+");
-			addButton.setBounds(118, 10, 39, 23);
-
-			/*
-			 * addButton.addActionListener(new ActionListener() { public void
-			 * actionPerformed(ActionEvent arg0) { try {
-			 * ScrabbleClient.remoteServer.invitePlayer(noGamerName); } catch
-			 * (RemoteException e) { e.printStackTrace(); } } });
-			 */
-			inviteRow.add(addButton);
-			invite.add(inviteRow);
-		}
-
 		if (ScrabbleClient.player.getRoomState()
 				&& ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
 			vCol.add("Invite");
+			notGamers = new ArrayList<String>();
+			for (int j = 0; j < players.size(); j++)
+				if (!gamers.contains(players.get(j)))
+					notGamers.add(players.get(j));
 
-			// MyButtonEditor editor = new MyButtonEditor(e);
-			// gameTable.getColumnModel().getColumn(1).setCellEditor(editor);
+			ButtonRenderer renderer = new ButtonRenderer();
+
+			for (int i = 0; i < notGamers.size(); i++) {
+				Vector<Object> inviteRow = new Vector<Object>();
+				String noGamerName = notGamers.get(i);
+				inviteRow.add(noGamerName);
+				JButton addButton = new JButton("+");
+				addButton.setBounds(118, 10, 39, 23);
+
+				inviteRow.add(addButton);
+				invite.add(inviteRow);
+			}
 
 			playerTable.setModel(new MyDefaultTableModel(invite, vCol));
+			playerTable.getColumn("Invite").setCellRenderer(renderer);
+			MouseListener[] listeners = playerTable.getMouseListeners();
+			for (int i = 1; i < listeners.length; i++)
+				playerTable.removeMouseListener(listeners[i]);
+			playerTable.addMouseListener(new ButtonMouseListener(playerTable));
 		} else {
 			playerTable.setModel(new MyDefaultTableModel(visiting, vCol));
 		}
-
-		if (vCol.contains("Invite")) {
-			playerTable.getColumn("Invite").setCellRenderer(renderer);
-			playerTable.addMouseListener(new ButtonMouseListener(playerTable));
-		}
 	}
-
-	/*
-	 * MyEvent e = new MyEvent() {
-	 * 
-	 * @Override public void invoke(ActionEvent e) { MyButton button = (MyButton)
-	 * e.getSource(); button.getRow(); } };
-	 */
 
 	public void freshGamerList() {
 		ArrayList<String> gamers = ScrabbleClient.player.getGamers();
@@ -612,9 +604,9 @@ public class ClientGUI implements ActionListener {
 			if (!ScrabbleClient.player.getRoomCreatorName().equals(ScrabbleClient.player.getUserName())) {
 				btnCreateRoom.setVisible(false);
 				btnStartGame.setVisible(false);
-				lblCreatRoom.setText("Room has been already created.Please wait for invitation or game starting.");
+				lblCreatRoom.setText("Room has been created. Please wait for invitation or game starting.");
 			} else {
-				lblCreatRoom.setText("Create room successfully! Invite other players into a game");
+				lblCreatRoom.setText("Create room successfully! Invite other players into a game.");
 				btnCreateRoom.setVisible(false);
 				if (ScrabbleClient.player.getGamers().size() > 1)
 					btnStartGame.setVisible(true);
@@ -623,6 +615,7 @@ public class ClientGUI implements ActionListener {
 			btnCreateRoom.setVisible(true);
 			btnStartGame.setVisible(false);
 			lblCreatRoom.setText(null);
+			lblInvitemessage.setText(null);
 		}
 		freshPlayerList();
 		freshGamerList();
@@ -686,7 +679,9 @@ public class ClientGUI implements ActionListener {
 			gameTable.setColumnSelectionInterval(startColIndex, endColIndex);
 			gameTable.setRowSelectionInterval(startRowIndex, endRowIndex);
 			lblMessage.setText("");
-			btnLayout.show(btnPanel, "votePanel");
+			if (ScrabbleClient.player.getGamers().contains(ScrabbleClient.player.getUserName())) {
+				btnLayout.show(btnPanel, "votePanel");
+			}else btnLayout.show(btnPanel, "voidPanel");
 		}
 	}
 
@@ -704,5 +699,9 @@ public class ClientGUI implements ActionListener {
 		for (int i = 0; i < 20; i++)
 			for (int j = 0; j < 20; j++)
 				myModel.setCellEditable(i, j, editable);
+	}
+
+	protected void invitationResponse(String invitedplayer, boolean agree) {
+
 	}
 }

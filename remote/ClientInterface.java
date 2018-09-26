@@ -7,7 +7,7 @@ import java.rmi.Remote;
 public interface ClientInterface extends Remote {
 	// gamestate means if the game is playing now and transmit the client instance
 	// to server
-	public void initiateGame(boolean gameState, boolean roomState, ArrayList<String> playerUserName,ArrayList<String> gamerUserName) throws RemoteException;
+	public void initiateGame(boolean gameState, boolean roomState, String creator, ArrayList<String> playerUserName,ArrayList<String> gamerUserName) throws RemoteException;
 
 	public void viewGame(ArrayList<String> playerUserName,
 			ArrayList<String> gamerUserName, ArrayList<Integer> scores, String currentPlayer,char[][] table) throws RemoteException;
