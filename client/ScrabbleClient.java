@@ -258,6 +258,17 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		this.gamerScores.addAll(scores);
 		// gui.newTable();
 		gui.showGameResult();
+		this.gamerUserName.clear();
+		this.gamerScores.clear();
+		for (int i = 0; i < 20; i++) {
+			for (int j = 0; j < 20; j++) {
+				grid[i][j] = ' ';
+			}
+		}
+		roomState=false;
+		gameState=false;
+		roomCreatorName = "";
+		currentPlayer = "";
 	}
 
 	@Override
