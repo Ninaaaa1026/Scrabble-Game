@@ -435,7 +435,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 							notify(player);
 						}
 					}
-				} else {
+				} else if(gamers.contains(deleteName)){
 					int currentGamer = gamers.indexOf(deleteName);
 					gamers.remove(currentGamer);
 					gamerScores.remove(currentGamer);
