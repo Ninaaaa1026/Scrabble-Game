@@ -239,6 +239,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		}
 		this.currentPlayer = nextUserName;
 		gui.showGame(this.currentPlayer);
+		gui.gameTable.clearSelection();
 		gui.voteResult(beginVoteUserName, accepted, totalMark, nextUserName);
 	}
 

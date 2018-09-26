@@ -34,6 +34,7 @@ import javax.swing.ScrollPaneConstants;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.border.EmptyBorder;
 
 public class ClientGUI implements ActionListener {
 
@@ -145,6 +146,7 @@ public class ClientGUI implements ActionListener {
 		gameLobbyPanel.add(scrollPane);
 
 		playerTable = new JTable();
+		playerTable.setBorder(null);
 		playerTable.setBackground(SystemColor.control);
 		playerTable.setEnabled(false);
 		playerTable.setRowSelectionAllowed(false);
@@ -257,6 +259,7 @@ public class ClientGUI implements ActionListener {
 		gameRoomPanel.add(scrollPane_1);
 
 		visitingTable = new JTable();
+		visitingTable.setBorder(null);
 		visitingTable.setBackground(SystemColor.control);
 		visitingTable.setEnabled(false);
 		visitingTable.setRowSelectionAllowed(false);
@@ -360,6 +363,7 @@ public class ClientGUI implements ActionListener {
 				setTableEditable(false);
 				ScrabbleClient.remoteServer.passTurn(ScrabbleClient.player.getUserName());
 				btnLayout.show(btnPanel, "name_965239449619613");
+				gameTable.clearSelection();
 			} else if (arg0.getSource().equals(btnVote)) {
 				if (gameTable.getSelectedColumnCount() == 0 && gameTable.getSelectedRowCount() == 0) {
 					JOptionPane.showMessageDialog(null,
