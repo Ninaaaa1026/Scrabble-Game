@@ -13,7 +13,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 	private String nextPlayer;
 	private int wordLength;
 	private char[][] table = new char[20][20];
-    private String voteBeginner;
+	private String voteBeginner;
 	private int passGamerNumber = 0;
 	private int totalVote = 0;
 	private int agreeVote = 0;
@@ -27,65 +27,63 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 	private ArrayList<Integer> gamerScores = new ArrayList<Integer>();
 
 	// private Map<String, Integer> gamerScores = new HashMap<String, Integer>();
-	
-	
+
 	public static void main(String[] args) {
-		
-		  try {
-			  ScrabbleServer scrabble = new ScrabbleServer();
-		            
-		            //Publish the remote object's stub in the registry under the name "Compute"
-		            Registry registry = LocateRegistry.createRegistry(1099);
-		            registry.bind("Scrabble", scrabble);
-		            System.out.println("Scrabble Server ready.");
-		            
-		  }catch (Exception e) {
-		   e.printStackTrace();
-		  }
-		 }
-	
-	
+
+		try {
+			ScrabbleServer scrabble = new ScrabbleServer();
+
+			// Publish the remote object's stub in the registry under the name "Compute"
+			Registry registry = LocateRegistry.createRegistry(1099);
+			registry.bind("Scrabble", scrabble);
+			System.out.println("Scrabble Server ready.");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	protected ScrabbleServer() throws RemoteException {
 		super();
-		
+
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	// ipaddress and port number is not used so far.
-public synchronized boolean addClient (String userName, ClientInterface clientinstance, String ipAddress, int portNumber) throws RemoteException{
-		
-		//Examine if username already exists
+	public synchronized boolean addClient(String userName, ClientInterface clientinstance, String ipAddress,
+			int portNumber) throws RemoteException {
+
+		// Examine if username already exists
 		if (playerNames.contains(userName)) {
 			return false;
-		} 
-		
-		//If not exists, add
-		players.add (clientinstance);
+		}
+
+		// If not exists, add
+		players.add(clientinstance);
 		playerNames.add(userName);
-		
-		//callback the newplayer
-		try{
+
+		// callback the newplayer
+		try {
 			if (gameState) {
-				clientinstance.viewGame(playerNames, gamers, gamerScores, nextPlayer,table);
-			}else {
+				clientinstance.viewGame(playerNames, gamers, gamerScores, nextPlayer, table);
+			} else {
 				clientinstance.initiateGame(gameState, roomState, playerNames, gamers);
 			}
-		}catch (RemoteException re){
+		} catch (RemoteException re) {
 			notify(clientinstance);
 		}
-		
-		//callback all players. 
-		for (ClientInterface e : players){
+
+		// callback all players.
+		for (ClientInterface e : players) {
 			ClientInterface player = e;
-			try{
+			try {
 				player.clientAdded(userName);
-			}catch (RemoteException re){
+			} catch (RemoteException re) {
 				notify(player);
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -151,43 +149,43 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 	}
 
 	@Override
-	//clients choose if he/she agrees to play a game
-		public void respondToInvitation(boolean agree, String userName)throws RemoteException{
-			if (agree) {
-				if (!gamers.contains(userName)) {
-					gamers.add(userName);
-					gamerScores.add(0);
-				}
+	// clients choose if he/she agrees to play a game
+	public void respondToInvitation(boolean agree, String userName) throws RemoteException {
+		if (agree) {
+			if (!gamers.contains(userName)) {
+				gamers.add(userName);
+				gamerScores.add(0);
 			}
-			for (ClientInterface e : players){
-				ClientInterface player = e;
-				try{
-					player.invitationResponse(userName,agree);
-				}catch (RemoteException re){
-					notify(player);
-				}
-			} 
 		}
+		for (ClientInterface e : players) {
+			ClientInterface player = e;
+			try {
+				player.invitationResponse(userName, agree);
+			} catch (RemoteException re) {
+				notify(player);
+			}
+		}
+	}
 
 	@Override
-	//creater start the game and let
+	// creater start the game and let
 	public void startGame() throws RemoteException {
-		for(int i = 0; i < 20;i++) {
-			for(int j = 0; j < 20; j++) {
-				table[i][j]=' ';
+		for (int i = 0; i < 20; i++) {
+			for (int j = 0; j < 20; j++) {
+				table[i][j] = ' ';
 			}
 		}
-		//Arrays.fill(this.table, ' ');
+		// Arrays.fill(this.table, ' ');
 		String currentPlayer = gamers.get(0);
-		/*for(int i = 0; i < gamers.size(); i++) {
-			gamerScores.add(0);
-		}
-		*/
+		/*
+		 * for(int i = 0; i < gamers.size(); i++) { gamerScores.add(0); }
+		 */
 		// TODO Auto-generated method stub
 		for (ClientInterface e : players) {
 			ClientInterface player = e;
 			try {
-				player.gameStarted(gamers,playerNames,currentPlayer);//ArrayList<String> gamers, ArrayList<String> players, String currentPlayer
+				player.gameStarted(gamers, playerNames, currentPlayer);// ArrayList<String> gamers, ArrayList<String>
+																		// players, String currentPlayer
 			} catch (RemoteException re) {
 				System.out.println("startgame error");
 				notify(player);
@@ -198,114 +196,115 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 	}
 
 	@Override
-	public void passTurn(String userName)throws RemoteException{
+	public void passTurn(String userName) throws RemoteException {
 		passGamerNumber = passGamerNumber + 1;
-		if (passGamerNumber == gamers.size()){
-			
-			for (int i = 0; i < gamers.size(); i++){
-		        for(int j = i; j > 0; j--){
-		          // Switch 2 continous players
-		          if (gamerScores.get(j)> gamerScores.get(j-1)){
-		            gamerScores.add(j+1, gamerScores.get(j-1));
-		            gamerScores.remove(j-1);
-		            gamers.add(j+1, gamers.get(j-1));
-		            gamers.remove(j-1);
-		         
-		          }else{
-		            break;
-		          }
-		        }
-		   }
-			
+		if (passGamerNumber == gamers.size()) {
+
+			for (int i = 0; i < gamers.size(); i++) {
+				for (int j = i; j > 0; j--) {
+					// Switch 2 continous players
+					if (gamerScores.get(j) > gamerScores.get(j - 1)) {
+						gamerScores.add(j + 1, gamerScores.get(j - 1));
+						gamerScores.remove(j - 1);
+						gamers.add(j + 1, gamers.get(j - 1));
+						gamers.remove(j - 1);
+
+					} else {
+						break;
+					}
+				}
+			}
+
 			for (ClientInterface e : players) {
 				ClientInterface player = e;
 				try {
-					player.gameOver(playerNames,gamers,gamerScores);
+					player.gameOver(playerNames, gamers, gamerScores);
 				} catch (RemoteException re) {
 					System.out.println("game over question");
 					notify(player);
 				}
 			}
-			
-			for(int i = 0; i < 20;i++) {
-				for(int j = 0; j < 20; j++) {
-					table[i][j]=' ';
+
+			for (int i = 0; i < 20; i++) {
+				for (int j = 0; j < 20; j++) {
+					table[i][j] = ' ';
 				}
 			}
-			
+
 			passGamerNumber = 0;
 			gamers.clear();
 			gamerScores.clear();
-			this.roomState=false;
-			this.gameState=false;
-		}else {
+			this.roomState = false;
+			this.gameState = false;
+		} else {
 			int current = gamers.indexOf(userName);
-			if (current == gamers.size()-1) {
+			if (current == gamers.size() - 1) {
 				current = -1;
 			}
-			nextPlayer = gamers.get(current+1);
-			
-			for (ClientInterface e : players){
+			nextPlayer = gamers.get(current + 1);
+
+			for (ClientInterface e : players) {
 				ClientInterface player = e;
-				try{
+				try {
 					player.pass(nextPlayer);
-				}catch (RemoteException re){
+				} catch (RemoteException re) {
 					notify(player);
 				}
-			}	
-		}	
+			}
+		}
 	}
 
 	@Override
-	public void nextTurn(char character, int rowIndex, int colIndex, String userName)throws RemoteException{
+	public void nextTurn(char character, int rowIndex, int colIndex, String userName) throws RemoteException {
 		passGamerNumber = 0;
-		table[rowIndex][colIndex]= character;
+		table[rowIndex][colIndex] = character;
 		int current = gamers.indexOf(userName);
 		System.out.println(userName);
-		System.out.println("current is "+current);
-		if (current == gamers.size()-1) {
+		System.out.println("current is " + current);
+		if (current == gamers.size() - 1) {
 			current = -1;
 		}
-		System.out.println("current is "+current);
-		nextPlayer = gamers.get(current+1);
-		
-		for (ClientInterface e : players){
+		System.out.println("current is " + current);
+		nextPlayer = gamers.get(current + 1);
+
+		for (ClientInterface e : players) {
 			ClientInterface player = e;
-			try{
+			try {
 				player.nextPlayer(character, rowIndex, colIndex, nextPlayer);
-			}catch (RemoteException re){
+			} catch (RemoteException re) {
 				notify(player);
 			}
-		}	
+		}
 	}
 
 	@Override
-	//client should handle if the user equals himself, he won't do the same thing as others
+	// client should handle if the user equals himself, he won't do the same thing
+	// as others
 	public void vote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
-			String userName,int rowIndex, int colIndex) throws RemoteException {
+			String userName, int rowIndex, int colIndex) throws RemoteException {
 		// TODO Auto-generated method stub
 		this.totalVote = 0;
 		this.agreeVote = 0;
 		this.table[rowIndex][colIndex] = character;
-		if(startRowIndex == endRowIndex) {
+		if (startRowIndex == endRowIndex) {
 			this.wordLength = endColIndex - startColIndex + 1;
-		}else {
+		} else {
 			this.wordLength = endRowIndex - startRowIndex + 1;
 		}
 		passGamerNumber = 0;
 		voteBeginner = userName;
 		for (ClientInterface e : players) {
 			ClientInterface player = e;
-			
+
 			try {
-				 player.beginVote(character, startRowIndex, startColIndex, endRowIndex, endColIndex, userName, rowIndex, colIndex);
-				
+				player.beginVote(character, startRowIndex, startColIndex, endRowIndex, endColIndex, userName, rowIndex,
+						colIndex);
+
 			} catch (RemoteException re) {
 				System.out.println("vote error");
 				notify(player);
 			}
 		}
-			
 
 	}
 
@@ -314,51 +313,59 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 	public void agreeVote(boolean agree, String userName) throws RemoteException {
 		// TODO Auto-generated method stub
 		if (agree) {
-			this.totalVote = totalVote+1;
-			this.agreeVote = agreeVote+1;
-			
-		}else {
-			this.totalVote = totalVote +1;
+			this.totalVote = totalVote + 1;
+			this.agreeVote = agreeVote + 1;
+
+		} else {
+			this.totalVote = totalVote + 1;
 		}
-		
-		if (totalVote == gamers.size()-1) {
-			if (agreeVote == gamers.size()-1) {
+
+		if (totalVote == gamers.size() - 1) {
+			if (agreeVote == gamers.size() - 1) {
 				boolean accepted = true;
 				int current = gamers.indexOf(voteBeginner);
 				int currentScore = gamerScores.get(current);
-				gamerScores.set(current, currentScore+wordLength);
-				  
-				  if (current == gamers.size()-1) {
-				   current = -1;
-				  }
-				  this.nextPlayer = gamers.get(current+1);
-				  
+				gamerScores.set(current, currentScore + wordLength);
+
+				if (current == gamers.size() - 1) {
+					current = -1;
+				}
+				this.nextPlayer = gamers.get(current + 1);
+
 				for (ClientInterface e : players) {
 					ClientInterface player = e;
-					
+
 					try {
-						 player.voteSuccess(voteBeginner,accepted,currentScore+wordLength,nextPlayer);//voteSuccess(String beginVoteUserName, boolean accepted, int totalMark, String nextUserName)throws RemoteException;
-						
+						player.voteSuccess(voteBeginner, accepted, currentScore + wordLength, nextPlayer);// voteSuccess(String
+																											// beginVoteUserName,
+																											// boolean
+																											// accepted,
+																											// int
+																											// totalMark,
+																											// String
+																											// nextUserName)throws
+																											// RemoteException;
+
 					} catch (RemoteException re) {
 						System.out.println("vote error");
 						notify(player);
 					}
 				}
 
-			}else {
+			} else {
 				boolean accepted = false;
 				int current = gamers.indexOf(voteBeginner);
 				int currentScore = gamerScores.get(current);
-				  if (current == gamers.size()-1) {
-				   current = -1;
-				  }
-				  this.nextPlayer = gamers.get(current+1);
+				if (current == gamers.size() - 1) {
+					current = -1;
+				}
+				this.nextPlayer = gamers.get(current + 1);
 				for (ClientInterface e : players) {
 					ClientInterface player = e;
-					
+
 					try {
-						 player.voteSuccess(voteBeginner,accepted,currentScore,nextPlayer);
-						
+						player.voteSuccess(voteBeginner, accepted, currentScore, nextPlayer);
+
 					} catch (RemoteException re) {
 						System.out.println("vote error");
 						notify(player);
@@ -375,33 +382,41 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 		String deleteName = playerNames.get(currentPlayer);
 		players.remove(delete);
 		playerNames.remove(deleteName);
-		
-		if(deleteName.equals(creator)) {
-			roomState=false;	
-			gamers.clear();
-			gamerScores.clear();
+
+		if (roomState) {
+			if (deleteName.equals(creator)) {
+				roomState = false;
+				gamers.clear();
+				gamerScores.clear();
+			} else {
+				int currentGamer = gamers.indexOf(deleteName);
+				gamers.remove(currentGamer);
+				gamerScores.remove(currentGamer);
+			}
 		}
-		
-		if (gamers.contains(deleteName)&&gameState) {
-			for (int i = 0; i < gamers.size(); i++){
-		        for(int j = i; j > 0; j--){
-		          // Switch 2 continous players
-		          if (gamerScores.get(j)> gamerScores.get(j-1)){
-		            gamerScores.add(j+1, gamerScores.get(j-1));
-		            gamerScores.remove(j-1);
-		            gamers.add(j+1, gamers.get(j-1));
-		            gamers.remove(j-1);
-		         
-		          }else{
-		            break;
-		          }
-		        }
-		   }
-		
+
+		if (gamers.contains(deleteName) && gameState) {
+			for (int i = 0; i < gamers.size(); i++) {
+				for (int j = i; j > 0; j--) {
+					// Switch 2 continous players
+					if (gamerScores.get(j) > gamerScores.get(j - 1)) {
+						gamerScores.add(j + 1, gamerScores.get(j - 1));
+						gamerScores.remove(j - 1);
+						gamers.add(j + 1, gamers.get(j - 1));
+						gamers.remove(j - 1);
+
+					} else {
+						break;
+					}
+				}
+			}
+
 			for (ClientInterface e : players) {
 				ClientInterface player = e;
 				try {
-					player.gameOver(playerNames,gamers,gamerScores);//gameOver(ArrayList<String> players, ArrayList<String> gamers, ArrayList<Integer> scores)throws
+					player.gameOver(playerNames, gamers, gamerScores);// gameOver(ArrayList<String> players,
+																		// ArrayList<String> gamers, ArrayList<Integer>
+																		// scores)throws
 				} catch (RemoteException re) {
 					System.out.println("game over question");
 					notify(player);
@@ -411,12 +426,12 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 			this.gameState = false;
 			gamers.clear();
 			gamerScores.clear();
-			for(int i = 0; i < 20;i++) {
-				for(int j = 0; j < 20; j++) {
-					table[i][j]=' ';
+			for (int i = 0; i < 20; i++) {
+				for (int j = 0; j < 20; j++) {
+					table[i][j] = ' ';
 				}
 			}
-		} else {			
+		} else {
 			for (ClientInterface e : players) {
 				ClientInterface player = e;
 				try {
@@ -428,7 +443,7 @@ public synchronized boolean addClient (String userName, ClientInterface clientin
 					notify(player);
 				}
 			}
-			if(!roomState)
+			if (!roomState)
 				for (ClientInterface e : players) {
 					ClientInterface player = e;
 					try {
