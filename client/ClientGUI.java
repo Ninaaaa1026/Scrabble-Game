@@ -373,7 +373,7 @@ public class ClientGUI implements ActionListener {
 					if (gameTable.getSelectedColumnCount() > 1 & gameTable.getSelectedRowCount() > 1) {
 						JOptionPane.showMessageDialog(null,
 								" You have to select a string in a single line.Please select again.");
-						gameTable.changeSelection(-1, -1, false, false);
+						gameTable.clearSelection();
 						myModel.setCellEditable(rowIndex, colIndex, true);
 					} else {
 						if (gameTable.getSelectedColumnCount() > 1 && gameTable.getSelectedRowCount() == 1) {
@@ -397,7 +397,7 @@ public class ClientGUI implements ActionListener {
 						if (!checkString(startRowIndex, startColIndex, endRowIndex, endColIndex)) {
 							JOptionPane.showMessageDialog(null,
 									" You have to select a complete string without empty cells.Please select again.");
-							gameTable.changeSelection(-1, -1, false, false);
+							gameTable.clearSelection();
 							myModel.setCellEditable(rowIndex, colIndex, true);
 						} else {
 							myModel.setCellEditable(rowIndex, colIndex, false);
@@ -411,7 +411,7 @@ public class ClientGUI implements ActionListener {
 			} else if (arg0.getSource().equals(btnAgreeVote)) {
 				ScrabbleClient.remoteServer.agreeVote(true, ScrabbleClient.player.getUserName());
 				btnLayout.show(btnPanel, "name_965239449619613");
-
+				gameTable.clearSelection();
 			} else if (arg0.getSource().equals(btnNext)) {
 				setTableEditable(false);
 				btnLayout.show(btnPanel, "name_965239449619613");
@@ -421,7 +421,7 @@ public class ClientGUI implements ActionListener {
 			} else if (arg0.getSource().equals(btnDisagree)) {
 				ScrabbleClient.remoteServer.agreeVote(false, ScrabbleClient.player.getUserName());
 				btnLayout.show(btnPanel, "name_965239449619613");
-
+				gameTable.clearSelection();
 			} else if (arg0.getSource().equals(btnCreateRoom)) {
 				if (ScrabbleClient.remoteServer.createRoom(ScrabbleClient.player.getUserName())) {
 					showLobby();
