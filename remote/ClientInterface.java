@@ -53,5 +53,5 @@ public interface ClientInterface extends Remote {
 	// get the clients username
 	public String getUserName() throws RemoteException;
 	
-	public void freshGamer(ArrayList<String> gamers, ArrayList<String> players,ArrayList<Integer> scores) throws RemoteException;
+	public void freshGamer(ArrayList<String> gamers, ArrayList<String> players,ArrayList<Integer> scores, boolean gameState, boolean roomState) throws RemoteException;
 }

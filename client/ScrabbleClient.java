@@ -332,13 +332,15 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		}
 	}
 	
-	public void freshGamer(ArrayList<String> gamers, ArrayList<String> players,ArrayList<Integer> scores ) {
+	public void freshGamer(ArrayList<String> gamers, ArrayList<String> players,ArrayList<Integer> scores, boolean gameState, boolean roomState) {
 		this.playerUserName.clear();
 		this.gamerUserName.clear();
 		this.gamerScores.clear();
 		this.playerUserName.addAll(players);
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.addAll(scores);
+		this.gameState=gameState;
+		this.roomState=roomState;
 		gui.freshGamerList();
 	}
 }

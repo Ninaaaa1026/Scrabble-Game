@@ -383,18 +383,6 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 		players.remove(delete);
 		playerNames.remove(deleteName);
 
-		if (roomState) {
-			if (deleteName.equals(creator)) {
-				roomState = false;
-				gamers.clear();
-				gamerScores.clear();
-			} else {
-				int currentGamer = gamers.indexOf(deleteName);
-				gamers.remove(currentGamer);
-				gamerScores.remove(currentGamer);
-			}
-		}
-
 		if (gamers.contains(deleteName) && gameState) {
 			for (int i = 0; i < gamers.size(); i++) {
 				for (int j = i; j > 0; j--) {
@@ -432,18 +420,17 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 				}
 			}
 		} else {
-			for (ClientInterface e : players) {
-				ClientInterface player = e;
-				try {
-					player.clientExited(deleteName);
-					player.freshGamer(gamers, playerNames, gamerScores);
-				} catch (RemoteException re) {
-					System.out.println("removing player -");
-					// Remove the listener
-					notify(player);
+			if (roomState) {
+				if (deleteName.equals(creator)) {
+					roomState = false;
+					gamers.clear();
+					gamerScores.clear();
+				} else {
+					int currentGamer = gamers.indexOf(deleteName);
+					gamers.remove(currentGamer);
+					gamerScores.remove(currentGamer);
 				}
-			}
-			if (!roomState)
+			} else {
 				for (ClientInterface e : players) {
 					ClientInterface player = e;
 					try {
@@ -454,6 +441,19 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 						notify(player);
 					}
 				}
+			}
+		}
+		
+		for (ClientInterface e : players) {
+			ClientInterface player = e;
+			try {
+				player.clientExited(deleteName);
+				player.freshGamer(gamers, playerNames, gamerScores,gameState,roomState);
+			} catch (RemoteException re) {
+				System.out.println("removing player -");
+				// Remove the listener
+				notify(player);
+			}
 		}
 	}
 
