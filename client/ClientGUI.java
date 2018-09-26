@@ -65,7 +65,7 @@ public class ClientGUI implements ActionListener {
 	protected JLabel lblMessage;
 	JScrollPane scrollPane_4;
 
-	protected boolean returnLobby = false;
+	protected boolean returnLobby = true;
 	char character;
 	int rowIndex = 0;
 	int colIndex = 0;

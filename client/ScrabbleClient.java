@@ -265,6 +265,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 				grid[i][j] = ' ';
 			}
 		}
+		gui.returnLobby = false;
 		roomState=false;
 		gameState=false;
 		roomCreatorName = "";
