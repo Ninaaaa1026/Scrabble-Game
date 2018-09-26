@@ -186,7 +186,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		this.gamerUserName.add(createplayerusername);
 		this.gamerScores.add(0);
 		System.out.println("roomCreatorName:" + this.roomCreatorName);
-		if(!createplayerusername.equals(this.playerUserName))
+		if(!createplayerusername.equals(userName))
 			if (gui.returnLobby)
 				gui.showLobby();
 	}
@@ -239,7 +239,6 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		}
 		this.currentPlayer = nextUserName;
 		gui.showGame(this.currentPlayer);
-		gui.gameTable.clearSelection();
 		gui.voteResult(beginVoteUserName, accepted, totalMark, nextUserName);
 	}
 

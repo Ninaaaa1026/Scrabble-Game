@@ -34,7 +34,6 @@ import javax.swing.ScrollPaneConstants;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.border.EmptyBorder;
 
 public class ClientGUI implements ActionListener {
 
@@ -65,8 +64,8 @@ public class ClientGUI implements ActionListener {
 	protected JScrollPane scrollPane_2;
 	protected JLabel lblMessage;
 	JScrollPane scrollPane_4;
-	
-	protected boolean returnLobby=true;
+
+	protected boolean returnLobby = false;
 	char character;
 	int rowIndex = 0;
 	int colIndex = 0;
@@ -82,7 +81,7 @@ public class ClientGUI implements ActionListener {
 	private JLabel lblCreatRoom;
 	private JButton btnStartGame;
 	String inputString = "";
-	boolean beginSetVoid=false;
+	boolean beginSetVoid = false;
 
 	/**
 	 * Create the application.
@@ -146,7 +145,7 @@ public class ClientGUI implements ActionListener {
 		gameLobbyPanel.add(scrollPane);
 
 		playerTable = new JTable();
-		playerTable.setBorder(null);
+		playerTable.setShowGrid(false);
 		playerTable.setBackground(SystemColor.control);
 		playerTable.setEnabled(false);
 		playerTable.setRowSelectionAllowed(false);
@@ -215,10 +214,10 @@ public class ClientGUI implements ActionListener {
 		btnPanel.setLayout(btnLayout);
 
 		voidPanel = new JPanel();
-		btnPanel.add(voidPanel, "name_965239449619613");
+		btnPanel.add(voidPanel, "voidPanel");
 
 		passPanel = new JPanel();
-		btnPanel.add(passPanel, "name_958014637000495");
+		btnPanel.add(passPanel, "passPanel");
 		passPanel.setLayout(null);
 
 		btnPass = new JButton("Pass");
@@ -227,7 +226,7 @@ public class ClientGUI implements ActionListener {
 		btnPass.addActionListener(this);
 
 		votePanel = new JPanel();
-		btnPanel.add(votePanel, "name_957940911752561");
+		btnPanel.add(votePanel, "votePanel");
 		votePanel.setLayout(null);
 
 		btnAgreeVote = new JButton("Agree");
@@ -241,7 +240,7 @@ public class ClientGUI implements ActionListener {
 		btnAgreeVote.addActionListener(this);
 
 		selectPenel = new JPanel();
-		btnPanel.add(selectPenel, "name_957948997083501");
+		btnPanel.add(selectPenel, "selectPenel");
 		selectPenel.setLayout(null);
 
 		btnNext = new JButton("Next");
@@ -259,12 +258,13 @@ public class ClientGUI implements ActionListener {
 		gameRoomPanel.add(scrollPane_1);
 
 		visitingTable = new JTable();
+		visitingTable.setShowGrid(false);
 		visitingTable.setBorder(null);
 		visitingTable.setBackground(SystemColor.control);
 		visitingTable.setEnabled(false);
 		visitingTable.setRowSelectionAllowed(false);
 		scrollPane_1.setViewportView(visitingTable);
-		
+
 		gameTable.setModel(myModel);
 		myModel.addTableModelListener(new TableModelListener() {
 			public void tableChanged(TableModelEvent e) {
@@ -281,18 +281,18 @@ public class ClientGUI implements ActionListener {
 						if (!Pattern.matches("\\s+", inputString) && !inputString.equals("")) {
 							tableChanged = true;
 							character = inputString.toCharArray()[0];
-							btnLayout.show(btnPanel, "name_957948997083501");
+							btnLayout.show(btnPanel, "selectPenel");
 							lblMessage.setText("");
 						} else {
 							JOptionPane.showMessageDialog(null, "You can only type one character without whitespace.");
 							tableChanged = false;
-							btnLayout.show(btnPanel, "name_958014637000495");
+							btnLayout.show(btnPanel, "passPanel");
 						}
 					} else {
 						if (gameTable.getValueAt(rowIndex, colIndex).equals(inputString)) {
-							beginSetVoid=true;
+							beginSetVoid = true;
 							gameTable.setValueAt("", rowIndex, colIndex);
-							beginSetVoid=false;
+							beginSetVoid = false;
 							if (gameTable.getValueAt(rowIndex, colIndex).equals("")) {
 								rowIndex = e.getFirstRow();
 								colIndex = e.getColumn();
@@ -301,13 +301,13 @@ public class ClientGUI implements ActionListener {
 							if (!Pattern.matches("\\s+", inputString) && !inputString.equals("")) {
 								tableChanged = true;
 								character = inputString.toCharArray()[0];
-								btnLayout.show(btnPanel, "name_957948997083501");
+								btnLayout.show(btnPanel, "selectPenel");
 								lblMessage.setText("");
 							} else {
 								JOptionPane.showMessageDialog(null,
 										"You can only type one character without whitespace.");
 								tableChanged = false;
-								btnLayout.show(btnPanel, "name_958014637000495");
+								btnLayout.show(btnPanel, "passPanel");
 							}
 						}
 					}
@@ -362,7 +362,7 @@ public class ClientGUI implements ActionListener {
 			if (arg0.getSource().equals(btnPass)) {
 				setTableEditable(false);
 				ScrabbleClient.remoteServer.passTurn(ScrabbleClient.player.getUserName());
-				btnLayout.show(btnPanel, "name_965239449619613");
+				btnLayout.show(btnPanel, "voidPanel");
 				gameTable.clearSelection();
 			} else if (arg0.getSource().equals(btnVote)) {
 				if (gameTable.getSelectedColumnCount() == 0 && gameTable.getSelectedRowCount() == 0) {
@@ -377,7 +377,6 @@ public class ClientGUI implements ActionListener {
 					if (gameTable.getSelectedColumnCount() > 1 & gameTable.getSelectedRowCount() > 1) {
 						JOptionPane.showMessageDialog(null,
 								" You have to select a string in a single line.Please select again.");
-						gameTable.clearSelection();
 						myModel.setCellEditable(rowIndex, colIndex, true);
 					} else {
 						if (gameTable.getSelectedColumnCount() > 1 && gameTable.getSelectedRowCount() == 1) {
@@ -401,40 +400,40 @@ public class ClientGUI implements ActionListener {
 						if (!checkString(startRowIndex, startColIndex, endRowIndex, endColIndex)) {
 							JOptionPane.showMessageDialog(null,
 									" You have to select a complete string without empty cells.Please select again.");
-							gameTable.clearSelection();
-							myModel.setCellEditable(rowIndex, colIndex, true);
+							myModel.setCellEditable(rowIndex, colIndex, true);							
 						} else {
 							myModel.setCellEditable(rowIndex, colIndex, false);
 							ScrabbleClient.remoteServer.vote(character, startRowIndex, startColIndex, endRowIndex,
 									endColIndex, ScrabbleClient.player.getUserName(), rowIndex, colIndex);
 							gameTable.setEnabled(false);
-							btnLayout.show(btnPanel, "name_965239449619613");
+							btnLayout.show(btnPanel, "voidPanel");
 						}
 					}
 				}
 			} else if (arg0.getSource().equals(btnAgreeVote)) {
 				ScrabbleClient.remoteServer.agreeVote(true, ScrabbleClient.player.getUserName());
-				btnLayout.show(btnPanel, "name_965239449619613");
+				btnLayout.show(btnPanel, "voidPanel");
 				gameTable.clearSelection();
 			} else if (arg0.getSource().equals(btnNext)) {
 				setTableEditable(false);
-				btnLayout.show(btnPanel, "name_965239449619613");
+				btnLayout.show(btnPanel, "voidPanel");
 				ScrabbleClient.remoteServer.nextTurn(character, rowIndex, colIndex,
 						ScrabbleClient.player.getUserName());
 
 			} else if (arg0.getSource().equals(btnDisagree)) {
 				ScrabbleClient.remoteServer.agreeVote(false, ScrabbleClient.player.getUserName());
-				btnLayout.show(btnPanel, "name_965239449619613");
+				btnLayout.show(btnPanel, "voidPanel");
 				gameTable.clearSelection();
 			} else if (arg0.getSource().equals(btnCreateRoom)) {
 				if (ScrabbleClient.remoteServer.createRoom(ScrabbleClient.player.getUserName())) {
 					showLobby();
 				}
 			} else if (arg0.getSource().equals(btnReturnToGame)) {
-				returnLobby=true;
-				if(ScrabbleClient.player.getGameState())
+				returnLobby = true;
+				if (ScrabbleClient.player.getGameState())
 					showGame(ScrabbleClient.player.getCurrentPlayer());
-				else showLobby();
+				else
+					showLobby();
 			} else if (arg0.getSource().equals(btnStartGame)) {
 				ScrabbleClient.remoteServer.startGame();
 			}
@@ -452,7 +451,7 @@ public class ClientGUI implements ActionListener {
 			return false;
 		}
 		if (startRowIndex == endRowIndex) {
-			if ((startColIndex > 0 &&gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
+			if ((startColIndex > 0 && gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
 					&& gameTable.getValueAt(startRowIndex, startColIndex - 1) != "")
 					|| (endColIndex > 19 && gameTable.getValueAt(startRowIndex, endColIndex + 1) != null
 							&& gameTable.getValueAt(startRowIndex, endColIndex + 1) != "")) {
@@ -509,16 +508,12 @@ public class ClientGUI implements ActionListener {
 			JButton addButton = new JButton("+");
 			addButton.setBounds(118, 10, 39, 23);
 
-			/*addButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					try {
-						ScrabbleClient.remoteServer.invitePlayer(noGamerName);
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
-				}
-			});
-*/
+			/*
+			 * addButton.addActionListener(new ActionListener() { public void
+			 * actionPerformed(ActionEvent arg0) { try {
+			 * ScrabbleClient.remoteServer.invitePlayer(noGamerName); } catch
+			 * (RemoteException e) { e.printStackTrace(); } } });
+			 */
 			inviteRow.add(addButton);
 			invite.add(inviteRow);
 		}
@@ -638,10 +633,10 @@ public class ClientGUI implements ActionListener {
 		freshPlayerList();
 		freshGamerList();
 		if (currentPlayer.equals(ScrabbleClient.player.getUserName())) {
-			btnLayout.show(btnPanel, "name_958014637000495");
+			btnLayout.show(btnPanel, "passPanel");
 			gameTable.setEnabled(true);
 		} else {
-			btnLayout.show(btnPanel, "name_965239449619613");
+			btnLayout.show(btnPanel, "voidPanel");
 			setTableEditable(false);
 			gameTable.setEnabled(false);
 		}
@@ -689,23 +684,18 @@ public class ClientGUI implements ActionListener {
 			gameTable.setColumnSelectionInterval(startColIndex, endColIndex);
 			gameTable.setRowSelectionInterval(startRowIndex, endRowIndex);
 			lblMessage.setText("");
-			btnLayout.show(btnPanel, "name_957940911752561");
+			btnLayout.show(btnPanel, "votePanel");
 		}
 	}
 
 	public void voteResult(String beginVoteUserName, boolean accepted, int totalMark, String nextUserName) {
-		// TimeDialog d = new TimeDialog();
 		if (accepted) {
 			if (ScrabbleClient.player.getUserName().equals(beginVoteUserName))
 				lblMessage.setText("Vote successfully! You get " + totalMark + "point(s)!");
-			// d.showDialog(null, "Vote successfully!You get " + totalMark + "points!", 2);
 			else
 				lblMessage.setText("Vote successfully! " + beginVoteUserName + " gets " + totalMark + "point(s)!");
-			// d.showDialog(null, "Vote successfully!" + beginVoteUserName + " gets " +
-			// totalMark + "points!", 2);
 		} else
 			lblMessage.setText("Vote Failed! " + nextUserName + "'s turn!");
-		// d.showDialog(null, "Vote Failed! " + nextUserName + "'s turn!", 2);
 	}
 
 	private void setTableEditable(boolean editable) {
