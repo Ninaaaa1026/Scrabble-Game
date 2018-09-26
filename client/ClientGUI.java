@@ -62,7 +62,7 @@ public class ClientGUI implements ActionListener {
 	protected CardLayout btnLayout;
 	protected JButton btnReturnToGame;
 	protected JScrollPane scrollPane_2;
-	protected JLabel lblMessage;
+	private JLabel lblMessage;
 	JScrollPane scrollPane_4;
 
 	protected boolean returnLobby = true;
@@ -119,7 +119,7 @@ public class ClientGUI implements ActionListener {
 		gameLobbyPanel.setLayout(null);
 
 		scrollPane_4 = new JScrollPane();
-		scrollPane_4.setBounds(0, 354, 384, 200);
+		scrollPane_4.setBounds(0, 421, 384, 133);
 		gameLobbyPanel.add(scrollPane_4);
 
 		invitedTable = new JTable();
@@ -168,7 +168,7 @@ public class ClientGUI implements ActionListener {
 
 		JPanel gamersPanel = new JPanel();
 		gamersPanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 1, true));
-		gamersPanel.setBounds(0, 0, 383, 93);
+		gamersPanel.setBounds(0, 0, 383, 86);
 		gameRoomPanel.add(gamersPanel);
 		gamersPanel.setLayout(null);
 
@@ -178,7 +178,7 @@ public class ClientGUI implements ActionListener {
 
 		scrollPane_2 = new JScrollPane();
 		scrollPane_2.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane_2.setBounds(0, 25, 383, 70);
+		scrollPane_2.setBounds(0, 25, 383, 58);
 		scrollPane_2.setVisible(false);
 		gamersPanel.add(scrollPane_2);
 
@@ -205,7 +205,8 @@ public class ClientGUI implements ActionListener {
 		GameTablePanel.add(gameTable);
 
 		lblPlayersTurn = new JLabel();
-		lblPlayersTurn.setBounds(10, 103, 254, 15);
+		lblPlayersTurn.setFont(new Font("Century", Font.PLAIN, 12));
+		lblPlayersTurn.setBounds(10, 96, 254, 22);
 		gameRoomPanel.add(lblPlayersTurn);
 
 		btnPanel = new JPanel();
@@ -341,6 +342,11 @@ public class ClientGUI implements ActionListener {
 		lblGameOver.setEnabled(false);
 		lblGameOver.setBounds(241, 24, 99, 15);
 		gameOverPanel.add(lblGameOver);
+		
+		lblMessage = new JLabel("");
+		lblMessage.setFont(new Font("Century", Font.PLAIN, 12));
+		lblMessage.setBounds(1, 525, 382, 23);
+		gameRoomPanel.add(lblMessage);
 
 		JFormattedTextField ftf;
 		try {
@@ -348,11 +354,6 @@ public class ClientGUI implements ActionListener {
 			ftf = new JFormattedTextField(format);
 			DefaultCellEditor cellEditor = new DefaultCellEditor(ftf);
 			gameTable.setCellEditor(cellEditor);
-
-			lblMessage = new JLabel("");
-			lblMessage.setFont(new Font("Century", Font.PLAIN, 12));
-			lblMessage.setBounds(1, 525, 382, 23);
-			gameRoomPanel.add(lblMessage);
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
@@ -689,12 +690,12 @@ public class ClientGUI implements ActionListener {
 		}
 	}
 
-	public void voteResult(String beginVoteUserName, boolean accepted, int totalMark, String nextUserName) {
+	public void voteResult(String beginVoteUserName, boolean accepted, int mark, String nextUserName) {
 		if (accepted) {
 			if (ScrabbleClient.player.getUserName().equals(beginVoteUserName))
-				lblMessage.setText("Vote successfully! You get " + totalMark + "point(s)!");
+				lblMessage.setText("Vote successfully! You get " + mark + " point(s)!");
 			else
-				lblMessage.setText("Vote successfully! " + beginVoteUserName + " gets " + totalMark + "point(s)!");
+				lblMessage.setText("Vote successfully! " + beginVoteUserName + " gets " + mark + " point(s)!");
 		} else
 			lblMessage.setText("Vote Failed! " + nextUserName + "'s turn!");
 	}

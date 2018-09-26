@@ -240,17 +240,17 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	}
 
 	@Override
-	public void voteSuccess(String beginVoteUserName, boolean accepted, int totalMark, String nextUserName)
+	public void voteSuccess(String beginVoteUserName, boolean accepted, int totalMark,int mark, String nextUserName)
 			throws RemoteException {
 		if (accepted) {
 			updateMark(beginVoteUserName, totalMark);
 		}
 		this.currentPlayer = nextUserName;
+		gui.voteResult(beginVoteUserName, accepted, mark, nextUserName);
 		if(userName.equals(nextUserName))
 			gui.GameTablePanel.setBorder(new LineBorder(Color.RED, 2, true));
 		else gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
-		gui.voteResult(beginVoteUserName, accepted, totalMark, nextUserName);
-		gui.showGame(this.currentPlayer);
+		gui.showGame(nextUserName);
 	}
 
 	@Override
@@ -267,7 +267,6 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		this.playerUserName.addAll(players);
 		this.gamerUserName.addAll(gamers);
 		this.gamerScores.addAll(scores);
-		// gui.newTable();
 		gui.showGameResult();
 		this.gamerUserName.clear();
 		this.gamerScores.clear();

@@ -184,6 +184,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 		for (ClientInterface e : players) {
 			ClientInterface player = e;
 			try {
+				nextPlayer=currentPlayer;
 				player.gameStarted(gamers, playerNames, currentPlayer);// ArrayList<String> gamers, ArrayList<String>
 																		// players, String currentPlayer
 			} catch (RemoteException re) {
@@ -296,13 +297,17 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 		for (ClientInterface e : players) {
 			ClientInterface player = e;
 
-			try {
-				player.beginVote(character, startRowIndex, startColIndex, endRowIndex, endColIndex, userName, rowIndex,
-						colIndex);
+			int currentPlayer = players.indexOf(player);
+			String playerName = playerNames.get(currentPlayer);
+			if (gamers.contains(playerName)) {
+				try {
+					player.beginVote(character, startRowIndex, startColIndex, endRowIndex, endColIndex, userName,
+							rowIndex, colIndex);
 
-			} catch (RemoteException re) {
-				System.out.println("vote error");
-				notify(player);
+				} catch (RemoteException re) {
+					System.out.println("vote error");
+					notify(player);
+				}
 			}
 		}
 
@@ -336,15 +341,15 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 					ClientInterface player = e;
 
 					try {
-						player.voteSuccess(voteBeginner, accepted, currentScore + wordLength, nextPlayer);// voteSuccess(String
-																											// beginVoteUserName,
-																											// boolean
-																											// accepted,
-																											// int
-																											// totalMark,
-																											// String
-																											// nextUserName)throws
-																											// RemoteException;
+						player.voteSuccess(voteBeginner, accepted, currentScore + wordLength, wordLength, nextPlayer);// voteSuccess(String
+						// beginVoteUserName,
+						// boolean
+						// accepted,
+						// int
+						// totalMark,
+						// String
+						// nextUserName)throws
+						// RemoteException;
 
 					} catch (RemoteException re) {
 						System.out.println("vote error");
@@ -364,7 +369,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 					ClientInterface player = e;
 
 					try {
-						player.voteSuccess(voteBeginner, accepted, currentScore, nextPlayer);
+						player.voteSuccess(voteBeginner, accepted, currentScore, 0, nextPlayer);
 
 					} catch (RemoteException re) {
 						System.out.println("vote error");
@@ -435,7 +440,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 							notify(player);
 						}
 					}
-				} else if(gamers.contains(deleteName)){
+				} else if (gamers.contains(deleteName)) {
 					int currentGamer = gamers.indexOf(deleteName);
 					gamers.remove(currentGamer);
 					gamerScores.remove(currentGamer);
