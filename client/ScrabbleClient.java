@@ -216,6 +216,9 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		// next turn
 		grid[rowIndex][colIndex] = character;
 		this.currentPlayer = currentPlayer;
+		if(userName.equals(currentPlayer))
+			gui.GameTablePanel.setBorder(new LineBorder(Color.RED, 2, true));
+		else gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
 		gui.showGame(this.currentPlayer);
 	}
 
@@ -223,6 +226,9 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	public void pass(String nextUserName) throws RemoteException {
 		// current player pass
 		this.currentPlayer = nextUserName;
+		if(userName.equals(nextUserName))
+			gui.GameTablePanel.setBorder(new LineBorder(Color.RED, 2, true));
+		else gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
 		gui.showGame(this.currentPlayer);
 	}
 
