@@ -472,6 +472,14 @@ public class ClientGUI implements ActionListener {
 						"You have to select a whole word . Please select again."
 								+ gameTable.getValueAt(startRowIndex, startColIndex - 1) + ".");
 				return false;
+			}else if ((startRowIndex > 0 && gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
+					&& !gameTable.getValueAt(startRowIndex - 1, startColIndex).equals(""))
+					|| (endRowIndex < 19 && gameTable.getValueAt(endRowIndex + 1, startColIndex) != null
+							&& !gameTable.getValueAt(endRowIndex + 1, startColIndex).equals(""))) {
+				JOptionPane.showMessageDialog(null,
+						"You have to select a whole word. Please select again."
+								+ gameTable.getValueAt(startRowIndex - 1, startColIndex) + ".");
+				return false;
 			}
 		} else if (startColIndex == endColIndex) {
 			if ((startRowIndex > 0 && gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
