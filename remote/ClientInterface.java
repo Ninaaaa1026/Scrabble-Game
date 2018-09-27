@@ -18,7 +18,7 @@ public interface ClientInterface extends Remote {
 	// set people who create the room
 	public void roomCreated(String createplayerusername) throws RemoteException;
 
-	// check if the player accpect the invitation
+	// check if the player accept the invitation
 	public void playerInvited() throws RemoteException;
 
 	// let the client know if the player accept the invitation
@@ -28,10 +28,7 @@ public interface ClientInterface extends Remote {
 	public void gameStarted(ArrayList<String> gamers, ArrayList<String> players, String currentPlayer)
 			throws RemoteException;
 
-	// change the clients' game table
-	// public void gameTableChanged(char character, int rowIndex, int colIndex)
-	// throws RemoteException;
-	// set player's turn
+	// change the clients' game table set player's turn
 	public void nextPlayer(char character, int rowIndex, int colIndex, String nextUserName) throws RemoteException;
 
 	// pass this turn, the argument is the next player
@@ -41,7 +38,7 @@ public interface ClientInterface extends Remote {
 	public void beginVote(char character, int startRowIndex, int startColIndex, int endRowIndex, int endColIndex,
 			String userName,int rowIndex,int colIndex) throws RemoteException;
 
-	// if all players think the string is valid , the people get the score. ???????
+	// if all players think the string is valid , the people get the score.
 	public void voteSuccess(String beginVoteUserName, boolean accepted, int totalMark, int mark,String nextUserName)throws RemoteException;
 
 	// gameover

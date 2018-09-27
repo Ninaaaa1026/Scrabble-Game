@@ -38,5 +38,7 @@ public interface ServerInterface extends Remote{
 	//if a player who is playing a game exit, the game is over; if a player
 	//who is not playing a game, just remove the usrname from the list
 	public void notify(ClientInterface clientinstance)throws RemoteException;
+	
+	public void checkConnect() throws RemoteException;
 
 }

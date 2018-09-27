@@ -25,7 +25,6 @@ public class ButtonMouseListener extends MouseAdapter {
 				} catch (RemoteException e1) {
 					e1.printStackTrace();
 				}
-				// ((JButton)value).doClick();
 			}
 		}
 	}

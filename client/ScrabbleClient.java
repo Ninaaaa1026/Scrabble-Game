@@ -21,13 +21,11 @@ import remote.ServerInterface;
  *
  */
 public class ScrabbleClient extends UnicastRemoteObject implements ClientInterface {
+
 	protected ScrabbleClient() throws RemoteException {
 		super();
 	}
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private ClientGUI gui = new ClientGUI();
@@ -53,28 +51,45 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	public static void main(String[] args) {
 		try {
 			player = new ScrabbleClient();
+			try {
+				// Connect to the rmi registry that is running on localhost
+				Registry registry = LocateRegistry.getRegistry("localhost");
+
+				// Retrieve the stub/proxy for the remote math object from the registry
+				remoteServer = (ServerInterface) registry.lookup("Scrabble");
+
+				Thread connectThread = new Thread() {
+					public void run() {
+						try {
+							while (true) {
+								remoteServer.checkConnect();
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
+						} catch (RemoteException e) {
+							JOptionPane.showMessageDialog(null, "Server disconnected. Please try later.");
+							System.exit(0);
+						}
+					}
+				};
+				connectThread.start();
+			} catch (Exception e) {
+				if (e.getMessage().contains("java.net.ConnectException: Connection refused: connect")) {
+					JOptionPane.showMessageDialog(null, "Server is closed. Please try later.");
+					System.exit(0);
+				}
+			}
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
 		}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-
 					window = new GameLogin(player.gui);
 					window.getFrame().setVisible(true);
-					try {
-						// Connect to the rmiregistry that is running on localhost
-						Registry registry = LocateRegistry.getRegistry("localhost");
-
-						// Retrieve the stub/proxy for the remote math object from the registry
-						remoteServer = (ServerInterface) registry.lookup("Scrabble");
-					} catch (Exception e) {
-						if (e.getMessage().contains("java.net.ConnectException: Connection refused: connect")) {
-							JOptionPane.showMessageDialog(null, "Server is closed. Please try later.");
-							System.exit(0);
-						}
-					}
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -180,7 +195,6 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 
 	@Override
 	public void roomCreated(String createplayerusername) throws RemoteException {
-		// this.gameState = false;
 		this.roomState = true;
 		this.gamerUserName.clear();
 		this.gamerScores.clear();
@@ -225,7 +239,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 			gui.GameTablePanel.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
 		gui.showGame(this.currentPlayer);
 		gui.lblMessage.setText("");
-		// gui.gameTable.clearSelection();
+		gui.gameTable.clearSelection();
 	}
 
 	@Override
