@@ -463,7 +463,132 @@ public class ClientGUI implements ActionListener {
 					"You have to select a word including the character you put. Please select again.");
 			return false;
 		}
-		if (startRowIndex == endRowIndex) {
+		if (startRowIndex == endRowIndex && startColIndex == endColIndex) {
+			if (startRowIndex == 0) {
+				if(startColIndex == 0) {
+					if((gameTable.getValueAt(startRowIndex, startColIndex + 1) != null
+							&& !gameTable.getValueAt(startRowIndex, startColIndex + 1).equals(""))
+							&& (gameTable.getValueAt(startRowIndex + 1, startColIndex) != null
+							&& !gameTable.getValueAt(startRowIndex + 1, startColIndex ).equals("")) ) {
+								JOptionPane.showMessageDialog(null,
+										"You have to select a whole word . Please select again."
+												+ gameTable.getValueAt(startRowIndex, startColIndex - 1) + ".");
+								return false;
+							}
+				}else if (startColIndex == 19) {
+					if((gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
+							&& !gameTable.getValueAt(startRowIndex, startColIndex - 1).equals(""))
+							&& (gameTable.getValueAt(startRowIndex + 1, startColIndex) != null
+							&& !gameTable.getValueAt(startRowIndex + 1, startColIndex ).equals("")) ) {
+								JOptionPane.showMessageDialog(null,
+										"You have to select a whole word . Please select again."
+												+ gameTable.getValueAt(startRowIndex, startColIndex - 1) + ".");
+								return false;
+							}
+				}else {
+					if(((gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
+							&& !gameTable.getValueAt(startRowIndex, startColIndex - 1).equals(""))
+							|| (gameTable.getValueAt(startRowIndex , startColIndex + 1) != null
+							&& !gameTable.getValueAt(startRowIndex , startColIndex + 1 ).equals("")))
+							&& (gameTable.getValueAt(startRowIndex + 1, startColIndex) != null
+							&& !gameTable.getValueAt(startRowIndex + 1, startColIndex ).equals(""))
+							 ) {
+								JOptionPane.showMessageDialog(null,
+										"You have to select a whole word . Please select again."
+												+ gameTable.getValueAt(startRowIndex, startColIndex - 1) + ".");
+								return false;
+							}
+					
+				}
+				
+			}else if (startRowIndex == 19) {
+				if(startColIndex == 0) {
+					if((gameTable.getValueAt(startRowIndex, startColIndex + 1) != null
+							&& !gameTable.getValueAt(startRowIndex, startColIndex + 1).equals(""))
+							&& (gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
+							&& !gameTable.getValueAt(startRowIndex - 1, startColIndex ).equals("")) ) {
+								JOptionPane.showMessageDialog(null,
+										"You have to select a whole word . Please select again."
+												+ gameTable.getValueAt(startRowIndex, startColIndex - 1) + ".");
+								return false;
+							}
+				}else if (startColIndex == 19) {
+					if((gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
+							&& !gameTable.getValueAt(startRowIndex, startColIndex - 1).equals(""))
+							&& (gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
+							&& !gameTable.getValueAt(startRowIndex - 1, startColIndex ).equals("")) ) {
+								JOptionPane.showMessageDialog(null,
+										"You have to select a whole word . Please select again."
+												+ gameTable.getValueAt(startRowIndex, startColIndex - 1) + ".");
+								return false;
+							}
+				}else {
+					if(((gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
+							&& !gameTable.getValueAt(startRowIndex, startColIndex - 1).equals(""))
+							|| (gameTable.getValueAt(startRowIndex , startColIndex + 1) != null
+							&& !gameTable.getValueAt(startRowIndex , startColIndex + 1 ).equals("")))
+							&& (gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
+							&& !gameTable.getValueAt(startRowIndex - 1, startColIndex ).equals(""))
+							 ) {
+								JOptionPane.showMessageDialog(null,
+										"You have to select a whole word . Please select again."
+												+ gameTable.getValueAt(startRowIndex, startColIndex - 1) + ".");
+								return false;
+							}
+					
+				}
+				
+			}else if (startColIndex == 0) {
+				if(((gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
+						&& !gameTable.getValueAt(startRowIndex- 1, startColIndex).equals(""))
+						|| (gameTable.getValueAt(startRowIndex + 1, startColIndex) != null
+						&& !gameTable.getValueAt(startRowIndex + 1 , startColIndex).equals("")))
+						&& (gameTable.getValueAt(startRowIndex , startColIndex + 1) != null
+						&& !gameTable.getValueAt(startRowIndex , startColIndex + 1 ).equals(""))
+						 ) {
+							JOptionPane.showMessageDialog(null,
+									"You have to select a whole word . Please select again."
+											+ gameTable.getValueAt(startRowIndex, startColIndex - 1) + ".");
+							return false;
+						}
+				
+				
+			}else if (startColIndex == 19) {
+				if(((gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
+						&& !gameTable.getValueAt(startRowIndex- 1, startColIndex).equals(""))
+						|| (gameTable.getValueAt(startRowIndex + 1, startColIndex) != null
+						&& !gameTable.getValueAt(startRowIndex + 1 , startColIndex).equals("")))
+						&& (gameTable.getValueAt(startRowIndex , startColIndex - 1 ) != null
+						&& !gameTable.getValueAt(startRowIndex , startColIndex - 1 ).equals(""))
+						 ) {
+							JOptionPane.showMessageDialog(null,
+									"You have to select a whole word . Please select again."
+											+ gameTable.getValueAt(startRowIndex, startColIndex - 1) + ".");
+							return false;
+						}
+				
+				
+			}else {
+				if(  ((gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
+						&& !gameTable.getValueAt(startRowIndex- 1, startColIndex).equals(""))
+						
+						|| (gameTable.getValueAt(startRowIndex + 1, startColIndex) != null
+						&& !gameTable.getValueAt(startRowIndex + 1 , startColIndex).equals("")))
+						
+						&& ((gameTable.getValueAt(startRowIndex , startColIndex - 1 ) != null
+						&& !gameTable.getValueAt(startRowIndex , startColIndex - 1 ).equals(""))
+								
+						||(gameTable.getValueAt(startRowIndex , startColIndex + 1 ) != null
+						&& !gameTable.getValueAt(startRowIndex , startColIndex + 1 ).equals("")))    ) {
+							JOptionPane.showMessageDialog(null,
+									"You have to select a whole word . Please select again."
+											+ gameTable.getValueAt(startRowIndex, startColIndex - 1) + ".");
+							return false;
+						}
+			}
+			
+		}
+		else if (startRowIndex == endRowIndex) {
 			if ((startColIndex > 0 && gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
 					&& !gameTable.getValueAt(startRowIndex, startColIndex - 1).equals(""))
 					|| (endColIndex > 19 && gameTable.getValueAt(startRowIndex, endColIndex + 1) != null
@@ -471,14 +596,6 @@ public class ClientGUI implements ActionListener {
 				JOptionPane.showMessageDialog(null,
 						"You have to select a whole word . Please select again."
 								+ gameTable.getValueAt(startRowIndex, startColIndex - 1) + ".");
-				return false;
-			}else if ((startRowIndex > 0 && gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
-					&& !gameTable.getValueAt(startRowIndex - 1, startColIndex).equals(""))
-					|| (endRowIndex < 19 && gameTable.getValueAt(endRowIndex + 1, startColIndex) != null
-							&& !gameTable.getValueAt(endRowIndex + 1, startColIndex).equals(""))) {
-				JOptionPane.showMessageDialog(null,
-						"You have to select a whole word. Please select again."
-								+ gameTable.getValueAt(startRowIndex - 1, startColIndex) + ".");
 				return false;
 			}
 		} else if (startColIndex == endColIndex) {
