@@ -53,7 +53,7 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 			player = new ScrabbleClient();
 			try {
 				// Connect to the rmi registry that is running on localhost
-				Registry registry = LocateRegistry.getRegistry("localhost");
+				Registry registry = LocateRegistry.getRegistry(args[0]);
 
 				// Retrieve the stub/proxy for the remote math object from the registry
 				remoteServer = (ServerInterface) registry.lookup("Scrabble");
@@ -75,26 +75,25 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 						}
 					}
 				};
-				connectThread.start();
-			} catch (Exception e) {
-				if (e.getMessage().contains("java.net.ConnectException: Connection refused: connect")) {
-					JOptionPane.showMessageDialog(null, "Server is closed. Please try later.");
+				connectThread.start();				
+
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							window = new GameLogin(player.gui);
+							window.getFrame().setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			} catch (RemoteException e) {
+					JOptionPane.showMessageDialog(null, "Cannot connect to server. Please try later.");
 					System.exit(0);
-				}
 			}
-		} catch (RemoteException e1) {
+		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					window = new GameLogin(player.gui);
-					window.getFrame().setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
 	}
 
 	public String getUserName() {
