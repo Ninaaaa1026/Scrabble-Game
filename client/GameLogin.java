@@ -107,8 +107,13 @@ public class GameLogin {
 						e1.printStackTrace();
 					}
 				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(null, " port number should be numeric.");
+					JOptionPane.showMessageDialog(null, "port number should be numeric.");
+				} catch(java.rmi.UnknownHostException e){
+					JOptionPane.showMessageDialog(null, "Unkown IP address.");
+					IPTextField.setText(null);
+					portTextField.setText(null);
 				} catch (RemoteException e) {
+					e.printStackTrace();
 					JOptionPane.showMessageDialog(null, "Cannot connect to server. Please try later.");
 					System.exit(0);
 				}
