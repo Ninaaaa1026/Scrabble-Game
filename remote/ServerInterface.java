@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 public interface ServerInterface extends Remote{
 	//transmit client instance and username and return if the username is valid
-	public boolean addClient(String userName, ClientInterface clientinstance, String ipAddress, int portNumber)throws RemoteException;
+	public boolean addClient(String userName, ClientInterface clientinstance)throws RemoteException;
 	
 	//transmit the username who createroom and return if he/she creates the room successfully
 	public boolean createRoom(String userName)throws RemoteException;

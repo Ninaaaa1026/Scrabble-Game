@@ -3,12 +3,9 @@ package client;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
 import javax.swing.border.LineBorder;
 
 import remote.ClientInterface;
@@ -38,62 +35,29 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 	private ArrayList<String> gamerUserName = new ArrayList<>(); // the players that are playing or in the game room
 	private ArrayList<Integer> gamerScores = new ArrayList<>();
 	private char[][] grid = new char[20][20];
-	private String IPAddress;
-	private int portNumber;
 	public static GameLogin window;
 	String userName;
 	public static ScrabbleClient player; // = new ScrabbleClient();
-	public static ServerInterface remoteServer;
-
-	/**
+	public static ServerInterface remoteServer;	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
 			player = new ScrabbleClient();
-			try {
-				// Connect to the rmi registry that is running on localhost
-				Registry registry = LocateRegistry.getRegistry(args[0]);
-
-				// Retrieve the stub/proxy for the remote math object from the registry
-				remoteServer = (ServerInterface) registry.lookup("Scrabble");
-
-				Thread connectThread = new Thread() {
-					public void run() {
-						try {
-							while (true) {
-								remoteServer.checkConnect();
-								try {
-									Thread.sleep(1000);
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
-							}
-						} catch (RemoteException e) {
-							JOptionPane.showMessageDialog(null, "Server disconnected. Please try later.");
-							System.exit(0);
-						}
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						window = new GameLogin(player.gui);
+						window.getFrame().setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				};
-				connectThread.start();				
-
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							window = new GameLogin(player.gui);
-							window.getFrame().setVisible(true);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
+				}
+			});
+			
 			} catch (RemoteException e) {
-					JOptionPane.showMessageDialog(null, "Cannot connect to server. Please try later.");
-					System.exit(0);
+				e.printStackTrace();
 			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
 	}
 
 	public String getUserName() {
@@ -136,14 +100,6 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 		return this.currentPlayer;
 	}
 
-	public String getIPAddress() {
-		return this.IPAddress;
-	}
-
-	public int getPortNumber() {
-		return this.portNumber;
-	}
-
 	public void setRoomState(boolean roomState) {
 		this.roomState = roomState;
 	}
@@ -154,14 +110,6 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 
 	public void setCurrentPlayer(String currentPlayer) {
 		this.currentPlayer = currentPlayer;
-	}
-
-	public void setIPAddress(String ip) {
-		this.IPAddress = ip;
-	}
-
-	public void setPortNumber(int port) {
-		this.portNumber = port;
 	}
 
 	public void ClearGamerUserName() {

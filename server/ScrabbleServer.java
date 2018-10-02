@@ -11,7 +11,7 @@ import remote.ServerInterface;
 
 public class ScrabbleServer extends UnicastRemoteObject implements ServerInterface {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String nextPlayer;
 	private int wordLength;
 	private int passGamerNumber = 0;
@@ -33,10 +33,11 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 			ScrabbleServer scrabble = new ScrabbleServer();
 
 			// Publish the remote object's stub in the registry under the name "Compute"
-			Registry registry = LocateRegistry.createRegistry(1099);
+			Registry registry = LocateRegistry.createRegistry(Integer.parseInt(args[0]));
 			registry.bind("Scrabble", scrabble);
 			System.out.println("Scrabble Server ready.");
-
+		} catch (NumberFormatException e) {
+			System.out.println(" port number should be numeric.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -48,8 +49,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 
 	@Override
 	// ipaddress and port number is not used so far.
-	public synchronized boolean addClient(String userName, ClientInterface clientinstance, String ipAddress,
-			int portNumber) throws RemoteException {
+	public synchronized boolean addClient(String userName, ClientInterface clientinstance) throws RemoteException {
 
 		// Examine if username already exists
 		if (playerNames.contains(userName)) {
@@ -144,7 +144,7 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 			if (!gamers.contains(userName)) {
 				gamers.add(userName);
 				gamerScores.add(0);
-			}			
+			}
 		}
 		for (ClientInterface e : players) {
 			ClientInterface player = e;
@@ -424,9 +424,9 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 			}
 		}
 	}
-	
+
 	public void checkConnect() {
-		
+
 	}
 
 }
