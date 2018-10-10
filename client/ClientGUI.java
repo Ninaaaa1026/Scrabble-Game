@@ -42,7 +42,6 @@ public class ClientGUI implements ActionListener {
 	protected JLabel lblMessage;
 	protected JLabel lblInvitemessage;
 	protected JPanel GameTablePanel;
-	protected JTable gameTable = new JTable();
 	
 	protected boolean returnLobby = true;
 	
@@ -75,6 +74,7 @@ public class ClientGUI implements ActionListener {
 	private JLabel lblPlayersTurn;
 	private JLabel lblCurrentGameState;
 	private MyDefaultTableModel myModel = new MyDefaultTableModel(20, 20);
+	protected JTable gameTable = new JTable(myModel);
 	
 	private char character;
 	private int rowIndex = 0;
@@ -274,7 +274,7 @@ public class ClientGUI implements ActionListener {
 		visitingTable.setRowSelectionAllowed(false);
 		scrollPane_1.setViewportView(visitingTable);
 
-		gameTable.setModel(myModel);
+		//gameTable.setModel(myModel);
 		myModel.addTableModelListener(new TableModelListener() {
 			public void tableChanged(TableModelEvent e) {
 				if (!newTable) {
@@ -286,7 +286,7 @@ public class ClientGUI implements ActionListener {
 					if (!tableChanged) {
 						rowIndex = e.getFirstRow();
 						colIndex = e.getColumn();
-						inputString = gameTable.getValueAt(rowIndex, colIndex).toString();
+						inputString = myModel.getValueAt(rowIndex, colIndex).toString();
 						if (!Pattern.matches("\\s+", inputString) && !inputString.equals("")) {
 							tableChanged = true;
 							character = inputString.toCharArray()[0];
@@ -298,14 +298,14 @@ public class ClientGUI implements ActionListener {
 							btnLayout.show(btnPanel, "passPanel");
 						}
 					} else {
-						if (gameTable.getValueAt(rowIndex, colIndex).equals(inputString)) {
+						if (myModel.getValueAt(rowIndex, colIndex).equals(inputString)) {
 							beginSetVoid = true;
-							gameTable.setValueAt("", rowIndex, colIndex);
+							myModel.setValueAt("", rowIndex, colIndex);
 							beginSetVoid = false;
-							if (gameTable.getValueAt(rowIndex, colIndex).equals("")) {
+							if (myModel.getValueAt(rowIndex, colIndex).equals("")) {
 								rowIndex = e.getFirstRow();
 								colIndex = e.getColumn();
-								inputString = gameTable.getValueAt(rowIndex, colIndex).toString();
+								inputString = myModel.getValueAt(rowIndex, colIndex).toString();
 							}
 							if (!Pattern.matches("\\s+", inputString) && !inputString.equals("")) {
 								tableChanged = true;
@@ -323,7 +323,7 @@ public class ClientGUI implements ActionListener {
 				}
 			}
 		});
-		myModel = new MyDefaultTableModel(20, 20);
+		//myModel = new MyDefaultTableModel(20, 20);
 
 		gameOverPanel = new JPanel();
 		frame.getContentPane().add(gameOverPanel, "name_1037193997593739");
@@ -460,28 +460,28 @@ public class ClientGUI implements ActionListener {
 		if (startRowIndex == endRowIndex && startColIndex == endColIndex) {
 			if (startRowIndex == 0) {
 				if (startColIndex == 0) {
-					if ((gameTable.getValueAt(startRowIndex, startColIndex + 1) != null
-							&& !gameTable.getValueAt(startRowIndex, startColIndex + 1).equals(""))
-							&& (gameTable.getValueAt(startRowIndex + 1, startColIndex) != null
-									&& !gameTable.getValueAt(startRowIndex + 1, startColIndex).equals(""))) {
+					if ((myModel.getValueAt(startRowIndex, startColIndex + 1) != null
+							&& !myModel.getValueAt(startRowIndex, startColIndex + 1).equals(""))
+							&& (myModel.getValueAt(startRowIndex + 1, startColIndex) != null
+									&& !myModel.getValueAt(startRowIndex + 1, startColIndex).equals(""))) {
 						JOptionPane.showMessageDialog(null, "You have to select a whole word . Please select again.");
 						return false;
 					}
 				} else if (startColIndex == 19) {
-					if ((gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
-							&& !gameTable.getValueAt(startRowIndex, startColIndex - 1).equals(""))
-							&& (gameTable.getValueAt(startRowIndex + 1, startColIndex) != null
-									&& !gameTable.getValueAt(startRowIndex + 1, startColIndex).equals(""))) {
+					if ((myModel.getValueAt(startRowIndex, startColIndex - 1) != null
+							&& !myModel.getValueAt(startRowIndex, startColIndex - 1).equals(""))
+							&& (myModel.getValueAt(startRowIndex + 1, startColIndex) != null
+									&& !myModel.getValueAt(startRowIndex + 1, startColIndex).equals(""))) {
 						JOptionPane.showMessageDialog(null, "You have to select a whole word . Please select again.");
 						return false;
 					}
 				} else {
-					if (((gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
-							&& !gameTable.getValueAt(startRowIndex, startColIndex - 1).equals(""))
-							|| (gameTable.getValueAt(startRowIndex, startColIndex + 1) != null
-									&& !gameTable.getValueAt(startRowIndex, startColIndex + 1).equals("")))
-							&& (gameTable.getValueAt(startRowIndex + 1, startColIndex) != null
-									&& !gameTable.getValueAt(startRowIndex + 1, startColIndex).equals(""))) {
+					if (((myModel.getValueAt(startRowIndex, startColIndex - 1) != null
+							&& !myModel.getValueAt(startRowIndex, startColIndex - 1).equals(""))
+							|| (myModel.getValueAt(startRowIndex, startColIndex + 1) != null
+									&& !myModel.getValueAt(startRowIndex, startColIndex + 1).equals("")))
+							&& (myModel.getValueAt(startRowIndex + 1, startColIndex) != null
+									&& !myModel.getValueAt(startRowIndex + 1, startColIndex).equals(""))) {
 						JOptionPane.showMessageDialog(null, "You have to select a whole word . Please select again.");
 						return false;
 					}
@@ -489,78 +489,78 @@ public class ClientGUI implements ActionListener {
 
 			} else if (startRowIndex == 19) {
 				if (startColIndex == 0) {
-					if ((gameTable.getValueAt(startRowIndex, startColIndex + 1) != null
-							&& !gameTable.getValueAt(startRowIndex, startColIndex + 1).equals(""))
-							&& (gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
-									&& !gameTable.getValueAt(startRowIndex - 1, startColIndex).equals(""))) {
+					if ((myModel.getValueAt(startRowIndex, startColIndex + 1) != null
+							&& !myModel.getValueAt(startRowIndex, startColIndex + 1).equals(""))
+							&& (myModel.getValueAt(startRowIndex - 1, startColIndex) != null
+									&& !myModel.getValueAt(startRowIndex - 1, startColIndex).equals(""))) {
 						JOptionPane.showMessageDialog(null, "You have to select a whole word . Please select again.");
 						return false;
 					}
 				} else if (startColIndex == 19) {
-					if ((gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
-							&& !gameTable.getValueAt(startRowIndex, startColIndex - 1).equals(""))
-							&& (gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
-									&& !gameTable.getValueAt(startRowIndex - 1, startColIndex).equals(""))) {
+					if ((myModel.getValueAt(startRowIndex, startColIndex - 1) != null
+							&& !myModel.getValueAt(startRowIndex, startColIndex - 1).equals(""))
+							&& (myModel.getValueAt(startRowIndex - 1, startColIndex) != null
+									&& !myModel.getValueAt(startRowIndex - 1, startColIndex).equals(""))) {
 						JOptionPane.showMessageDialog(null, "You have to select a whole word . Please select again.");
 						return false;
 					}
 				} else {
-					if (((gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
-							&& !gameTable.getValueAt(startRowIndex, startColIndex - 1).equals(""))
-							|| (gameTable.getValueAt(startRowIndex, startColIndex + 1) != null
-									&& !gameTable.getValueAt(startRowIndex, startColIndex + 1).equals("")))
-							&& (gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
-									&& !gameTable.getValueAt(startRowIndex - 1, startColIndex).equals(""))) {
+					if (((myModel.getValueAt(startRowIndex, startColIndex - 1) != null
+							&& !myModel.getValueAt(startRowIndex, startColIndex - 1).equals(""))
+							|| (myModel.getValueAt(startRowIndex, startColIndex + 1) != null
+									&& !myModel.getValueAt(startRowIndex, startColIndex + 1).equals("")))
+							&& (myModel.getValueAt(startRowIndex - 1, startColIndex) != null
+									&& !myModel.getValueAt(startRowIndex - 1, startColIndex).equals(""))) {
 						JOptionPane.showMessageDialog(null, "You have to select a whole word . Please select again.");
 						return false;
 					}
 				}
 			} else if (startColIndex == 0) {
-				if (((gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
-						&& !gameTable.getValueAt(startRowIndex - 1, startColIndex).equals(""))
-						|| (gameTable.getValueAt(startRowIndex + 1, startColIndex) != null
-								&& !gameTable.getValueAt(startRowIndex + 1, startColIndex).equals("")))
-						&& (gameTable.getValueAt(startRowIndex, startColIndex + 1) != null
-								&& !gameTable.getValueAt(startRowIndex, startColIndex + 1).equals(""))) {
+				if (((myModel.getValueAt(startRowIndex - 1, startColIndex) != null
+						&& !myModel.getValueAt(startRowIndex - 1, startColIndex).equals(""))
+						|| (myModel.getValueAt(startRowIndex + 1, startColIndex) != null
+								&& !myModel.getValueAt(startRowIndex + 1, startColIndex).equals("")))
+						&& (myModel.getValueAt(startRowIndex, startColIndex + 1) != null
+								&& !myModel.getValueAt(startRowIndex, startColIndex + 1).equals(""))) {
 					JOptionPane.showMessageDialog(null, "You have to select a whole word . Please select again.");
 					return false;
 				}
 			} else if (startColIndex == 19) {
-				if (((gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
-						&& !gameTable.getValueAt(startRowIndex - 1, startColIndex).equals(""))
-						|| (gameTable.getValueAt(startRowIndex + 1, startColIndex) != null
-								&& !gameTable.getValueAt(startRowIndex + 1, startColIndex).equals("")))
-						&& (gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
-								&& !gameTable.getValueAt(startRowIndex, startColIndex - 1).equals(""))) {
+				if (((myModel.getValueAt(startRowIndex - 1, startColIndex) != null
+						&& !myModel.getValueAt(startRowIndex - 1, startColIndex).equals(""))
+						|| (myModel.getValueAt(startRowIndex + 1, startColIndex) != null
+								&& !myModel.getValueAt(startRowIndex + 1, startColIndex).equals("")))
+						&& (myModel.getValueAt(startRowIndex, startColIndex - 1) != null
+								&& !myModel.getValueAt(startRowIndex, startColIndex - 1).equals(""))) {
 					JOptionPane.showMessageDialog(null, "You have to select a whole word . Please select again.");
 					return false;
 				}
 			} else {
-				if (((gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
-						&& !gameTable.getValueAt(startRowIndex - 1, startColIndex).equals(""))
-						|| (gameTable.getValueAt(startRowIndex + 1, startColIndex) != null
-								&& !gameTable.getValueAt(startRowIndex + 1, startColIndex).equals("")))
-						&& ((gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
-								&& !gameTable.getValueAt(startRowIndex, startColIndex - 1).equals(""))
-								|| (gameTable.getValueAt(startRowIndex, startColIndex + 1) != null
-										&& !gameTable.getValueAt(startRowIndex, startColIndex + 1).equals("")))) {
+				if (((myModel.getValueAt(startRowIndex - 1, startColIndex) != null
+						&& !myModel.getValueAt(startRowIndex - 1, startColIndex).equals(""))
+						|| (myModel.getValueAt(startRowIndex + 1, startColIndex) != null
+								&& !myModel.getValueAt(startRowIndex + 1, startColIndex).equals("")))
+						&& ((myModel.getValueAt(startRowIndex, startColIndex - 1) != null
+								&& !myModel.getValueAt(startRowIndex, startColIndex - 1).equals(""))
+								|| (myModel.getValueAt(startRowIndex, startColIndex + 1) != null
+										&& !myModel.getValueAt(startRowIndex, startColIndex + 1).equals("")))) {
 					JOptionPane.showMessageDialog(null, "You have to select a whole word . Please select again.");
 					return false;
 				}
 			}
 		} else if (startRowIndex == endRowIndex) {
-			if ((startColIndex > 0 && gameTable.getValueAt(startRowIndex, startColIndex - 1) != null
-					&& !gameTable.getValueAt(startRowIndex, startColIndex - 1).equals(""))
-					|| (endColIndex > 19 && gameTable.getValueAt(startRowIndex, endColIndex + 1) != null
-							&& !gameTable.getValueAt(startRowIndex, endColIndex + 1).equals(""))) {
+			if ((startColIndex > 0 && myModel.getValueAt(startRowIndex, startColIndex - 1) != null
+					&& !myModel.getValueAt(startRowIndex, startColIndex - 1).equals(""))
+					|| (endColIndex > 19 && myModel.getValueAt(startRowIndex, endColIndex + 1) != null
+							&& !myModel.getValueAt(startRowIndex, endColIndex + 1).equals(""))) {
 				JOptionPane.showMessageDialog(null, "You have to select a whole word . Please select again.");
 				return false;
 			}
 		} else if (startColIndex == endColIndex) {
-			if ((startRowIndex > 0 && gameTable.getValueAt(startRowIndex - 1, startColIndex) != null
-					&& !gameTable.getValueAt(startRowIndex - 1, startColIndex).equals(""))
-					|| (endRowIndex < 19 && gameTable.getValueAt(endRowIndex + 1, startColIndex) != null
-							&& !gameTable.getValueAt(endRowIndex + 1, startColIndex).equals(""))) {
+			if ((startRowIndex > 0 && myModel.getValueAt(startRowIndex - 1, startColIndex) != null
+					&& !myModel.getValueAt(startRowIndex - 1, startColIndex).equals(""))
+					|| (endRowIndex < 19 && myModel.getValueAt(endRowIndex + 1, startColIndex) != null
+							&& !myModel.getValueAt(endRowIndex + 1, startColIndex).equals(""))) {
 				JOptionPane.showMessageDialog(null, "You have to select a whole word. Please select again.");
 				return false;
 			}
@@ -571,7 +571,7 @@ public class ClientGUI implements ActionListener {
 		}
 		for (int i = startRowIndex; i <= endRowIndex; i++) {
 			for (int j = startColIndex; j <= endColIndex; j++) {
-				if (null == gameTable.getValueAt(i, j) || gameTable.getValueAt(i, j).equals("")) {
+				if (null == myModel.getValueAt(i, j) || myModel.getValueAt(i, j).equals("")) {
 					JOptionPane.showMessageDialog(null,
 							" You have to select a whole word without empty cells. Please select again.");
 					return false;
@@ -674,11 +674,11 @@ public class ClientGUI implements ActionListener {
 			for (int i = 0; i < grid.length; i++) {
 				for (int j = 0; j < grid[0].length; j++) {
 					if (grid[i][j] != ' ') {
-						gameTable.setValueAt(grid[i][j], i, j);
+						myModel.setValueAt(grid[i][j], i, j);
 						myModel.setCellEditable(i, j, false);
 					} else {
 						if (newTable) {
-							gameTable.setValueAt("", i, j);
+							myModel.setValueAt("", i, j);
 						}
 						myModel.setCellEditable(i, j, true);
 					}

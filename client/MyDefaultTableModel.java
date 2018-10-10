@@ -36,6 +36,5 @@ public class MyDefaultTableModel extends DefaultTableModel {
 
     public void setCellEditable(int row, int col, boolean value) {
         this.editable_cells[row][col] = value; // set cell true/false
-       this.fireTableCellUpdated(row, col);
     }
 }
