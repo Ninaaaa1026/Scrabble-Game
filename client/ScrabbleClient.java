@@ -1,3 +1,11 @@
+/***
+ * author: Chenjing Yu, Jinnan Li, Mochuan Wang, Mengwen Ma
+ * email:
+ * chenjingy@student.unimelb.edu.au
+ * mochuanw@student.unimelb.edu.au
+ * mengwenm@student.unimelb.edu.au
+ * jinnanl@student.unimelb.edu.au
+ */
 package client;
 
 import java.awt.Color;
@@ -27,18 +35,19 @@ public class ScrabbleClient extends UnicastRemoteObject implements ClientInterfa
 
 	private ClientGUI gui = new ClientGUI();
 	// mention the order of initiating the parameters and invoking them by gui
-	private boolean gameState = false;
-	private boolean roomState = false;
+	private boolean gameState = false; // is a game in play
+	private boolean roomState = false; // is room created (game is not started)
 	private String roomCreatorName = "";
 	private String currentPlayer = "";
 	private ArrayList<String> playerUserName = new ArrayList<>(); // all the players
 	private ArrayList<String> gamerUserName = new ArrayList<>(); // the players that are playing or in the game room
-	private ArrayList<Integer> gamerScores = new ArrayList<>();
+	private ArrayList<Integer> gamerScores = new ArrayList<>(); //correspond to gamerUserName
 	private char[][] grid = new char[20][20];
 	public static GameLogin window;
 	String userName;
-	public static ScrabbleClient player; // = new ScrabbleClient();
-	public static ServerInterface remoteServer;	/**
+	public static ScrabbleClient player;
+	public static ServerInterface remoteServer;
+	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {

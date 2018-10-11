@@ -1,3 +1,11 @@
+/***
+ * author: Chenjing Yu, Jinnan Li, Mochuan Wang, Mengwen Ma
+ * email:
+ * chenjingy@student.unimelb.edu.au
+ * mochuanw@student.unimelb.edu.au
+ * mengwenm@student.unimelb.edu.au
+ * jinnanl@student.unimelb.edu.au
+ */
 package client;
 
 import javax.swing.JFrame;
@@ -36,6 +44,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.SwingConstants;
 
+/***
+ * This class defines the game GUI for users
+ * and methods for interaction with users and the server.
+ * It also provides methods for client callback methods
+ * to refresh the GUI.
+ */
 public class ClientGUI implements ActionListener {
 
 	protected JFrame frame;
@@ -76,9 +90,9 @@ public class ClientGUI implements ActionListener {
 	private MyDefaultTableModel myModel = new MyDefaultTableModel(20, 20);
 	protected JTable gameTable = new JTable(myModel);
 	
-	private char character;
+	private char character; //character that the player input
 	private int rowIndex = 0;
-	private int colIndex = 0;
+	private int colIndex = 0; //indexes of the input character's position
 	private boolean tableChanged = false;
 	private boolean newTable = true;
 	private boolean beginSetVoid = false;	
@@ -276,6 +290,11 @@ public class ClientGUI implements ActionListener {
 
 		//gameTable.setModel(myModel);
 		myModel.addTableModelListener(new TableModelListener() {
+			/***
+			 * Listen to user's action on displayed grid
+			 * and validate the input
+			 * @param e
+			 */
 			public void tableChanged(TableModelEvent e) {
 				if (!newTable) {
 					if (tableChanged)
@@ -366,6 +385,11 @@ public class ClientGUI implements ActionListener {
 		}
 	}
 
+	/***
+	 * Listen to user's action on the game window
+	 * such as next, pass, vote, and start game buttons.
+	 * @param arg0
+	 */
 	public void actionPerformed(ActionEvent arg0) {
 		try {
 			if (arg0.getSource().equals(btnPass)) {
@@ -451,6 +475,9 @@ public class ClientGUI implements ActionListener {
 		return frame;
 	}
 
+	/**
+	 * Validate the seleted word for vote
+	 */
 	public boolean checkString(int startRowIndex, int startColIndex, int endRowIndex, int endColIndex) {
 		if (rowIndex < startRowIndex || rowIndex > endRowIndex || colIndex < startColIndex || colIndex > endColIndex) {
 			JOptionPane.showMessageDialog(null,

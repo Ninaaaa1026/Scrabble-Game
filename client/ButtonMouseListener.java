@@ -1,3 +1,11 @@
+/***
+ * author: Chenjing Yu, Jinnan Li, Mochuan Wang, Mengwen Ma
+ * email:
+ * chenjingy@student.unimelb.edu.au
+ * mochuanw@student.unimelb.edu.au
+ * mengwenm@student.unimelb.edu.au
+ * jinnanl@student.unimelb.edu.au
+ */
 package client;
 
 import javax.swing.*;
@@ -5,6 +13,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 
+/***
+ * This class defines the mouse listener for an invitation button.
+ */
 public class ButtonMouseListener extends MouseAdapter {
 	private final JTable table;
 

@@ -1,3 +1,11 @@
+/***
+ * author: Chenjing Yu, Jinnan Li, Mochuan Wang, Mengwen Ma
+ * email:
+ * chenjingy@student.unimelb.edu.au
+ * mochuanw@student.unimelb.edu.au
+ * mengwenm@student.unimelb.edu.au
+ * jinnanl@student.unimelb.edu.au
+ */
 package client;
 
 import javax.swing.JFrame;
@@ -19,12 +27,17 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.awt.event.ActionEvent;
 
+/***
+ * This class defines the login window for clients.
+ * It displays the GUI, takes the inputs of users, and then connects to the server.
+ * It also keeps a thread checking the connection to the server regularly.
+ */
 public class GameLogin {
 
 	private JFrame frame;
-	private JTextField loginTextField;
-	private JTextField IPTextField;
-	private JTextField portTextField;
+	private JTextField loginTextField; //username
+	private JTextField IPTextField; //IP address
+	private JTextField portTextField; //port number
 	private JLabel lblWelcomeToScrabble;
 	ClientGUI window;
 
@@ -56,6 +69,7 @@ public class GameLogin {
 					Registry registry = LocateRegistry.getRegistry(IPTextField.getText(),port);
 
 					// Retrieve the stub/proxy for the remote math object from the registry
+					// A thread is created to regularly check the connection to the server
 					try {
 						ScrabbleClient.remoteServer = (ServerInterface) registry.lookup("Scrabble");
 
@@ -98,12 +112,11 @@ public class GameLogin {
 							});
 						} else {
 							JOptionPane.showMessageDialog(null,
-									" Username already exists.Please input another user name.");
+									" Username already exists. Please input another user name.");
 							loginTextField.setText(null);
 						}
 
 					} catch (NotBoundException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				} catch (NumberFormatException e) {
@@ -113,8 +126,8 @@ public class GameLogin {
 					IPTextField.setText(null);
 					portTextField.setText(null);
 				} catch (RemoteException e) {
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(null, "Cannot connect to server. Please try later.");
+					//e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Cannot connect to server. Please check the port number or try later.");
 					System.exit(0);
 				}
 			}

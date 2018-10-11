@@ -1,3 +1,11 @@
+/***
+ * author: Chenjing Yu, Jinnan Li, Mochuan Wang, Mengwen Ma
+ * email:
+ * chenjingy@student.unimelb.edu.au
+ * mochuanw@student.unimelb.edu.au
+ * mengwenm@student.unimelb.edu.au
+ * jinnanl@student.unimelb.edu.au
+ */
 package server;
 
 import java.rmi.RemoteException;
@@ -14,12 +22,12 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 
 	private String nextPlayer;
 	private int wordLength;
-	private int passGamerNumber = 0;
+	private int passGamerNumber = 0; //count the number of gamers who clicked "pass"
 	private int totalVote = 0;
 	private int agreeVote = 0;
 	private char[][] table = new char[20][20];
 	private String voteBeginner;
-	private String creator = null;
+	private String creator = null; //username of room creator
 	boolean gameState = false;
 	boolean roomState = false;
 	private ArrayList<ClientInterface> players = new ArrayList<ClientInterface>();
@@ -244,13 +252,14 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 		passGamerNumber = 0;
 		table[rowIndex][colIndex] = character;
 		int current = gamers.indexOf(userName);
-		System.out.println(userName);
-		System.out.println("current is " + current);
+		//System.out.println(userName);
+		//System.out.println("current is " + current);
 		if (current == gamers.size() - 1) {
 			current = -1;
 		}
-		System.out.println("current is " + current);
+		//System.out.println("current is " + current);
 		nextPlayer = gamers.get(current + 1);
+		System.out.println("next turn: " + nextPlayer);
 
 		for (ClientInterface e : players) {
 			ClientInterface player = e;
