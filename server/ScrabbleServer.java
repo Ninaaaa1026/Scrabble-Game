@@ -44,8 +44,12 @@ public class ScrabbleServer extends UnicastRemoteObject implements ServerInterfa
 			Registry registry = LocateRegistry.createRegistry(Integer.parseInt(args[0]));
 			registry.bind("Scrabble", scrabble);
 			System.out.println("Scrabble Server ready.");
+		}catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println(" please enter the port number");
+			System.exit(0);
 		} catch (NumberFormatException e) {
 			System.out.println(" port number should be numeric.");
+			System.exit(0);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
